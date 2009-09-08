@@ -1,0 +1,59 @@
+/*
+ *      Copyright 2009 Battams, Derek
+ *       
+ *       Licensed under the Apache License, Version 2.0 (the "License");
+ *       you may not use this file except in compliance with the License.
+ *       You may obtain a copy of the License at
+ *
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *       Unless required by applicable law or agreed to in writing, software
+ *       distributed under the License is distributed on an "AS IS" BASIS,
+ *       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *       See the License for the specific language governing permissions and
+ *       limitations under the License.
+ */
+package com.google.code.sagetvaddons.sagealert.client;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+/**
+ * Entry point classes define <code>onModuleLoad()</code>.
+ * @version $Id$
+ */
+public class SageAlert implements EntryPoint {
+
+  /**
+   * This is the entry point method.
+   * 
+   * Build the tab panel and display it on the root panel; the UI for this app is a tab panel
+   * The Alerts tab must always remain as the first tab, then Settings second; About tab must always remain last
+   */
+  public void onModuleLoad() {
+	  
+	  TabPanel tabs = new TabPanel();
+	  tabs.setWidth("640px");
+	  tabs.getDeckPanel().setWidth("100%");
+	  tabs.add(AlertSettingsPanel.getInstance(), "Alerts");
+	  tabs.add(UserSettingsPanel.getInstance(), "Settings");
+	  tabs.add(TwitterSettingsPanel.getInstance(), "Twitter");
+	  tabs.add(GrowlSettingsPanel.getInstance(), "Growl");
+	  tabs.add(new Label("About panel here"), "About");
+	  tabs.selectTab(0);
+	  
+	  VerticalPanel holder = new VerticalPanel();
+	  holder.setBorderWidth(1);
+	  holder.setSize("100%", "100%");
+	  holder.add(tabs);
+	  holder.setCellVerticalAlignment(tabs, HasVerticalAlignment.ALIGN_MIDDLE);
+	  holder.setCellHorizontalAlignment(tabs, HasHorizontalAlignment.ALIGN_CENTER);
+	  
+	  RootPanel.get().add(holder);
+  }
+}
