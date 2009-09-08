@@ -82,4 +82,9 @@ public interface UserSettings {
 	public final String LOW_SPACE_THRESHOLD = "LowSpaceThreshold";
 	public final String LOW_SPACE_THRESHOLD_DEFAULT = "20";
 
+	/**
+	 * Amount of time, in ms, between each run of the viewing client monitor
+	 */
+	public final String VIEWING_CLNT_MONITOR_SLEEP = "ViewingClntMonSleep";
+	public final String VIEWING_CLNT_MONITOR_SLEEP_DEFAULT = "120000"; 
 }

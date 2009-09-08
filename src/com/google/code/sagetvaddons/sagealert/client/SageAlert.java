@@ -18,7 +18,6 @@ package com.google.code.sagetvaddons.sagealert.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -44,7 +43,7 @@ public class SageAlert implements EntryPoint {
 	  tabs.add(UserSettingsPanel.getInstance(), "Settings");
 	  tabs.add(TwitterSettingsPanel.getInstance(), "Twitter");
 	  tabs.add(GrowlSettingsPanel.getInstance(), "Growl");
-	  tabs.add(new Label("About panel here"), "About");
+	  tabs.add(new AboutPanel(), "About");
 	  tabs.selectTab(0);
 	  
 	  VerticalPanel holder = new VerticalPanel();

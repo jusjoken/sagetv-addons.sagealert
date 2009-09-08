@@ -19,6 +19,12 @@
  */
 -->
 <project name="SageAlert" default="build" basedir=".">
+  <!-- Import svn tasks -->
+  <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
+
+  <property name="sagealert.ver" value="0.0.3" />
+  <property name="sagealert.ver.file" value="src/com/google/code/sagetvaddons/sagealert/client/Version.java" />
+	
   <!-- Configure path to GWT SDK -->
   <property name="gwt.sdk" location="C:/gwt-windows-1.7.0" />
 
@@ -30,12 +36,26 @@
     <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
   </path>
 
-  <target name="libs" description="Copy libs to WEB-INF/lib">
+  <target name="init_svn" description="Set SVN revision variables">
+    <svn javahl="true">
+    <wcVersion path="." />
+    </svn>
+  </target>
+
+  <target name="libs" depends="init_svn" description="Copy libs to WEB-INF/lib">
     <mkdir dir="war/WEB-INF/lib" />
     <copy todir="war/WEB-INF/lib" file="${gwt.sdk}/gwt-servlet.jar" />
     <!-- Add any additional server libs that need to be copied -->
   </target>
 
+  <!-- Dynamically generate the version information into the VersionLabel widget -->
+  <target name="ver_update" depends="libs">
+    <replace file="${sagealert.ver.file}" summary="yes">
+	  <replacefilter token="@@BLD_NUM@@" value="${revision.max-with-flags}" />
+	  <replacefilter token="@@VER_NUM@@" value="${sagealert.ver}" />
+	</replace>
+  </target>
+	
   <target name="javac" depends="libs" description="Compile java source">
     <mkdir dir="war/WEB-INF/classes"/>
     <javac srcdir="src" includes="**" encoding="utf-8"
@@ -49,7 +69,7 @@
     </copy>
   </target>
 
-  <target name="gwtc" depends="javac" description="GWT compile to JavaScript">
+  <target name="gwtc" depends="ver_update,javac" description="GWT compile to JavaScript">
     <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
       <classpath>
         <pathelement location="src"/>
@@ -60,6 +80,9 @@
       <!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
       <arg value="com.google.code.sagetvaddons.sagealert.SageAlert"/>
     </java>
+    <svn javahl="true">
+        <revert file="${sagealert.ver.file}" />
+    </svn>
   </target>
 
   <target name="hosted" depends="javac" description="Run hosted mode">
@@ -84,18 +107,29 @@
 
   <target name="dist" depends="war">
   	<touch file="SageAlert.context.xml" />
-	<zip destfile="sagealert-beta.zip">
+	<zip destfile="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip">
   	   <zipfileset dir="." prefix="jetty/contexts" includes="SageAlert.context.xml" />
 	   <zipfileset dir="." prefix="jetty/webapps" includes="SageAlert.war" />
 	   <fileset dir="." includes="sagealert.log4j.properties" />
   	</zip>
   </target>
-  	
+
+  <target name="gcode" depends="dist" description="Upload build to Google Code">
+	<exec executable="cmd" failonerror="true" dir=".">
+	   <arg value="/c"/>
+	   <arg value="C:/snapshots/upload_snapshot.bat"/>
+	   <arg value="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip"/>
+	</exec>
+  </target>
+	
   <target name="clean" description="Cleans this project">
     <delete dir="war/WEB-INF/classes" failonerror="false" />
     <delete dir="war/sagealert" failonerror="false" />
-  	<delete file="sagealert-beta.zip" />
-  	<delete file="SageAlert.war" />
+    <delete failonerror="false">
+      <fileset dir="." includes="SageAlert.war,sagealert*.zip" />
+    </delete>
+    <svn javahl="true">
+        <revert file="${sagealert.ver.file}" />
+    </svn>
   </target>
-
 </project>
