@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.google.code.sagetvaddons.sagealert.client.Client;
 import com.google.code.sagetvaddons.sagealert.client.UserSettings;
 
 /**
@@ -52,7 +53,11 @@ final class ViewingClientMonitor extends SageRunnable {
 					MediaFileAPI.MediaFile lastMf = lastStatus.get(ui);
 					if(lastMf == null || lastMf.GetMediaFileID() != mf.GetMediaFileID()) {
 						lastStatus.put(ui, mf);
-						SageEventHandlerManager.getInstance().fire(new PlayingMediaEvent(new ViewingClient(ui, mf)));
+						Client c = DataStore.getInstance().findClient(ui);
+						if(c.doNotify())
+							SageEventHandlerManager.getInstance().fire(new PlayingMediaEvent(new ViewingClient(c, mf)));
+						else
+							LOG.info("Viewing notifications disabled for client '" + c.getId() + "'; event not fired.");
 					}
 				}
 			}

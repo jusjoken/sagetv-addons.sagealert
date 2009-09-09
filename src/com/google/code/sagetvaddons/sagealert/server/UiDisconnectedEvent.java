@@ -15,6 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import com.google.code.sagetvaddons.sagealert.client.Client;
 import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
 
 
@@ -27,14 +28,14 @@ final class UiDisconnectedEvent implements SageEvent {
 
 	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(UiDisconnectedEvent.class.getCanonicalName(), "Alert when a UI (client, extender, placeshifter) disconnects from the SageTV server.");
 	
-	private String uiContextName;
+	private Client source;
 	
 	/**
 	 * ctor 
 	 * @param uiContextName
 	 */
-	UiDisconnectedEvent(String uiContextName) {
-		this.uiContextName = uiContextName;
+	UiDisconnectedEvent(Client c) {
+		source = c;
 	}
 	
 	/* (non-Javadoc)
@@ -42,7 +43,7 @@ final class UiDisconnectedEvent implements SageEvent {
 	 */
 	@Override
 	public String getLongDescription() {
-		return "A client has disconnected from the server. [" + uiContextName + "]";
+		return "Client '" + source.getAlias() + "' has disconnected from the SageTV server.";
 	}
 
 	/* (non-Javadoc)
@@ -65,8 +66,8 @@ final class UiDisconnectedEvent implements SageEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEvent#getSource()
 	 */
 	@Override
-	public String getSource() {
-		return uiContextName;
+	public Client getSource() {
+		return source;
 	}
 
 	/* (non-Javadoc)

@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.google.code.sagetvaddons.sagealert.client.Client;
 import com.google.code.sagetvaddons.sagealert.client.UserSettings;
 
 
@@ -49,6 +50,7 @@ final class UiMonitor extends SageRunnable {
 	@Override
 	public void run() {
 		LOG.info("Thread initialized...");
+		DataStore store = DataStore.getInstance();
 		while(keepAlive()) {
 			LOG.info("Thread started...");
 
@@ -60,17 +62,23 @@ final class UiMonitor extends SageRunnable {
 			for(String c : API.apiNullUI.global.GetUIContextNames())
 				currentConnections.add(c);
 			
-			for(String s : remoteConnections)
+			for(String s : remoteConnections) {
+				Client c = store.findClient(s);
 				if(!currentConnections.contains(s)) {
-					SageEventHandlerManager.getInstance().fire(new UiDisconnectedEvent(s));
-					LOG.info("Firing UI disconnected event for '" + s + "'");
+					SageEventHandlerManager.getInstance().fire(new UiDisconnectedEvent(c));
+					LOG.info("Firing UI disconnected event for '" + s + "'/'" + c.getAlias() + "'");
 				}
+			}
 			
-			for(String s : currentConnections)
+			for(String s : currentConnections) {
+				Client c = store.findClient(s);
 				if(!remoteConnections.contains(s)) {
-					SageEventHandlerManager.getInstance().fire(new UiConnectedEvent(s));
-					LOG.info("Firing UI connected event for '" + s + "'");
+					if(store.registerClient(s))
+						LOG.info("Registered a new client with SageAlert: '" + s + "'/'" + c.getAlias() + "'");
+					SageEventHandlerManager.getInstance().fire(new UiConnectedEvent(c));
+					LOG.info("Firing UI connected event for '" + s + "'/'" + c.getAlias() + "'");
 				}
+			}
 			
 			remoteConnections = currentConnections;				
 

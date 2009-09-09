@@ -15,6 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import com.google.code.sagetvaddons.sagealert.client.Client;
 import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
 
 
@@ -27,14 +28,14 @@ final class UiConnectedEvent implements SageEvent {
 
 	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(UiConnectedEvent.class.getCanonicalName(), "Alert when a UI (client, extender, placeshifter) connects to the SageTV server.");
 	
-	private String uiContextName;
+	private Client source;
 	
 	/**
 	 * ctor
 	 * @param uiContextName The name of the UI context that triggered this event; the source of the event
 	 */
-	UiConnectedEvent(String uiContextName) {
-		this.uiContextName = uiContextName;
+	UiConnectedEvent(Client c) {
+		source = c;
 	}
 	
 	/* (non-Javadoc)
@@ -42,7 +43,7 @@ final class UiConnectedEvent implements SageEvent {
 	 */
 	@Override
 	public String getLongDescription() {
-		return "A new client has connected to the server. [" + uiContextName + "]";
+		return "Client '" + source.getAlias() + "' has connected to the SageTV server.";
 	}
 
 	/* (non-Javadoc)
@@ -65,8 +66,8 @@ final class UiConnectedEvent implements SageEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEvent#getSource()
 	 */
 	@Override
-	public String getSource() {
-		return uiContextName;
+	public Client getSource() {
+		return source;
 	}
 
 	/* (non-Javadoc)

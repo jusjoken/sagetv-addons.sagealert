@@ -16,6 +16,8 @@
 package com.google.code.sagetvaddons.sagealert.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -41,10 +43,20 @@ public class SageAlert implements EntryPoint {
 	  tabs.getDeckPanel().setWidth("100%");
 	  tabs.add(AlertSettingsPanel.getInstance(), "Alerts");
 	  tabs.add(UserSettingsPanel.getInstance(), "Settings");
+	  tabs.add(ClientSettingsPanel.getInstance(), "Clients");
 	  tabs.add(TwitterSettingsPanel.getInstance(), "Twitter");
 	  tabs.add(GrowlSettingsPanel.getInstance(), "Growl");
 	  tabs.add(new AboutPanel(), "About");
 	  tabs.selectTab(0);
+	  tabs.addSelectionHandler(new SelectionHandler<Integer>() {
+		@Override
+		public void onSelection(SelectionEvent<Integer> event) {
+			int tab = event.getSelectedItem();
+			if(tab != 2)
+				return;
+			ClientSettingsPanel.getInstance().refresh();
+		}
+	  });
 	  
 	  VerticalPanel holder = new VerticalPanel();
 	  holder.setBorderWidth(1);

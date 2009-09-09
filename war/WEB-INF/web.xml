@@ -25,6 +25,15 @@
 <web-app>
   
   <!-- Servlets -->
+  <servlet>
+    <servlet-name>ClientService</servlet-name>
+    <servlet-class>com.google.code.sagetvaddons.sagealert.server.ClientServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ClientService</servlet-name>
+    <url-pattern>/sagealert/ClientService</url-pattern>
+  </servlet-mapping>
+  
  <servlet>
     <servlet-name>ReporterService</servlet-name>
     <servlet-class>com.google.code.sagetvaddons.sagealert.server.ReporterServiceImpl</servlet-class>

@@ -28,10 +28,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import com.google.code.sagetvaddons.sagealert.client.Client;
 import com.google.code.sagetvaddons.sagealert.client.IsDataStoreSerializable;
 import com.google.code.sagetvaddons.sagealert.client.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
@@ -65,6 +69,7 @@ final class DataStore {
 	static private final Logger SQL_LOG = Logger.getLogger("com.google.code.sagetvaddons.sagealert.server.SQLLogger");
 	
 	static private final String ERR_MISSING_TABLE = "^no such table.+";
+	static public final String CLNT_SETTING_PREFIX = "sage.client.";
 	static private final String SQL_ERROR = "SQL error";
 	static private final void logQry(String qry, Object... params) {
 		if(SQL_LOG.isTraceEnabled()) {
@@ -515,5 +520,125 @@ final class DataStore {
 			if(pstmt != null)
 				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
 		}
+	}
+	
+	/**
+	 * Retrieve the collection of all clients stored in the data store
+	 * @return A Collection of Client instances; the list may be empty, but not null
+	 */
+	public Collection<Client> getClients() {
+		String qry = "SELECT var, val FROM settings WHERE var LIKE '" + CLNT_SETTING_PREFIX + "%'";
+		Collection<Client> list = new ArrayList<Client>();
+		Statement stmt = null;
+		ResultSet rset = null;
+		try {
+			stmt = conn.createStatement();
+			logQry(qry);
+			rset = stmt.executeQuery(qry);
+			while(rset.next()) {
+				String data = rset.getString(2);
+				list.add(buildClient(rset.getString(1).substring(CLNT_SETTING_PREFIX.length()), data));
+			}
+		} catch(SQLException e) {
+			LOG.trace(SQL_ERROR, e);
+			LOG.error(e);
+		} finally {
+			try {
+				if(rset != null)
+					rset.close();
+				if(stmt != null)
+					stmt.close();
+			} catch(SQLException e) {
+				LOG.trace(SQL_ERROR, e);
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * Retrieve a client by id
+	 * @param id The unique client id to be retrieved
+	 * @return A Client instance representing the given Client id
+	 */
+	public Client getClient(String id) {
+		return buildClient(id, getSetting(CLNT_SETTING_PREFIX + id, "0"));
+	}
+	
+	// First char of data is 0/1 for notify flag; rest of string is alias
+	private Client buildClient(String id, String data) {
+		String alias;
+		if(data.length() > 1)
+			alias = data.substring(1);
+		else
+			alias = "";
+		boolean notify = false;
+		if(data.charAt(0) == '1')
+			notify = true;
+		return new Client(id, alias, notify);		
+	}
+	
+	/**
+	 * Save a Client to the data store
+	 * @param c The Client instance to be saved
+	 */
+	public void saveClient(Client c) {
+		setSetting(CLNT_SETTING_PREFIX + c.getId(), (c.doNotify() ? "1" : "0") + c.getAlias());
+	}
+	
+	/**
+	 * Delete the list of clients from the data store
+	 * @param clients The list of clients to be deleted
+	 */
+	public void deleteClients(Collection<Client> clients) {
+		String qry = "DELETE FROM settings WHERE var = ?";
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(qry);
+			for(Client c : clients) {
+				pstmt.setString(1, CLNT_SETTING_PREFIX + c.getId());
+				pstmt.addBatch();
+			}
+			pstmt.executeBatch();
+		} catch(SQLException e) {
+			LOG.trace(SQL_ERROR, e);
+			LOG.error(e);
+		} finally {
+			if(pstmt != null)
+				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+		}
+	}
+	
+	/**
+	 * Register a new client with SageAlert
+	 * @param id The client id
+	 * @return True if the new client was registered or false if the client already existed in the data store
+	 */
+	public boolean registerClient(String id) {
+		id = massageClientId(id);
+		if(getSetting(CLNT_SETTING_PREFIX + id) != null)
+			return false;
+		
+		saveClient(buildClient(id, "0"));
+		return true;
+	}
+	
+	/**
+	 * Same as getClient() except it returns a new Client with the alias set to the ID if the given Client is not in the data store
+	 * @param id The Client id to search for
+	 * @return The Client instance; initialized if not found
+	 */
+	public Client findClient(String id) {
+		id = massageClientId(id);
+		return buildClient(id, getSetting(CLNT_SETTING_PREFIX + id, "0" + id));
+	}
+	
+	static private String massageClientId(String id) {
+		Pattern p = Pattern.compile("[^\\d]*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*");
+		Matcher m = p.matcher(id);
+		if(m.matches()) {
+			LOG.debug("Client id [" + id + "] looks like an IP address, converted id to: '" + m.group(1) + "'");
+			id = m.group(1);
+		}
+		return id;
 	}
 }

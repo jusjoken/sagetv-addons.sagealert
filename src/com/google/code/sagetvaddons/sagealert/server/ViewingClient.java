@@ -17,6 +17,8 @@ package com.google.code.sagetvaddons.sagealert.server;
 
 import gkusnick.sagetv.api.MediaFileAPI;
 
+import com.google.code.sagetvaddons.sagealert.client.Client;
+
 /**
  * Describes an active UI context and the media it is currently viewing
  * @author dbattams
@@ -24,7 +26,7 @@ import gkusnick.sagetv.api.MediaFileAPI;
  */
 public class ViewingClient {
 
-	private String clientId;
+	private Client client;
 	private MediaFileAPI.MediaFile media;
 	
 	/**
@@ -32,16 +34,16 @@ public class ViewingClient {
 	 * @param id The UI context name of the client viewing the given media file
 	 * @param mf The media file being viewed
 	 */
-	public ViewingClient(String id, MediaFileAPI.MediaFile mf) {
-		clientId = id;
+	public ViewingClient(Client c, MediaFileAPI.MediaFile mf) {
+		client = c;
 		media = mf;
 	}
 
 	/**
 	 * @return the clientId
 	 */
-	public String getClientId() {
-		return clientId;
+	public Client getClient() {
+		return client;
 	}
 
 	/**
