@@ -16,6 +16,7 @@
 package com.google.code.sagetvaddons.sagealert.server;
 
 import com.google.code.sagetvaddons.sagealert.client.SettingsService;
+import com.google.code.sagetvaddons.sagealert.client.SmtpSettings;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -40,5 +41,15 @@ public class SettingsServiceImpl extends RemoteServiceServlet implements Setting
 	@Override
 	public void setSetting(String var, String val) {
 		DataStore.getInstance().setSetting(var, val);
+	}
+
+	@Override
+	public SmtpSettings getSmtpSettings() {
+		return DataStore.getInstance().getSmtpSettings();
+	}
+
+	@Override
+	public void saveSmtpSettings(SmtpSettings settings) {
+		DataStore.getInstance().saveSmtpSettings(settings);
 	}
 }

@@ -46,6 +46,7 @@ public class SageAlert implements EntryPoint {
 	  tabs.add(ClientSettingsPanel.getInstance(), "Clients");
 	  tabs.add(TwitterSettingsPanel.getInstance(), "Twitter");
 	  tabs.add(GrowlSettingsPanel.getInstance(), "Growl");
+	  tabs.add(EmailSettingsPanel.getInstance(), "Email");
 	  tabs.add(new AboutPanel(), "About");
 	  tabs.selectTab(0);
 	  tabs.addSelectionHandler(new SelectionHandler<Integer>() {

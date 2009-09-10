@@ -38,4 +38,17 @@ public interface SettingsServiceAsync {
 	 * @param cb The async callback
 	 */
 	public void setSetting(String var, String val, AsyncCallback<Void> cb);
+	
+	/**
+	 * Save the SmtpServer settings object to the data store
+	 * @param settings The settings object to be saved
+	 * @param cb The async callback
+	 */
+	public void saveSmtpSettings(SmtpSettings settings, AsyncCallback<Void> cb);
+
+	/**
+	 * Get the SmtpServer settings object from the data store
+	 * @param cb The async callback
+	 */
+	public void getSmtpSettings(AsyncCallback<SmtpSettings> cb);
 }

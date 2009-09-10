@@ -39,4 +39,15 @@ public interface SettingsService extends RemoteService {
 	 * @param val The value of the setting
 	 */
 	public void setSetting(String var, String val);
+	
+	/**
+	 * Save an SmtpSettings object to the data store
+	 * @param settings The settings object to save
+	 */
+	public void saveSmtpSettings(SmtpSettings settings);
+	
+	/**
+	 * Get the SmtpServer settings object from the data store
+	 */
+	public SmtpSettings getSmtpSettings();
 }

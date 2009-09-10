@@ -34,11 +34,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.code.sagetvaddons.sagealert.client.Client;
 import com.google.code.sagetvaddons.sagealert.client.IsDataStoreSerializable;
 import com.google.code.sagetvaddons.sagealert.client.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
+import com.google.code.sagetvaddons.sagealert.client.SmtpSettings;
 
 /**
  * @author dbattams
@@ -71,6 +74,7 @@ final class DataStore {
 	static private final String ERR_MISSING_TABLE = "^no such table.+";
 	static public final String CLNT_SETTING_PREFIX = "sage.client.";
 	static private final String SQL_ERROR = "SQL error";
+	static private final String SMTP_SETTINGS = "SmtpSettings";
 	static private final void logQry(String qry, Object... params) {
 		if(SQL_LOG.isTraceEnabled()) {
 			if(params != null && params.length > 0)
@@ -640,5 +644,45 @@ final class DataStore {
 			id = m.group(1);
 		}
 		return id;
+	}
+
+	/**
+	 * Unserialize and construct the SmtpServer settings object
+	 * @return The SmtpServer settings object
+	 */
+	public SmtpSettings getSmtpSettings() {
+		String jsonEnc = getSetting(SMTP_SETTINGS);
+		if(jsonEnc == null)
+			return null;
+		
+		JSONObject jobj = null;
+		try {
+			jobj = new JSONObject(jsonEnc);
+			return new SmtpSettings(jobj.getString("host"), jobj.getInt("port"), jobj.getString("user"), jobj.getString("pwd"), jobj.getString("from"), jobj.getBoolean("ssl"));
+		} catch(JSONException e) {
+			LOG.trace("JSON error", e);
+			LOG.error(e);
+			return null;
+		}
+	}
+
+	/**
+	 * Serialize and save the SmtpServer settings object to the data store
+	 * @param settings The object to be written to the data store
+	 */
+	public void saveSmtpSettings(SmtpSettings settings) {
+		JSONObject jobj = new JSONObject();
+		try {
+			jobj.put("host", settings.getHost());
+			jobj.put("port", settings.getPort());
+			jobj.put("user", settings.getUser());
+			jobj.put("pwd", settings.getPwd());
+			jobj.put("from", settings.getSenderAddress());
+			jobj.put("ssl", settings.useSsl());
+			setSetting(SMTP_SETTINGS, jobj.toString());
+		} catch(JSONException e) {
+			LOG.trace("JSON error", e);
+			LOG.error(e);
+		}
 	}
 }
