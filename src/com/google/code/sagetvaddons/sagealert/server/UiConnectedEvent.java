@@ -43,7 +43,7 @@ final class UiConnectedEvent implements SageEvent {
 	 */
 	@Override
 	public String getLongDescription() {
-		return "Client '" + source.getAlias() + "' has connected to the SageTV server.";
+		return "Client '" + (source.getAlias().length() == 0 ? source.getId() : source.getAlias()) + "' has connected to the SageTV server.";
 	}
 
 	/* (non-Javadoc)

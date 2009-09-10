@@ -10,6 +10,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtsrwc.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/twitter4j-2.0.9.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/json.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/mail.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>

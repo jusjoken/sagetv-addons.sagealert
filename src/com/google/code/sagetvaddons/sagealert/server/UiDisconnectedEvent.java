@@ -43,7 +43,7 @@ final class UiDisconnectedEvent implements SageEvent {
 	 */
 	@Override
 	public String getLongDescription() {
-		return "Client '" + source.getAlias() + "' has disconnected from the SageTV server.";
+		return "Client '" + (source.getAlias().length() == 0 ? source.getId() : source.getAlias()) + "' has disconnected from the SageTV server.";
 	}
 
 	/* (non-Javadoc)

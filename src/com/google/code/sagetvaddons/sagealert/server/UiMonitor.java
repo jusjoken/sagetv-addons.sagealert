@@ -66,7 +66,7 @@ final class UiMonitor extends SageRunnable {
 				Client c = store.findClient(s);
 				if(!currentConnections.contains(s)) {
 					SageEventHandlerManager.getInstance().fire(new UiDisconnectedEvent(c));
-					LOG.info("Firing UI disconnected event for '" + s + "'/'" + c.getAlias() + "'");
+					LOG.info("Firing UI disconnected event for '" + s + "'/'" + (c.getAlias().length() == 0 ? s : c.getAlias()) + "'");
 				}
 			}
 			
@@ -76,7 +76,7 @@ final class UiMonitor extends SageRunnable {
 					if(store.registerClient(s))
 						LOG.info("Registered a new client with SageAlert: '" + s + "'/'" + c.getAlias() + "'");
 					SageEventHandlerManager.getInstance().fire(new UiConnectedEvent(c));
-					LOG.info("Firing UI connected event for '" + s + "'/'" + c.getAlias() + "'");
+					LOG.info("Firing UI connected event for '" + s + "'/'" + (c.getAlias().length() == 0 ? s : c.getAlias()) + "'");
 				}
 			}
 			

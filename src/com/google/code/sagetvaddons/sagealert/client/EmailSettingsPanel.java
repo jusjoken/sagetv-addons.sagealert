@@ -70,13 +70,12 @@ final class EmailSettingsPanel extends VerticalPanel {
 					return;
 				}
 				
-				if(smtpPort.getValue().length() > 0 && !smtpPort.isValueValid()) {
-					Window.alert("SMTP server port must be an integer in the valid range!");
-					return;
-				}
-
+				int port = 25;
+				if(smtpPort.getValue().length() > 0 && smtpPort.isValueValid())
+					port = Integer.parseInt(smtpPort.getValue());
+				
 				SettingsServiceAsync rpc = GWT.create(SettingsService.class);
-				rpc.saveSmtpSettings(new SmtpSettings(smtpHost.getValue(), Integer.parseInt(smtpPort.getValue()), smtpUser.getValue(), smtpPassword.getValue(), smtpFromAddr.getValue(), smtpUseSsl.getValue()), new AsyncCallback<Void>() {
+				rpc.saveSmtpSettings(new SmtpSettings(smtpHost.getValue(), port, smtpUser.getValue(), smtpPassword.getValue(), smtpFromAddr.getValue(), smtpUseSsl.getValue()), new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						Window.alert(caught.getLocalizedMessage());

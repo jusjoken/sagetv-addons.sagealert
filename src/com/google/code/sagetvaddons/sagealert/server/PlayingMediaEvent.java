@@ -67,7 +67,7 @@ final class PlayingMediaEvent implements SageEvent {
 	@Override
 	public String getLongDescription() {
 		StringWriter w = new StringWriter();
-		w.write("Client '" + source.getClient().getAlias() + "' is currently ");
+		w.write("Client '" + (source.getClient().getAlias().length() == 0 ? source.getClient().getId() : source.getClient().getAlias()) + "' is currently ");
 		if(!source.getMedia().IsMusicFile())
 			w.write("watching ");
 		else
