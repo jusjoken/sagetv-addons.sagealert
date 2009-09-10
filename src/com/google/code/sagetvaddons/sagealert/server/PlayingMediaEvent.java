@@ -15,6 +15,9 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import gkusnick.sagetv.api.AiringAPI;
+import gkusnick.sagetv.api.ShowAPI;
+
 import java.io.StringWriter;
 
 import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
@@ -48,9 +51,33 @@ final class PlayingMediaEvent implements SageEvent {
 	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(PlayingMediaEvent.class.getCanonicalName(), "Alert when a local client, extender or placeshifter is playing back a media file.");
 
 	private ViewingClient source;
+	private String title;
+	private String subtitle;
 	
 	PlayingMediaEvent(ViewingClient client) {
 		source = client;
+		
+		// Set the default values
+		title = client.getMedia().GetMediaTitle();
+		subtitle = null;
+		
+		AiringAPI.Airing a = client.getMedia().GetMediaFileAiring();
+		if(a != null) {  // Can't get the show details unless there are airing details
+			ShowAPI.Show s = a.GetShow();
+			if(s != null) {
+				if(s.GetShowTitle() != null && s.GetShowTitle().length() > 0)
+					title = s.GetShowTitle();
+				subtitle = s.GetShowEpisode();
+				if(subtitle != null && subtitle.length() == 0)
+					subtitle = null;
+				
+				// For imported videos, the title seems to be the file path and the episode the title so, flip them around
+				if(subtitle != null && !client.getMedia().IsTVFile() && client.getMedia().IsLibraryFile()) {
+					title = subtitle;
+					subtitle = null;
+				}
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -69,10 +96,13 @@ final class PlayingMediaEvent implements SageEvent {
 		StringWriter w = new StringWriter();
 		w.write("Client '" + (source.getClient().getAlias().length() == 0 ? source.getClient().getId() : source.getClient().getAlias()) + "' is currently ");
 		if(!source.getMedia().IsMusicFile())
-			w.write("watching ");
+			w.write("watching '");
 		else
-			w.write("listening to ");
-		w.write("'" + source.getMedia().GetMediaTitle() + "'");
+			w.write("listening to '");
+		w.write(title);
+		if(subtitle != null)
+			w.write(": " + subtitle);
+		w.write("'");
 		return w.toString();
 	}
 
