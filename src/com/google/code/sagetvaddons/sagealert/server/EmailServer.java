@@ -105,7 +105,7 @@ final class EmailServer implements SageEventHandler {
 		message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(smtpSettings.getSenderAddress().length() == 0 ? "sagealert@" + smtpSettings.getHost() : smtpSettings.getSenderAddress()));
 		message.setRecipient(Message.RecipientType.TO, new InternetAddress(emailSettings.getAddress()));
-		message.setSubject(event.getSubject());
+		message.setSubject("SageAlert: " + event.getSubject());
 		message.setSentDate(new Date());
 		String txt;
 		if(emailSettings.getMsgType().equals("short"))
@@ -125,5 +125,47 @@ final class EmailServer implements SageEventHandler {
 			t.connect();
 		t.sendMessage(message, message.getAllRecipients());
 		LOG.info("Email for '" + event.getSubject() + "' event sent successfully to '" + emailSettings.getAddress() + "'");
+	}
+	
+	@Override
+	public String toString() {
+		return emailSettings.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((emailSettings == null) ? 0 : emailSettings.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof EmailServer)) {
+			return false;
+		}
+		EmailServer other = (EmailServer) obj;
+		if (emailSettings == null) {
+			if (other.emailSettings != null) {
+				return false;
+			}
+		} else if (!emailSettings.equals(other.emailSettings)) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -15,6 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -144,9 +145,26 @@ final class SageEventHandlerManager implements HasHandlers {
 
 	@Override
 	synchronized public void removeAllHandlers(SageEventMetaData e) {
-		Set<SageEventHandler> set = handlers.get(e.getClass());
+		Set<SageEventHandler> set = null;
+		try {
+			set = handlers.get(Class.forName(e.getClassName()));
+		} catch(ClassNotFoundException x) {
+			LOG.trace("Invalid event class", x);
+			LOG.error(x);
+		}
 		if(set != null)
 			set.clear();
 		DataStore.getInstance().removeAllHandlers(e);
+	}
+	
+	synchronized String dumpState() {
+		StringWriter w = new StringWriter();
+		for(Class<?> c : handlers.keySet()) {
+			w.write(c.getCanonicalName() + "\n");
+			for(SageEventHandler h : handlers.get(c))
+				w.write("\t" + h + "\n");
+			w.write("\n");
+		}
+		return w.toString();
 	}
 }
