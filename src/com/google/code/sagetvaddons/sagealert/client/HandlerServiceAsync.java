@@ -46,4 +46,11 @@ public interface HandlerServiceAsync {
 	 * @param cb The callback object to be called when the async call completes
 	 */
 	public void getEventMetaData(AsyncCallback<Collection<SageEventMetaData>> cb);
+	
+	/**
+	 * Test a notification server
+	 * @param settings Server settings to be tested
+	 * @param cb The async callback
+	 */
+	public void testServer(NotificationServerSettings settings, AsyncCallback<Void> cb);
 }

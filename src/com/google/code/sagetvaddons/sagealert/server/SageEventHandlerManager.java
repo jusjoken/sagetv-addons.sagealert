@@ -106,7 +106,13 @@ final class SageEventHandlerManager implements HasHandlers {
 	}
 	
 	synchronized private void removeHandler(SageEventHandler h, SageEventMetaData e) {
-		Set<SageEventHandler> s = handlers.get(e.getClass());
+		Set<SageEventHandler> s = null;
+		try {
+			s = handlers.get(Class.forName(e.getClassName()));
+		} catch(ClassNotFoundException x) {
+			LOG.trace("Invalid class name", x);
+			LOG.error(x);
+		}
 		if(s != null)
 			s.remove(h);				
 		List<NotificationServerSettings> list = new ArrayList<NotificationServerSettings>();

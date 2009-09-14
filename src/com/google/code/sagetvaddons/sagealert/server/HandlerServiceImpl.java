@@ -85,4 +85,14 @@ public class HandlerServiceImpl extends RemoteServiceServlet implements	HandlerS
 		}
 		return EVENT_METADATA;
 	}
+
+	@Override
+	public void testServer(NotificationServerSettings settings) {
+		SageEventHandlerManager mgr = SageEventHandlerManager.getInstance();
+		TestEvent e = new TestEvent();
+		SageEventHandler h = NotificationServerFactory.getInstance(settings);
+		mgr.addHandler(h, e);
+		mgr.fire(e);
+		mgr.removeHandler(h, e);
+	}
 }

@@ -58,14 +58,27 @@ final class GrowlSettingsPanel extends VerticalPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				HTMLTable.Cell clicked = ((HTMLTable)event.getSource()).getCellForEvent(event);
-				if(clicked == null || clicked.getCellIndex() != 2)
-					return;
-				
 				int row = clicked.getRowIndex();
 				String host = ((TextBox)grid.getWidget(row, 0)).getValue();
 				String pwd  = ((TextBox)grid.getWidget(row, 1)).getValue();
-				deleted.add(new GrowlServerSettings(host, pwd));
-				grid.removeRow(row);
+
+				if(clicked.getCellIndex() == 2) {
+					deleted.add(new GrowlServerSettings(host, pwd));
+					grid.removeRow(row);
+				} else if(clicked.getCellIndex() == 3 && Window.confirm("Are you sure you want to test this Growl server?")) {
+					HandlerServiceAsync rpc = GWT.create(HandlerService.class);
+					rpc.testServer(new GrowlServerSettings(host, pwd), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getLocalizedMessage());
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							Window.alert("Test notification sent to Growl server; check SageAlert logs if notification not received.");
+						}
+					});
+				}
 			}
 		});
 		
@@ -79,7 +92,12 @@ final class GrowlSettingsPanel extends VerticalPanel {
 				int newRow = grid.insertRow(grid.getRowCount());
 				grid.setWidget(newRow, 0, new TextBox());
 				grid.setWidget(newRow, 1, new PasswordTextBox());
-				grid.setText(newRow, 2, "Delete");
+				Label delLbl = new Label("Delete");
+				delLbl.addStyleName("sageHyperlink");
+				grid.setWidget(newRow, 2, delLbl);
+				Label tstLbl = new Label("Test");
+				tstLbl.addStyleName("sageHyperlink");
+				grid.setWidget(newRow, 3, tstLbl);
 				((TextBox)grid.getWidget(newRow, 0)).setFocus(true);
 			}
 		});
@@ -180,6 +198,9 @@ final class GrowlSettingsPanel extends VerticalPanel {
 					Label delLbl = new Label("Delete");
 					delLbl.addStyleName("sageHyperlink");
 					grid.setWidget(rowId, 2, delLbl);
+					Label tstLbl = new Label("Test");
+					tstLbl.addStyleName("sageHyperlink");
+					grid.setWidget(rowId, 3, tstLbl);
 				}
 				saveBtn.setEnabled(true);
 			}

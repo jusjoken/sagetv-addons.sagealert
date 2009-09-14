@@ -63,7 +63,7 @@ public class SageAlert implements EntryPoint {
 	  holder.setBorderWidth(1);
 	  holder.setSize("100%", "100%");
 	  holder.add(tabs);
-	  holder.setCellVerticalAlignment(tabs, HasVerticalAlignment.ALIGN_MIDDLE);
+	  holder.setCellVerticalAlignment(tabs, HasVerticalAlignment.ALIGN_TOP);
 	  holder.setCellHorizontalAlignment(tabs, HasHorizontalAlignment.ALIGN_CENTER);
 	  
 	  RootPanel.get().add(holder);

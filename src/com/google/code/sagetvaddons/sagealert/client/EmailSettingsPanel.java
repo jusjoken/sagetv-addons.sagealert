@@ -28,6 +28,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -46,11 +47,13 @@ final class EmailSettingsPanel extends VerticalPanel {
 	static private final EmailSettingsPanel INSTANCE = new EmailSettingsPanel();
 	static final EmailSettingsPanel getInstance() { return INSTANCE; }
 	
+	private DisclosurePanel smtpSettings;
 	private FlexTable smtpTbl;
 	private TextBox smtpHost, smtpUser, smtpPassword, smtpFromAddr;
 	private ValidatedTextBox smtpPort;
 	private CheckBox smtpUseSsl;
 	private HorizontalPanel smtpToolbar;
+	private VerticalPanel smtpHolder;
 	
 	private FlexTable emails;
 	private HorizontalPanel emailsToolbar;
@@ -58,6 +61,8 @@ final class EmailSettingsPanel extends VerticalPanel {
 	private Collection<EmailSettings> deleted;
 	
 	private EmailSettingsPanel() {
+		smtpSettings = new DisclosurePanel("SMTP (Outgoing) Server Settings", false);
+		smtpHolder = new VerticalPanel();
 		deleted = new ArrayList<EmailSettings>();
 		smtpTbl = new FlexTable();
 		smtpToolbar = new HorizontalPanel();
@@ -109,16 +114,28 @@ final class EmailSettingsPanel extends VerticalPanel {
 		emails.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				HTMLTable.Cell cell = emails.getCellForEvent(event);
-				if(cell.getCellIndex() != 2)
-					return;
-				
-				int row = cell.getRowIndex();
-				String addr = ((TextBox)emails.getWidget(row, 0)).getValue();
-				ListBox box = ((ListBox)emails.getWidget(row, 1));
-				String type = box.getValue(box.getSelectedIndex());
-				deleted.add(new EmailSettings(addr, type));
-				emails.removeRow(row);
+				final HTMLTable.Cell cell = emails.getCellForEvent(event);
+				final int row = cell.getRowIndex();
+				final String addr = ((TextBox)emails.getWidget(row, 0)).getValue();
+				final ListBox box = ((ListBox)emails.getWidget(row, 1));
+				final String type = box.getValue(box.getSelectedIndex());
+				if(cell.getCellIndex() == 2) { // Handle delete link
+					deleted.add(new EmailSettings(addr, type));
+					emails.removeRow(row);
+				} else if(cell.getCellIndex() == 3 && Window.confirm("Are you sure you want to test this notification server?")) { // Handle test link
+					HandlerServiceAsync rpc = GWT.create(HandlerService.class);
+					rpc.testServer(new EmailSettings(addr, type), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getLocalizedMessage());
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							Window.alert("Email test submitted successfully!  Check your inbox or the SageAlert logs if the email was not received.");
+						}
+					});
+				}
 			}
 		});
 
@@ -165,13 +182,14 @@ final class EmailSettingsPanel extends VerticalPanel {
 		emailsToolbar.add(emailSave);
 		
 		setSpacing(10);
-		add(new Label("SMTP (Outgoing) Server Settings"));
-		add(smtpTbl);
-		add(smtpToolbar);
+		smtpHolder.add(smtpTbl);
+		smtpHolder.add(smtpToolbar);
+		smtpSettings.add(smtpHolder);
 		add(new Label("Email addresses below can be attached to the various alerts."));
 		add(new Label("If you're sending your email alerts to an email to SMS gateway in order to receive alerts via SMS, you will want to pick medium or short message types.  If you're sending alerts to an actual email account then you can choose long."));
 		add(emails);
 		add(emailsToolbar);
+		add(smtpSettings);
 	}
 	
 	private void addRow(String email, String type) {
@@ -183,9 +201,14 @@ final class EmailSettingsPanel extends VerticalPanel {
 		Label del = new Label("Delete");
 		del.addStyleName("sageHyperlink");
 		emails.setWidget(newRow, 2, del);
+		Label test = new Label("Test");
+		test.addStyleName("sageHyperlink");
+		emails.setWidget(newRow, 3, test);
 		
-		if(email != null)
+		if(email != null) {
 			addr.setValue(email);
+			addr.setEnabled(false);
+		}
 		if(type != null) {
 			if(type.equals("short"))
 				list.setSelectedIndex(0);

@@ -47,4 +47,10 @@ public interface HandlerService extends RemoteService {
 	 * @return A collection of all registered event descriptions; the list may be empty if no events are registered
 	 */
 	public Collection<SageEventMetaData> getEventMetaData();
+	
+	/**
+	 * Test a notification server
+	 * @param settings The settings object of the server to test
+	 */
+	public void testServer(NotificationServerSettings settings);
 }

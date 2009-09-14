@@ -62,14 +62,26 @@ final class TwitterSettingsPanel extends VerticalPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				HTMLTable.Cell clicked = ((HTMLTable)event.getSource()).getCellForEvent(event);
-				if(clicked == null || clicked.getCellIndex() != 2)
-					return;
-				
 				int row = clicked.getRowIndex();
 				String id = ((TextBox)grid.getWidget(row, 0)).getValue();
 				String pwd  = ((TextBox)grid.getWidget(row, 1)).getValue();
+				if(clicked.getCellIndex() == 2) {
 				deleted.add(new TwitterSettings(id, pwd));
 				grid.removeRow(row);
+				} else if(clicked.getCellIndex() == 3 && Window.confirm("Are you sure you want to post a test tweet to this Twitter account?")) {
+					HandlerServiceAsync rpc = GWT.create(HandlerService.class);
+					rpc.testServer(new TwitterSettings(id, pwd), new AsyncCallback<Void>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getLocalizedMessage());
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							Window.alert("Twitter test sent; check your Twitter timeline or SageAlert logs if the tweet did not post.");
+						}
+					});
+				}
 			}
 		});
 		
@@ -83,7 +95,12 @@ final class TwitterSettingsPanel extends VerticalPanel {
 				int newRow = grid.insertRow(grid.getRowCount());
 				grid.setWidget(newRow, 0, new TextBox());
 				grid.setWidget(newRow, 1, new PasswordTextBox());
-				grid.setText(newRow, 2, "Delete");
+				Label delLbl = new Label("Delete");
+				delLbl.addStyleName("sageHyperlink");
+				Label testLbl = new Label("Test");
+				testLbl.addStyleName("sageHyperlink");
+				grid.setWidget(newRow, 2, delLbl);
+				grid.setWidget(newRow, 3, testLbl);
 				((TextBox)grid.getWidget(newRow, 0)).setFocus(true);
 			}
 		});
@@ -184,6 +201,9 @@ final class TwitterSettingsPanel extends VerticalPanel {
 					Label delLbl = new Label("Delete");
 					delLbl.addStyleName("sageHyperlink");
 					grid.setWidget(rowId, 2, delLbl);
+					Label test = new Label("Test");
+					test.addStyleName("sageHyperlink");
+					grid.setWidget(rowId, 3, test);
 				}
 				saveBtn.setEnabled(true);
 			}
