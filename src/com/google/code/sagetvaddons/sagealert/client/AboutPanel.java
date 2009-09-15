@@ -25,5 +25,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 final class AboutPanel extends VerticalPanel {
 	AboutPanel() {
 		add(new Label("You are running SageAlert v" + Version.getFullVersion()));
+		add(new Label("Author: Derek Battams <derek AT battams DOT ca>"));
 	}
 }

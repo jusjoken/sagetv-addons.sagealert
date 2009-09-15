@@ -20,6 +20,8 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -60,11 +62,16 @@ public class SageAlert implements EntryPoint {
 	  });
 	  
 	  VerticalPanel holder = new VerticalPanel();
-	  holder.setBorderWidth(1);
-	  holder.setSize("100%", "100%");
+	  holder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  holder.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+	  holder.setWidth("100%");
+	  VerticalPanel imgHolder = new VerticalPanel();
+	  imgHolder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	  imgHolder.add(new Image("gfx/sagetv_logo.jpg"));
+	  imgHolder.add(new Label("SageAlert"));
+	  holder.add(imgHolder);
 	  holder.add(tabs);
-	  holder.setCellVerticalAlignment(tabs, HasVerticalAlignment.ALIGN_TOP);
-	  holder.setCellHorizontalAlignment(tabs, HasHorizontalAlignment.ALIGN_CENTER);
+	  holder.setSpacing(15);
 	  
 	  RootPanel.get().add(holder);
   }
