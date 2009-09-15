@@ -28,6 +28,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public final class SageEventMetaData implements IsSerializable {
 
 	private String className;
+	private String eventTitle;
 	private String eventDescription;
 	
 	// Required for GWT RPC; do not use
@@ -39,8 +40,9 @@ public final class SageEventMetaData implements IsSerializable {
 	 * @param clsName The FQ class name being described by this metadata object
 	 * @param desc A textual description of what the event signifies (i.e. "Alert when a recording has started.")
 	 */
-	public SageEventMetaData(String clsName, String desc) {
+	public SageEventMetaData(String clsName, String title, String desc) {
 		className = clsName;
+		eventTitle = title;
 		eventDescription = desc;
 	}
 
@@ -56,5 +58,12 @@ public final class SageEventMetaData implements IsSerializable {
 	 */
 	public String getEventDescription() {
 		return eventDescription;
+	}
+	
+	/**
+	 * @return the eventTitle
+	 */
+	public String getEventTitle() {
+		return eventTitle;
 	}
 }

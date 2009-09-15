@@ -26,7 +26,7 @@ final class RecordingConflictEvent implements SageEvent {
 	/**
 	 * The metadata for this event
 	 */
-	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(RecordingConflictEvent.class.getCanonicalName(), "Alert when recording conflicts are detected.");
+	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(RecordingConflictEvent.class.getCanonicalName(), "Recording Conflict Alert", "Alert when recording conflicts are detected.");
 	
 	private int numOfConflicts;
 	

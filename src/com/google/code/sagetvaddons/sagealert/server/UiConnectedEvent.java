@@ -26,7 +26,7 @@ import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
  */
 final class UiConnectedEvent implements SageEvent {
 
-	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(UiConnectedEvent.class.getCanonicalName(), "Alert when a UI (client, extender, placeshifter) connects to the SageTV server.");
+	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(UiConnectedEvent.class.getCanonicalName(), "UI Connected Alert", "Alert when a UI (client, extender, placeshifter) connects to the SageTV server.");
 	
 	private Client source;
 	

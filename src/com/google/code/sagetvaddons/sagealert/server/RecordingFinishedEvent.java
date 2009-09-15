@@ -33,7 +33,7 @@ class RecordingFinishedEvent implements SageEvent {
 	/**
 	 * Metadata for this event
 	 */
-	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(RecordingFinishedEvent.class.getCanonicalName(), "Alert when a recording has completed.");
+	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(RecordingFinishedEvent.class.getCanonicalName(), "Recording Finished Alert", "Alert when a recording has completed.");
 	
 	private MediaFileAPI.MediaFile source;
 	

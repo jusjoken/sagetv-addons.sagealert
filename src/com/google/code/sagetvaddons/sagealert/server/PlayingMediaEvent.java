@@ -48,7 +48,7 @@ final class PlayingMediaEvent implements SageEvent {
 	/**
 	 * The meta data for this event
 	 */
-	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(PlayingMediaEvent.class.getCanonicalName(), "Alert when a local client, extender or placeshifter is playing back a media file.");
+	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(PlayingMediaEvent.class.getCanonicalName(), "Media Playback Alert", "Alert when a local client, extender or placeshifter is playing back a media file.");
 
 	private ViewingClient source;
 	private String title;

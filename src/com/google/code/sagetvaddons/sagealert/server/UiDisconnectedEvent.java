@@ -26,7 +26,7 @@ import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
  */
 final class UiDisconnectedEvent implements SageEvent {
 
-	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(UiDisconnectedEvent.class.getCanonicalName(), "Alert when a UI (client, extender, placeshifter) disconnects from the SageTV server.");
+	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(UiDisconnectedEvent.class.getCanonicalName(), "UI Disconnected Alert", "Alert when a UI (client, extender, placeshifter) disconnects from the SageTV server.");
 	
 	private Client source;
 	

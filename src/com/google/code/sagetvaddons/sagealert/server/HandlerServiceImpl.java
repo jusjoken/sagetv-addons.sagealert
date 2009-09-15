@@ -62,21 +62,23 @@ public class HandlerServiceImpl extends RemoteServiceServlet implements	HandlerS
 	@Override
 	public Collection<SageEventMetaData> getEventMetaData() {
 		if(EVENT_METADATA.size() == 0) {
-			String desc;
+			String title, desc;
 			try {
 				for(Class<?> cls : RegisteredClasses.getSageEventClasses()) {
+					title = cls.getSimpleName();
 					desc = cls.getCanonicalName();
 					Field f = null;
 					try {
 						f = cls.getDeclaredField("EVENT_METADATA");
 						f.setAccessible(true);
+						title = ((SageEventMetaData)f.get(null)).getEventTitle();
 						desc = ((SageEventMetaData)f.get(null)).getEventDescription();
 					} catch(NoSuchFieldException e) {
 						LOG.error("Class '" + cls.getCanonicalName() + "' does not provide field: static SageEventMetaData EVENT_METADATA");
 					} catch(IllegalAccessException e) {
 						LOG.trace("Unexpected error", e);
 					}
-					EVENT_METADATA.add(new SageEventMetaData(cls.getCanonicalName(), desc));
+					EVENT_METADATA.add(new SageEventMetaData(cls.getCanonicalName(), title, desc));
 				}
 			} catch(IOException e) {
 				LOG.trace("IO exception reading registered class file", e);

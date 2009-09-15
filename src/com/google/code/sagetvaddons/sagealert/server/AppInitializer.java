@@ -125,7 +125,7 @@ public final class AppInitializer implements ServletContextListener {
 					f.setAccessible(true);
 					metadata = (SageEventMetaData)f.get(null); 
 				} catch(NoSuchFieldException e) {
-					metadata = new SageEventMetaData(cls.getCanonicalName(), cls.getCanonicalName());
+					metadata = new SageEventMetaData(cls.getCanonicalName(), cls.getSimpleName(), cls.getCanonicalName());
 					LOG.warn("Class '" + cls.getCanonicalName() + "' does not define static SageEventMetaData EVENT_METADATA field; using generic one instead (you probably want to fix this)");
 				} catch(IllegalAccessException e) {
 					LOG.trace("Unexpected exception thrown", e);

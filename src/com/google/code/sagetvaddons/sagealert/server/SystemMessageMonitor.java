@@ -44,9 +44,15 @@ final class SystemMessageMonitor extends SageRunnable {
 			SystemMessageAPI.List msgs = API.apiNullUI.systemMessageAPI.GetSystemMessages();
 			long lastNotice = Long.parseLong(store.getSetting(SYSMSG_LAST_NOTICE, "0"));
 			long newLastNotice = 0;
+			SageEventHandlerManager mgr = SageEventHandlerManager.getInstance();
 			for(SystemMessageAPI.SystemMessage msg : msgs)
 				if(msg.GetSystemMessageLevel() > 0 && msg.GetSystemMessageTime() > lastNotice) {
-					SageEventHandlerManager.getInstance().fire(new SystemMessageEvent(msg));
+					mgr.fire(new SystemMessageEvent(msg));
+					switch(msg.GetSystemMessageLevel()) {
+					case 1:	mgr.fire(new InfoSystemMessageEvent(msg)); break;
+					case 2: mgr.fire(new WarningSystemMessageEvent(msg)); break;
+					case 3: mgr.fire(new ErrorSystemMessageEvent(msg)); break;
+					}
 					if(msg.GetSystemMessageTime() > newLastNotice)
 						newLastNotice = msg.GetSystemMessageTime();
 					LOG.info("Firing system message event for '" + msg.GetSystemMessageTypeName() + "'");

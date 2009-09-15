@@ -26,7 +26,7 @@ final class LowSpaceEvent implements SageEvent {
 	/**
 	 * The metadata for this event
 	 */
-	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(LowSpaceEvent.class.getCanonicalName(), "Alert when recording space is low (set threshold on Settings tab):");
+	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(LowSpaceEvent.class.getCanonicalName(), "Low Space Alert", "Alert when recording space is low (set threshold on Settings tab).");
 	
 	private RecordingDevice device;
 	

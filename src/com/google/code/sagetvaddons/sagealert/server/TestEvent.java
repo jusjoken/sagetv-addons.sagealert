@@ -23,7 +23,7 @@ import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
  * @version $Id$
  */
 final class TestEvent implements SageEvent {
-	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(TestEvent.class.getCanonicalName(), "Allows for testing of configured notification servers.");
+	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(TestEvent.class.getCanonicalName(), "Test Alert", "Allows for testing of configured notification servers.");
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEvent#getEventMetaData()
