@@ -31,48 +31,59 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @version $Id$
  */
 public class SageAlert implements EntryPoint {
+	static private SageAlert SELF = null;
+	
+	static final SageAlert getInstance() { return SELF; }
+	
+	private TabPanel tabs;
+	
+	/**
+	 * This is the entry point method.
+	 * 
+	 * Build the tab panel and display it on the root panel; the UI for this app is a tab panel
+	 * The Alerts tab must always remain as the first tab, then Settings second; About tab must always remain last
+	 */
+	public void onModuleLoad() {
 
-  /**
-   * This is the entry point method.
-   * 
-   * Build the tab panel and display it on the root panel; the UI for this app is a tab panel
-   * The Alerts tab must always remain as the first tab, then Settings second; About tab must always remain last
-   */
-  public void onModuleLoad() {
-	  
-	  TabPanel tabs = new TabPanel();
-	  tabs.setWidth("640px");
-	  tabs.getDeckPanel().setWidth("100%");
-	  tabs.add(AlertSettingsPanel.getInstance(), "Alerts");
-	  tabs.add(UserSettingsPanel.getInstance(), "Settings");
-	  tabs.add(ClientSettingsPanel.getInstance(), "Clients");
-	  tabs.add(TwitterSettingsPanel.getInstance(), "Twitter");
-	  tabs.add(GrowlSettingsPanel.getInstance(), "Growl");
-	  tabs.add(EmailSettingsPanel.getInstance(), "Email");
-	  tabs.add(new AboutPanel(), "About");
-	  tabs.selectTab(0);
-	  tabs.addSelectionHandler(new SelectionHandler<Integer>() {
-		@Override
-		public void onSelection(SelectionEvent<Integer> event) {
-			int tab = event.getSelectedItem();
-			if(tab != 2)
-				return;
-			ClientSettingsPanel.getInstance().refresh();
-		}
-	  });
-	  
-	  VerticalPanel holder = new VerticalPanel();
-	  holder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	  holder.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
-	  holder.setWidth("100%");
-	  VerticalPanel imgHolder = new VerticalPanel();
-	  imgHolder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	  imgHolder.add(new Image("gfx/sagetv_logo.jpg"));
-	  imgHolder.add(new Label("SageAlert"));
-	  holder.add(imgHolder);
-	  holder.add(tabs);
-	  holder.setSpacing(15);
-	  
-	  RootPanel.get().add(holder);
-  }
+		tabs = new TabPanel();
+		tabs.setWidth("640px");
+		tabs.getDeckPanel().setWidth("100%");
+		tabs.add(AlertSettingsPanel.getInstance(), "Alerts");
+		tabs.add(UserSettingsPanel.getInstance(), "Settings");
+		tabs.add(ClientSettingsPanel.getInstance(), "Clients");
+		tabs.add(TwitterSettingsPanel.getInstance(), "Twitter");
+		tabs.add(GrowlSettingsPanel.getInstance(), "Growl");
+		tabs.add(EmailSettingsPanel.getInstance(), "Email");
+		tabs.add(new AboutPanel(), "About");
+		tabs.selectTab(0);
+		tabs.addSelectionHandler(new SelectionHandler<Integer>() {
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				int tab = event.getSelectedItem();
+				if(tab == 0)
+					AlertSettingsPanel.getInstance().refresh();
+				else if(tab == 2)
+					ClientSettingsPanel.getInstance().refresh();
+			}
+		});
+
+		VerticalPanel holder = new VerticalPanel();
+		holder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		holder.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		holder.setWidth("100%");
+		VerticalPanel imgHolder = new VerticalPanel();
+		imgHolder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		imgHolder.add(new Image("gfx/sagetv_logo.jpg"));
+		imgHolder.add(new Label("SageAlert"));
+		holder.add(imgHolder);
+		holder.add(tabs);
+		holder.setSpacing(15);
+
+		SELF = this;
+		RootPanel.get().add(holder);
+	}
+
+	void goToServerTab() {
+		tabs.selectTab(3);
+	}
 }

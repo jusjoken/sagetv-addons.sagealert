@@ -19,15 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -38,22 +34,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @version $Id$
  */
 final class EventConfigurator extends SimplePanel {
-//	static private final EventConfigurator INSTANCE = new EventConfigurator();
-//	static final EventConfigurator getInstance(SageEventMetaData event) {
-//		INSTANCE.setEvent(event);
-//		INSTANCE.loadListBox();
-//		return INSTANCE;
-//	}
 	
 	private SageEventMetaData event;
 	
 	private List<CheckBox> reporterChoices;
-	private Button saveBtn;
-	private Button cancelBtn;
 	
 	private List<NotificationServerSettings> reporters; 
 	private VerticalPanel container;
-	private HorizontalPanel btnPanel;
 	private FlexTable grid;
 	
 	EventConfigurator(SageEventMetaData event) {
@@ -63,31 +50,17 @@ final class EventConfigurator extends SimplePanel {
 		container = new VerticalPanel();
 		container.add(new Label(event.getEventDescription()));
 		container.add(new Label("Select all the servers that should be notified of this event."));
-		btnPanel = new HorizontalPanel();
 		
 		reporterChoices = new ArrayList<CheckBox>();
 		
-		saveBtn = new Button("Save");
-		saveBtn.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				registerHandlers();
-			}
-		});
-		cancelBtn = new Button("Cancel");
-		cancelBtn.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				loadReporters();
-			}
-		});
-		btnPanel.add(saveBtn);
-		btnPanel.add(cancelBtn);
 		
 		container.add(grid);
-		container.add(btnPanel);
 		disPanel.add(container);
 		setWidget(disPanel);
+		loadReporters();
+	}
+
+	void refresh() {
 		loadReporters();
 	}
 	
@@ -161,5 +134,9 @@ final class EventConfigurator extends SimplePanel {
 				
 			}			
 		});
+	}
+	
+	void save() {
+		registerHandlers();
 	}
 }
