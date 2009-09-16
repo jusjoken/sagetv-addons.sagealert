@@ -21,10 +21,12 @@
 <project name="SageAlert" default="build" basedir=".">
   <!-- Import svn tasks -->
   <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
+  <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
 
   <property name="sagealert.ver" value="0.0.3" />
   <property name="sagealert.ver.file" value="src/com/google/code/sagetvaddons/sagealert/client/Version.java" />
-	
+  <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
+
   <!-- Configure path to GWT SDK -->
   <property name="gwt.sdk" location="C:/gwt-windows-1.7.0" />
 
@@ -36,7 +38,11 @@
     <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
   </path>
 
-  <target name="init_svn" description="Set SVN revision variables">
+  <target name="init_gcupload">
+    <available file="${gc.upload.settings}" property="gc.upload.enable" />
+  </target>
+
+  <target name="init_svn" depends="init_gcupload" description="Set SVN revision variables">
     <svn javahl="true">
     <wcVersion path="." />
     </svn>
@@ -115,11 +121,11 @@
   </target>
 
   <target name="gcode" depends="dist" description="Upload build to Google Code">
-	<exec executable="cmd" failonerror="true" dir=".">
-	   <arg value="/c"/>
-	   <arg value="C:/snapshots/upload_snapshot.bat"/>
-	   <arg value="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip"/>
-	</exec>
+	<fail message="${gc.upload.settings} file does not exist!" unless="gc.upload.enable" />
+	<property file="${gc.upload.settings}" />
+        <fail message="gc.username must be defined in ${gc.upload.settings}" unless="gc.username" />
+        <fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
+	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" summary="Snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
   </target>
 	
   <target name="clean" description="Cleans this project">
