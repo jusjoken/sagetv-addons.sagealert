@@ -17,6 +17,7 @@ package com.google.code.sagetvaddons.sagealert.server;
 
 import gkusnick.sagetv.api.API;
 import gkusnick.sagetv.api.MediaFileAPI;
+import gkusnick.sagetv.api.MediaPlayerAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,12 +53,12 @@ final class ViewingClientMonitor extends SageRunnable {
 				} else {
 					MediaFileAPI.MediaFile lastMf = lastStatus.get(ui);
 					if(lastMf == null || lastMf.GetMediaFileID() != mf.GetMediaFileID()) {
-						lastStatus.put(ui, mf);
 						Client c = DataStore.getInstance().findClient(ui);
-						if(c.doNotify())
+						if(c.doNotify() && getPlayPercentage(api.mediaPlayerAPI) >= 10) {
+							lastStatus.put(ui, mf);
 							SageEventHandlerManager.getInstance().fire(new PlayingMediaEvent(new ViewingClient(c, mf)));
-						else
-							LOG.info("Viewing notifications disabled for client '" + c.getId() + "'; event not fired.");
+						} else
+							LOG.info("Viewing notifications disabled for client '" + c.getId() + "' or haven't watched enough of it yet; event not fired.");
 					}
 				}
 			}
@@ -69,5 +70,22 @@ final class ViewingClientMonitor extends SageRunnable {
 			}
 		}
 		LOG.info("Thread destroyed...");
+	}
+	
+	private int getPlayPercentage(final MediaPlayerAPI api) {
+		int pctPlayed;
+		long currentLocation = 0;
+		if(!api.HasMediaFile())
+			pctPlayed = 0;
+		else {
+			MediaFileAPI.MediaFile mf = api.GetCurrentMediaFile();
+			if(mf.IsDVD() || mf.IsBluRay())
+				currentLocation = api.GetMediaTime();
+			else
+				currentLocation = api.GetMediaTime() - mf.GetMediaFileAiring().GetAiringStartTime();
+			pctPlayed = Integer.parseInt(Long.toString((currentLocation * 100L) / api.GetMediaDuration()));
+		}
+		LOG.debug("Play percentage = " + pctPlayed + " :: CurLoc = " + currentLocation + " :: MediaDur = " + api.GetMediaDuration());
+		return pctPlayed;
 	}
 }

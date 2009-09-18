@@ -21,7 +21,6 @@
 <project name="SageAlert" default="build" basedir=".">
   <!-- Import svn tasks -->
   <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
-  <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
 
   <property name="sagealert.ver" value="0.0.3" />
   <property name="sagealert.ver.file" value="src/com/google/code/sagetvaddons/sagealert/client/Version.java" />
@@ -123,9 +122,10 @@
   <target name="gcode" depends="dist" description="Upload build to Google Code">
 	<fail message="${gc.upload.settings} file does not exist!" unless="gc.upload.enable" />
 	<property file="${gc.upload.settings}" />
-        <fail message="gc.username must be defined in ${gc.upload.settings}" unless="gc.username" />
-        <fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
-	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" summary="Snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
+    <fail message="gc.username must be defined in ${gc.upload.settings}" unless="gc.username" />
+    <fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
+  	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
+  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" summary="Snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
   </target>
 	
   <target name="clean" description="Cleans this project">

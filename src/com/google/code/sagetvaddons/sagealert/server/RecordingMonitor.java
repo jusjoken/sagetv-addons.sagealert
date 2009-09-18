@@ -65,7 +65,7 @@ final class RecordingMonitor extends SageRunnable {
 			Iterator<MediaFileAPI.MediaFile> itr = activeRecordings.iterator();
 			while(itr.hasNext()) {
 				MediaFileAPI.MediaFile mf = itr.next();
-				if(!mf.IsFileCurrentlyRecording()) {
+				if(!mf.IsFileCurrentlyRecording() && !mf.GetMediaFileAiring().IsNotManualOrFavorite()) {
 					itr.remove();
 					// Make sure the file hasn't been deleted between the time the recording actually ended and the time this event is fired
 					if(API.apiNullUI.mediaFileAPI.GetMediaFileForID(mf.GetMediaFileID()) != null) {
