@@ -54,7 +54,7 @@ final class ViewingClientMonitor extends SageRunnable {
 					MediaFileAPI.MediaFile lastMf = lastStatus.get(ui);
 					if(lastMf == null || lastMf.GetMediaFileID() != mf.GetMediaFileID()) {
 						Client c = DataStore.getInstance().findClient(ui);
-						if(c.doNotify() && getPlayPercentage(api.mediaPlayerAPI) >= 10) {
+						if(c.doNotify() && (mf.IsCompleteRecording() || getPlayPercentage(api.mediaPlayerAPI) >= 10)) {
 							lastStatus.put(ui, mf);
 							SageEventHandlerManager.getInstance().fire(new PlayingMediaEvent(new ViewingClient(c, mf)));
 						} else
