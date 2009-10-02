@@ -36,6 +36,10 @@
     <!-- Add any additional non-server libs (such as JUnit) -->
     <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
   </path>
+	
+  <path id="rpc.class.path">
+	<fileset dir="libs" includes="*.jar" />
+  </path>
 
   <target name="init_gcupload">
     <available file="${gc.upload.settings}" property="gc.upload.enable" />
@@ -66,7 +70,8 @@
     <javac srcdir="src" includes="**" encoding="utf-8"
         destdir="war/WEB-INF/classes"
         source="1.5" target="1.5" nowarn="true"
-        debug="true" debuglevel="lines,vars,source">
+        debug="true" debuglevel="lines,vars,source"
+    	excludes="**/sagealert/rpc/**">
       <classpath refid="project.class.path"/>
     </javac>
     <copy todir="war/WEB-INF/classes">
@@ -125,14 +130,33 @@
     <fail message="gc.username must be defined in ${gc.upload.settings}" unless="gc.username" />
     <fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
   	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
-  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" summary="Snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
+  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" summary="SageAlert snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
+  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-rpc-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-rpc-${sagealert.ver}.${revision.max-with-flags}.zip" summary="SageAlert RPC client snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
+  </target>
+	
+  <target name="rpc_clnt" depends="init_svn" description="Build the RPC client package">
+  	<mkdir dir="rpcbin" />
+    <javac srcdir="src" includes="**/sagealert/rpc/**" excludes="**/Test*.java" encoding="utf-8"
+        destdir="rpcbin/"
+        source="1.5" target="1.5" nowarn="true"
+        debug="true" debuglevel="lines,vars,source">
+      <classpath refid="project.class.path"/>
+      <classpath refid="rpc.class.path" />
+    </javac>
+  	<jar destfile="sagealert-rpc.jar" basedir="rpcbin" />
+  	<zip destfile="sagealert-rpc-${sagealert.ver}.${revision.max-with-flags}.zip">
+  	   <zipfileset dir="." prefix="" includes="sagealert-rpc.jar" />
+  	   <zipfileset dir="libs" prefix="" includes="*.jar" />
+  	   <zipfileset dir="war/WEB-INF/lib" prefix="" includes="ws-commons-util-1.0.2.jar,commons-logging-1.1.jar,xmlrpc-common-3.1.2.jar,xmlrpc-client-3.1.2.jar" />
+  	</zip>
   </target>
 	
   <target name="clean" description="Cleans this project">
     <delete dir="war/WEB-INF/classes" failonerror="false" />
     <delete dir="war/sagealert" failonerror="false" />
+  	<delete dir="rpcbin" failonerror="false" />
     <delete failonerror="false">
-      <fileset dir="." includes="SageAlert.war,sagealert*.zip" />
+      <fileset dir="." includes="SageAlert.war,sagealert*.zip,sagealert-rpc.jar" />
     </delete>
     <svn javahl="true">
         <revert file="${sagealert.ver.file}" />
