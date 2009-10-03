@@ -131,7 +131,7 @@
     <fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
   	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
   	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-${sagealert.ver}.${revision.max-with-flags}.zip" summary="SageAlert snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
-  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-rpc-client-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-rpc-${sagealert.ver}.${revision.max-with-flags}.zip" summary="SageAlert RPC client snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
+  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-rpc-client-${sagealert.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-rpc-client-${sagealert.ver}.${revision.max-with-flags}.zip" summary="SageAlert RPC client snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
   </target>
 	
   <target name="rpc_clnt" depends="init_svn" description="Build the RPC client package">
