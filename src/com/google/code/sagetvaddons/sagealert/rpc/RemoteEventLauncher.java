@@ -43,15 +43,27 @@ public class RemoteEventLauncher {
 		rpcClnt.setConfig(rpcConfig);
 	}
 	
-	public boolean fire(String title, String desc) {
+	private boolean fire(String methodName, String title, String desc) {
 		Object[] params = new Object[] {title, desc};
 		try {
-			return (Boolean)rpcClnt.execute("RemoteEventLauncher.fire", params);
+			return (Boolean)rpcClnt.execute(methodName, params);
 		} catch(XmlRpcException e) {
 			return false;
-		}
+		}		
 	}
 	
+	public boolean fireInfo(String title, String desc) {
+		return fire("RemoteEventLauncher.fireInfo", title, desc);
+	}
+
+	public boolean fireWarning(String title, String desc) {
+		return fire("RemoteEventLauncher.fireWarning", title, desc);
+	}
+
+	public boolean fireError(String title, String desc) {
+		return fire("RemoteEventLauncher.fireError", title, desc);
+	}
+
 	public void setUserId(String id) {
 		rpcConfig.setBasicUserName(id);
 	}

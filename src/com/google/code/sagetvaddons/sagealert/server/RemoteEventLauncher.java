@@ -32,10 +32,24 @@ public final class RemoteEventLauncher {
 	 * @param desc The textual description of the event (the event's body)
 	 * @return True on success or false if the event could not be fired by SageAlert
 	 */
-	public boolean fire(String title, String desc) {
+	public boolean fireInfo(String title, String desc) {
 		String clientIpAddr = XmlRpcServletWithClientIpAddr.getRequesterIpAddr();
-		SageEventHandlerManager.getInstance().fire(new RemoteEvent(title, desc, clientIpAddr));
-		LOG.info("Remote event '" + title + "' fired by " + clientIpAddr);
+		SageEventHandlerManager.getInstance().fire(new RemoteInfoEvent(title, desc, clientIpAddr));
+		LOG.info("Remote info event '" + title + "' fired by " + clientIpAddr);
 		return true;
+	}
+	
+	public boolean fireWarning(String title, String desc) {
+		String clientIpAddr = XmlRpcServletWithClientIpAddr.getRequesterIpAddr();
+		SageEventHandlerManager.getInstance().fire(new RemoteWarningEvent(title, desc, clientIpAddr));
+		LOG.info("Remote warning event '" + title + "' fired by " + clientIpAddr);
+		return true;		
+	}
+	
+	public boolean fireError(String title, String desc) {
+		String clientIpAddr = XmlRpcServletWithClientIpAddr.getRequesterIpAddr();
+		SageEventHandlerManager.getInstance().fire(new RemoteErrorEvent(title, desc, clientIpAddr));
+		LOG.info("Remote error event '" + title + "' fired by " + clientIpAddr);
+		return true;		
 	}
 }
