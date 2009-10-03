@@ -1,15 +1,26 @@
-/**
- * 
+/*
+ *      Copyright 2009 Battams, Derek
+ *       
+ *       Licensed under the Apache License, Version 2.0 (the "License");
+ *       you may not use this file except in compliance with the License.
+ *       You may obtain a copy of the License at
+ *
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *       Unless required by applicable law or agreed to in writing, software
+ *       distributed under the License is distributed on an "AS IS" BASIS,
+ *       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *       See the License for the specific language governing permissions and
+ *       limitations under the License.
  */
 package com.google.code.sagetvaddons.sagealert.server;
-
-import java.net.InetAddress;
 
 import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
 
 /**
+ * The RemoteEvent is an event that can be fired by remote clients via RPC calls
  * @author dbattams
- *
+ * @version $Id$
  */
 final class RemoteEvent implements SageEvent {
 	/**
@@ -19,11 +30,12 @@ final class RemoteEvent implements SageEvent {
 	
 	private String title;
 	private String desc;
-	private InetAddress source;
+	private String source;
 	
-	RemoteEvent(String title, String desc, InetAddress source) {
+	RemoteEvent(String title, String desc, String source) {
 		this.title = title;
 		this.desc = desc;
+		this.source = source;
 	}
 	
 	/* (non-Javadoc)
@@ -62,7 +74,7 @@ final class RemoteEvent implements SageEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEvent#getSource()
 	 */
 	@Override
-	public InetAddress getSource() {
+	public String getSource() {
 		return source;
 	}
 
