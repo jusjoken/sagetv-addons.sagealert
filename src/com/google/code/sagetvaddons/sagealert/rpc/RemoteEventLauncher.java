@@ -23,54 +23,138 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
- * @author dbattams
- *
+ * Developer API for generating remote alerts within a SageAlert server
+ * 
+ * Use this API to connect to an active SageAlert server and generate a remote event.
+ * There are three types of remote events that an application can generate:
+ * <ul>
+ *   <li>Info: An informational alert</li>
+ *   <li>Warning: An warning alert</li>
+ *   <li>Error: An error alert</li>
+ * </ul>
+ * @author derek AT battams DOT ca
+ * @version $Id$
  */
-public class RemoteEventLauncher {
-
+final public class RemoteEventLauncher {
+	static private final int API_VERSION = 0;
+	
 	private URL url;
 	
 	private XmlRpcClientConfigImpl rpcConfig;
 	private XmlRpcClient rpcClnt;
 	
-	public RemoteEventLauncher(URL url) throws MalformedURLException {
-		if(!url.toString().endsWith("sagealert"))
-			throw new MalformedURLException("SageAlert URL must end with 'sagealert' and no trailing slash!");
+	/**
+	 * Class constructor
+	 * @param url The base URL of the SageAlert server to generate the alerts on; the URL must point to a valid, active SageAlert installation and must not contain a trailing slash (i.e. http://192.168.0.1/sagealert)
+	 * @param id The HTTP user id required to connect to SageAlert; null if no id is required
+	 * @param pwd The HTTP password required to connect to SageAlert; null if no password is required
+	 * @throws MalformedURLException If the URL argument is invalid
+	 * @throws ApiVersionException If the client and server are not running the same RPC API version
+	 */
+	public RemoteEventLauncher(URL url, String id, String pwd) throws MalformedURLException, ApiVersionException {
+		if(!url.toString().endsWith("/sagealert"))
+			throw new MalformedURLException("SageAlert URL must end with '/sagealert' and no trailing slash!");
 		this.url = new URL(url.toString() + "/xmlrpc");
 		rpcConfig = new XmlRpcClientConfigImpl();
 		rpcConfig.setServerURL(this.url);
+		if(id != null) {
+			rpcConfig.setBasicUserName(id);
+			rpcConfig.setBasicPassword(pwd != null ? pwd : "");
+		}
 		rpcClnt = new XmlRpcClient();
 		rpcClnt.setConfig(rpcConfig);
-	}
-	
-	private boolean fire(String methodName, String title, String desc) {
-		Object[] params = new Object[] {title, desc};
+		
 		try {
-			return (Boolean)rpcClnt.execute(methodName, params);
+			int srvVersion = (Integer)rpcClnt.execute("RemoteEventLauncher.checkApiVersion", new Object[0]);
+			if(srvVersion != API_VERSION)
+				throw new ApiVersionException(srvVersion, API_VERSION);
 		} catch(XmlRpcException e) {
-			return false;
-		}		
+			throw new ApiVersionException("Unable to verify server RPC API version; your SageAlert server probably needs to be upgraded!");
+		}
 	}
 	
-	public boolean fireInfo(String title, String desc) {
-		return fire("RemoteEventLauncher.fireInfo", title, desc);
+	/**
+	 * Constructor that assumes there is no id/password required to connect to the SageAlert server
+	 * @param url The base URL of the SageAlert server with no trailing slash (i.e. http://192.168.0.1./sagealert)
+	 * @throws MalformedURLException Thrown if the given URL is invalid
+	 * @throws ApiVersionException Thrown if this client and the SageAlert server are not speaking the same RPC API version
+	 */
+	public RemoteEventLauncher(URL url) throws MalformedURLException, ApiVersionException {
+		this(url, null, null);
+	}
+	
+	// Make the actual RPC call on the server
+	private void fire(String methodName, String title, String desc) throws RpcException {
+		Object[] params = new Object[] {API_VERSION, title, desc};
+		try {
+			rpcClnt.execute(methodName, params);
+		} catch(XmlRpcException e) {
+			throw new RpcException(e);
+		}
+	}
+	
+	/**
+	 * Fire an info level remote event on the server
+	 * @param title The alert's title/subject
+	 * @param desc The alert's description
+	 */
+	public void fireInfo(String title, String desc) throws RpcException {
+		fire("RemoteEventLauncher.fireInfo", title, desc);
 	}
 
-	public boolean fireWarning(String title, String desc) {
-		return fire("RemoteEventLauncher.fireWarning", title, desc);
+	/**
+	 * Fire a warning level remote event on the server
+	 * @param title The alert's title/subject
+	 * @param desc The alert's description
+	 */
+	public void fireWarning(String title, String desc) throws RpcException {
+		fire("RemoteEventLauncher.fireWarning", title, desc);
 	}
 
-	public boolean fireError(String title, String desc) {
-		return fire("RemoteEventLauncher.fireError", title, desc);
+	/**
+	 * Fire an error level remote event on the server
+	 * @param title The alert's title/subject
+	 * @param desc The alert's description
+	 */
+	public void fireError(String title, String desc) throws RpcException {
+		fire("RemoteEventLauncher.fireError", title, desc);
 	}
 
+	/**
+	 * Set the HTTP user id for connecting to the SageAlert server; setting the id takes effect on all future fire() calls after this call is made
+	 * @param id The new HTTP user id to use for connecting to the SageAlert server
+	 */
 	public void setUserId(String id) {
 		rpcConfig.setBasicUserName(id);
 	}
+
+	/**
+	 * Get the current HTTP user name being used to connect to the SageAlert server to make the RPC calls
+	 * @return The HTTP user name currently in use
+	 */
+	public String getUserId() {
+		return rpcConfig.getBasicUserName();
+	}
 	
+	/**
+	 * Set the HTTP password for connecting to the SageAlert server; setting the password takes effect on all future fire() calls after this call is made
+	 * @param pwd The new HTTP password to use for connecting to the SageAlert server
+	 */
 	public void setPassword(String pwd) {
 		rpcConfig.setBasicPassword(pwd);
 	}
 	
+	/**
+	 * Get the current HTTP password being used to connect to the SageAlert server to make the RPC calls
+	 * @return The HTTP password currently in use
+	 */
+	public String getPassword() {
+		return rpcConfig.getBasicPassword();
+	}
+	
+	/**
+	 * Get the complete URL being used by this client for connecting to the SageAlert server (for debug purposes only)
+	 * @return The SageAlert connection URL, as a string
+	 */
 	public String getRpcUrlString() { return url.toString(); }
 }
