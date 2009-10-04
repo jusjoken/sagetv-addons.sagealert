@@ -33,14 +33,15 @@ public final class RemoteEventLauncher {
 	 * @param clntApiVersion The API version of the calling client
 	 * @param title The title/subject of the event
 	 * @param desc The textual description of the event (the event's body)
-	 * @return True on success or false if the event could not be fired by SageAlert
+	 * @return Always returns true; if there was an error with the RPC call then an XmlRpcException is thrown
 	 * @throws XmlRpcException If the calling client's API version is not the same as the server's
 	 */
-	public void fireInfo(int clntApiVersion, String title, String desc) throws XmlRpcException {
+	public boolean fireInfo(int clntApiVersion, String title, String desc) throws XmlRpcException {
 		validateClientApiVersion(clntApiVersion);
 		String clientIpAddr = XmlRpcServletWithClientIpAddr.getRequesterIpAddr();
 		SageEventHandlerManager.getInstance().fire(new RemoteInfoEvent(title, desc, clientIpAddr));
 		LOG.info("Remote info event '" + title + "' fired by " + clientIpAddr);
+		return true;
 	}
 	
 	/**
@@ -48,13 +49,15 @@ public final class RemoteEventLauncher {
 	 * @param clntApiVersion The API version of the calling client
 	 * @param title The title/subject of the event
 	 * @param desc The description of the event
+	 * @return Always returns true; if there was an error with the RPC call then an XmlRpcException is thrown
 	 * @throws XmlRpcException If the calling client's API version is not the same as the server's
 	 */
-	public void fireWarning(int clntApiVersion, String title, String desc) throws XmlRpcException {
+	public boolean fireWarning(int clntApiVersion, String title, String desc) throws XmlRpcException {
 		validateClientApiVersion(clntApiVersion);
 		String clientIpAddr = XmlRpcServletWithClientIpAddr.getRequesterIpAddr();
 		SageEventHandlerManager.getInstance().fire(new RemoteWarningEvent(title, desc, clientIpAddr));
 		LOG.info("Remote warning event '" + title + "' fired by " + clientIpAddr);
+		return true;
 	}
 	
 	/**
@@ -62,13 +65,15 @@ public final class RemoteEventLauncher {
 	 * @param clntApiVersion The API version of the calling client
 	 * @param title The title/subject of the event
 	 * @param desc The description of the event
+	 * @return Always returns true; if there was an error with the RPC call then an XmlRpcException is thrown
 	 * @throws XmlRpcException If the calling client's API version is not the same as the server's
 	 */
-	public void fireError(int clntApiVersion, String title, String desc) throws XmlRpcException {
+	public boolean fireError(int clntApiVersion, String title, String desc) throws XmlRpcException {
 		validateClientApiVersion(clntApiVersion);
 		String clientIpAddr = XmlRpcServletWithClientIpAddr.getRequesterIpAddr();
 		SageEventHandlerManager.getInstance().fire(new RemoteErrorEvent(title, desc, clientIpAddr));
 		LOG.info("Remote error event '" + title + "' fired by " + clientIpAddr);
+		return true;
 	}
 	
 	/**
