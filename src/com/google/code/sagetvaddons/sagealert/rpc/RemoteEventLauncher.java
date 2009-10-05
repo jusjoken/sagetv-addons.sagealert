@@ -39,7 +39,7 @@ final public class RemoteEventLauncher {
 	static private final int API_VERSION = 0;
 	
 	private URL url;
-	
+	private int serverApiVersion; 
 	private XmlRpcClientConfigImpl rpcConfig;
 	private XmlRpcClient rpcClnt;
 	
@@ -66,6 +66,7 @@ final public class RemoteEventLauncher {
 		
 		try {
 			int srvVersion = (Integer)rpcClnt.execute("RemoteEventLauncher.checkApiVersion", new Object[0]);
+			serverApiVersion = srvVersion;
 			if(srvVersion != API_VERSION)
 				throw new ApiVersionException(srvVersion, API_VERSION);
 		} catch(XmlRpcException e) {
@@ -157,4 +158,18 @@ final public class RemoteEventLauncher {
 	 * @return The SageAlert connection URL, as a string
 	 */
 	public String getRpcUrlString() { return url.toString(); }
+	
+	/**
+	 * Get the API version this client speaks; the client must speak the same API version as the server in order to successfully communicate
+	 * @return The client's API version
+	 */
+	public int getClientApiVersion() { return API_VERSION; }
+	
+	/**
+	 * Get the API version being spoken by the SageAlert server this client is connected to; the client must speak the same API version as the server in order to successfully communicate
+	 * @return The server's API version
+	 */
+	public int getServerApiVersion() {
+		return serverApiVersion;
+	}
 }
