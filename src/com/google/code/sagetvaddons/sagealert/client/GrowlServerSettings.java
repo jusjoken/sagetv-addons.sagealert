@@ -21,7 +21,7 @@ package com.google.code.sagetvaddons.sagealert.client;
  * @author dbattams
  * @version $Id$
  */
-public class GrowlServerSettings implements NotificationServerSettings {
+public final class GrowlServerSettings implements NotificationServerSettings {
 	
 	private String host;
 	private String password;
@@ -81,7 +81,7 @@ public class GrowlServerSettings implements NotificationServerSettings {
 	}
 
 	/**
-	 * @return the port
+	 * @return the connection password
 	 */
 	public String getPassword() {
 		if(password != null && password.length() == 0)
@@ -90,7 +90,7 @@ public class GrowlServerSettings implements NotificationServerSettings {
 	}
 
 	/**
-	 * @param port the port to set
+	 * @param password The Growl connection password
 	 */
 	public void setPassword(String password) {
 		this.password = password;

@@ -32,7 +32,7 @@ import com.google.code.sagetvaddons.sagealert.client.UserSettings;
  * @author dbattams
  * @version $Id$
  */
-final class ViewingClientMonitor extends SageRunnable {
+final class ViewingClientMonitor extends SageAlertRunnable {
 
 	static private final Logger LOG = Logger.getLogger(ViewingClientMonitor.class);
 	

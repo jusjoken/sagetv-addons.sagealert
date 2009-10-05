@@ -23,13 +23,15 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 /**
- * Developer API for generating remote alerts within a SageAlert server
+ * <p>Developer API for generating remote alerts within a SageAlert server.</p>
  * 
- * Use this API to connect to an active SageAlert server and generate a remote event.
- * There are three types of remote events that an application can generate:
+ * <p>
+ *   Use this API to connect to an active SageAlert server and generate a remote event.
+ *   There are three types of remote events that an application can generate:
+ * </p>
  * <ul>
  *   <li>Info: An informational alert</li>
- *   <li>Warning: An warning alert</li>
+ *   <li>Warning: A warning alert</li>
  *   <li>Error: An error alert</li>
  * </ul>
  * @author derek AT battams DOT ca
@@ -98,6 +100,7 @@ final public class RemoteEventLauncher {
 	 * Fire an info level remote event on the server
 	 * @param title The alert's title/subject
 	 * @param desc The alert's description
+	 * @throws RpcException Thrown if the RPC call fails
 	 */
 	public void fireInfo(String title, String desc) throws RpcException {
 		fire("RemoteEventLauncher.fireInfo", title, desc);
@@ -107,6 +110,7 @@ final public class RemoteEventLauncher {
 	 * Fire a warning level remote event on the server
 	 * @param title The alert's title/subject
 	 * @param desc The alert's description
+	 * @throws RpcException Thrown if the RPC call fails
 	 */
 	public void fireWarning(String title, String desc) throws RpcException {
 		fire("RemoteEventLauncher.fireWarning", title, desc);
@@ -116,6 +120,7 @@ final public class RemoteEventLauncher {
 	 * Fire an error level remote event on the server
 	 * @param title The alert's title/subject
 	 * @param desc The alert's description
+	 * @throws RpcException Thrown if the RPC call fails
 	 */
 	public void fireError(String title, String desc) throws RpcException {
 		fire("RemoteEventLauncher.fireError", title, desc);

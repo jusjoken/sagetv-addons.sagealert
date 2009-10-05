@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Entry point classes define <code>onModuleLoad()</code>.
  * @version $Id$
  */
-public class SageAlert implements EntryPoint {
+public final class SageAlert implements EntryPoint {
 	static private SageAlert SELF = null;
 	
 	static final SageAlert getInstance() { return SELF; }

@@ -29,7 +29,7 @@ import gkusnick.sagetv.api.MediaFileAPI;
  * @author dbattams
  * @version $Id$
  */
-class RecordingFinishedEvent implements SageEvent {
+final class RecordingFinishedEvent implements SageEvent {
 	/**
 	 * Metadata for this event
 	 */

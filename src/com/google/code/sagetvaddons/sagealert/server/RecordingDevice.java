@@ -20,7 +20,7 @@ package com.google.code.sagetvaddons.sagealert.server;
  * @author dbattams
  * @version $Id$
  */
-public class RecordingDevice {
+final class RecordingDevice {
 	private long freeSpace;
 	private long minSpace;
 	

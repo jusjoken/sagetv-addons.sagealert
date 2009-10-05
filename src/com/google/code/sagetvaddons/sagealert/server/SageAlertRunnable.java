@@ -16,13 +16,13 @@
 package com.google.code.sagetvaddons.sagealert.server;
 
 /**
- * All monitor threads must implement this interface.
+ * <p>All monitor threads must implement this interface.</p>
  * 
- * A SageRunnable is just like a java.lang.Runnable except it adds two additional rules that must be followed:
+ * <p>A SageAlertRunnable is just like a java.lang.Runnable except it adds two additional rules that must be followed:</p>
  * 
- * First, SageAlert will only create and start one instance of any given SageRunnable.  Implementers must ensure that their runnable stays alive and monitors for as
+ * <p>First, SageAlert will only create and start one instance of any given SageAlertRunnable.  Implementers must ensure that their runnable stays alive and monitors for as
  * long as SageAlert is running.  This would usually be achieved by putting the logic of your run() method inside a while loop like so:
- * <code>
+ * <pre>
  * public void run() {
  *    while(keepAlive()) {
  *       // Monitor your event condition, fire it when necessary
@@ -30,22 +30,23 @@ package com.google.code.sagetvaddons.sagealert.server;
  *       Thread.sleep(x); // Sleep after each run then first thing you check when done sleeping is if you should exit (via keepAlive() in while loop condition)
  *    }
  * }
- * </code>
+ * </pre>
+ * </p>
  * 
- * Second, you must honour the keepAlive() flag and once it's false you must immediately cleanup and gracefully exit the run() method of your class.  The above skeleton shows
- * how you should do this.
+ * <p>Second, you must honour the keepAlive() flag and once it's false you must immediately cleanup and gracefully exit the run() method of your class.  The above skeleton shows
+ * how you should do this.</p>
  * 
  * @author dbattams
  * @version $Id$
  */
-abstract public class SageRunnable implements Runnable {
+abstract public class SageAlertRunnable implements Runnable {
 	
 	private boolean keepAlive;
 	
 	/**
 	 * Constructor
 	 */
-	public SageRunnable() {
+	public SageAlertRunnable() {
 		keepAlive = true;
 	}
 

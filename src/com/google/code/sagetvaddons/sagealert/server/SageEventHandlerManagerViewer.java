@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author dbattams
  * @version $Id$
  */
-public class SageEventHandlerManagerViewer extends HttpServlet {
+public final class SageEventHandlerManagerViewer extends HttpServlet {
 
 	/**
 	 * 

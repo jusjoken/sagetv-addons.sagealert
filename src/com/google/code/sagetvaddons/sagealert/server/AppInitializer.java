@@ -49,7 +49,7 @@ public final class AppInitializer implements ServletContextListener {
 	 */
 	static public String REGISTERED_HANDLER_CLASSES = null;
 
-	private Map<SageRunnable, Thread> monitors;
+	private Map<SageAlertRunnable, Thread> monitors;
 	private Date startTime;
 	
 	
@@ -58,7 +58,7 @@ public final class AppInitializer implements ServletContextListener {
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		for(SageRunnable r : monitors.keySet()) {
+		for(SageAlertRunnable r : monitors.keySet()) {
 			Thread t = monitors.get(r);
 			if(t.isAlive()) {
 				r.setKeepAlive(false);
@@ -75,7 +75,7 @@ public final class AppInitializer implements ServletContextListener {
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-		monitors = new HashMap<SageRunnable, Thread>();
+		monitors = new HashMap<SageAlertRunnable, Thread>();
 		startTime = new Date();
 		PropertyConfigurator.configure("sagealert.log4j.properties");
 		
@@ -94,7 +94,7 @@ public final class AppInitializer implements ServletContextListener {
 	private void launchMonitorThreads() {
 		try {
 			for(Class<?> cls : RegisteredClasses.getSageMonitorClasses()) {
-				SageRunnable runnable = (SageRunnable)cls.newInstance();
+				SageAlertRunnable runnable = (SageAlertRunnable)cls.newInstance();
 				Thread t = new Thread(runnable);
 				t.setDaemon(true);
 				t.setName("SageAlert-" + cls.getSimpleName());

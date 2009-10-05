@@ -26,7 +26,7 @@ import com.google.code.sagetvaddons.sagealert.client.UserSettings;
  * @author dbattams
  * @version $Id$
  */
-final class RecordingConflictMonitor extends SageRunnable {
+final class RecordingConflictMonitor extends SageAlertRunnable {
 
 	static private final Logger LOG = Logger.getLogger(RecordingConflictMonitor.class);
 	static private final String CONFLICT_LAST_NOTICE = "ConflictLastNotice";

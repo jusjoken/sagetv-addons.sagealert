@@ -34,7 +34,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * @version $Id$
  */
 @SuppressWarnings("serial")
-public class HandlerServiceImpl extends RemoteServiceServlet implements	HandlerService {
+public final class HandlerServiceImpl extends RemoteServiceServlet implements	HandlerService {
 	
 	static private final Logger LOG = Logger.getLogger(HandlerServiceImpl.class);
 	static private final Collection<SageEventMetaData> EVENT_METADATA = new ArrayList<SageEventMetaData>();

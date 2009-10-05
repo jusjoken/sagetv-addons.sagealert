@@ -19,7 +19,7 @@ import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
 
 
 /**
- * Base implementation for all events
+ * All events that the server can trigger must implement this interface.
  * @author dbattams
  * @version $Id$
  */
@@ -44,7 +44,7 @@ public interface SageEvent {
 	
 	/**
 	 * A longer description of the event; no length restrictions (suitable for email notification)
-	 * @return
+	 * @return The event's long description
 	 */
 	public String getLongDescription();
 	

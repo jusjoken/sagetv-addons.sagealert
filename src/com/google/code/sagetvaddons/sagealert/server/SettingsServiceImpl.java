@@ -25,7 +25,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * @version $Id$
  */
 @SuppressWarnings("serial")
-public class SettingsServiceImpl extends RemoteServiceServlet implements SettingsService {
+public final class SettingsServiceImpl extends RemoteServiceServlet implements SettingsService {
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.client.SettingsService#getSetting(java.lang.String, java.lang.String)

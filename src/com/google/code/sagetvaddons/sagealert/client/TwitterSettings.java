@@ -20,7 +20,7 @@ package com.google.code.sagetvaddons.sagealert.client;
  * @author dbattams
  * @version $Id$
  */
-public class TwitterSettings implements NotificationServerSettings {
+public final class TwitterSettings implements NotificationServerSettings {
 
 	private String id;
 	private String pwd;

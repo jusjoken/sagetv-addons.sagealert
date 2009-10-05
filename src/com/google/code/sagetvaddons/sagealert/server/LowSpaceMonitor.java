@@ -26,7 +26,7 @@ import com.google.code.sagetvaddons.sagealert.client.UserSettings;
  * @author dbattams
  * @version $Id$
  */
-final class LowSpaceMonitor extends SageRunnable {
+final class LowSpaceMonitor extends SageAlertRunnable {
 	static private final Logger LOG = Logger.getLogger(LowSpaceMonitor.class);
 	static private final String LOW_SPACE_LAST_NOTIFY = "LowSpaceLastNotify";
 	/**

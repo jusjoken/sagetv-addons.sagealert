@@ -24,7 +24,7 @@ import com.google.code.sagetvaddons.sagealert.client.Client;
  * @author dbattams
  * @version $Id$
  */
-public class ViewingClient {
+final class ViewingClient {
 
 	private Client client;
 	private MediaFileAPI.MediaFile media;

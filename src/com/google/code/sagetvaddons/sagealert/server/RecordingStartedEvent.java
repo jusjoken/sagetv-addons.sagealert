@@ -29,7 +29,7 @@ import com.google.code.sagetvaddons.sagealert.client.UserSettings;
  * @author dbattams
  * @version $Id$
  */
-class RecordingStartedEvent implements SageEvent {
+final class RecordingStartedEvent implements SageEvent {
 	static final SageEventMetaData EVENT_METADATA = new SageEventMetaData(RecordingStartedEvent.class.getCanonicalName(), "Recording Started Alert", "Alert when a recording starts.");
 	
 	private AiringAPI.Airing source;

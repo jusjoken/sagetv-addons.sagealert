@@ -16,33 +16,33 @@
 package com.google.code.sagetvaddons.sagealert.client;
 
 /**
- * Denotes that an object can be serialized for storage in the data store
+ * <p>Denotes that an object can be serialized for storage in the data store.</p>
  * 
- * Though not definable in the interface, all implementers must also provide an
- * empty ctor and a method with signature: void unserialize(String key, String data)
- * The unserialize method should be protected or private since it should only be used by the reflection code
+ * <p>Though not definable in the interface, all implementers must also provide an
+ * empty ctor and a method with signature: <code>void unserialize(String key, String data)</code></p>
+ * <p>The unserialize method should be protected or private since it should only be used by the reflection code.</p>
  * to reconstruct objects from the data store
  * @author dbattams
  * @version $Id$
  */
 public interface IsDataStoreSerializable {
 	/**
-	 * A serialization of the unique value(s) that identify an instance.
+	 * <p>A serialization of the unique value(s) that identify an instance.</p>
 	 * 
-	 * If that value is just one field (i.e. a user id) then this method should just return that single value.  If, however, that value is a composite of many fields then
+	 * <p>If that value is just one field (i.e. a user id) then this method should just return that single value.  If, however, that value is a composite of many fields then
 	 * this method must return a single string that packs all of those fields into one value.  The technique used to generate this string must be reversed when the unserialize()
-	 * method is called.
+	 * method is called.</p>
 	 *  
 	 * @return The unique identifier suitable for storage in the app data store
 	 */
 	public String getDataStoreKey();
 	
 	/**
-	 * A serialization of the non-unique data value(s) for an instance.
+	 * <p>A serialization of the non-unique data value(s) for an instance.</p>
 	 * 
-	 * This value should pack all of those state values that were not included in the getDataStoreKey() method.  If there is only one field then this value should just return
+	 * <p>This value should pack all of those state values that were not included in the getDataStoreKey() method.  If there is only one field then this value should just return
 	 * that field.  If, however, there is more than one field then this string must pack all of those fields into one value.  The technique used to generate this string must
-	 * be reversed when the unserialize() method is called in order to restore the state of the a given instance.
+	 * be reversed when the unserialize() method is called in order to restore the state of the a given instance.</p>
 	 * 
 	 * @return The serialization of all remaining state fields not included in the key value of the instance
 	 */

@@ -31,7 +31,7 @@ import com.google.code.sagetvaddons.sagealert.client.UserSettings;
  * @author dbattams
  * @version $Id$
  */
-final class UiMonitor extends SageRunnable {
+final class UiMonitor extends SageAlertRunnable {
 
 	static private final Logger LOG = Logger.getLogger(UiMonitor.class);
 		

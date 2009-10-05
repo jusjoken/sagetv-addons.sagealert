@@ -27,7 +27,7 @@ import com.google.code.sagetvaddons.sagealert.client.UserSettings;
  * @author dbattams
  * @version $Id$
  */
-final class SystemMessageMonitor extends SageRunnable {
+final class SystemMessageMonitor extends SageAlertRunnable {
 
 	static private final Logger LOG = Logger.getLogger(SystemMessageMonitor.class);
 	static private final String SYSMSG_LAST_NOTICE = "SysMsgLastNotice";

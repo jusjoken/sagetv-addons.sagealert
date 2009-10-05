@@ -27,7 +27,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * @version $Id$
  */
 @SuppressWarnings("serial")
-public class ReporterServiceImpl extends RemoteServiceServlet implements
+public final class ReporterServiceImpl extends RemoteServiceServlet implements
 		ReporterService {
 
 	/* (non-Javadoc)

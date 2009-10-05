@@ -18,10 +18,10 @@ package com.google.code.sagetvaddons.sagealert.client;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Describes the details of a SageEvent type
+ * <p>Describes the details of a SageEvent type.</p>
  * 
- * SageEvent objects can't be used on the client side because they contain SageTV objects, which aren't serializable so instead these metadata objects are used between
- * client and server to describe/reference SageEvent objects
+ * <p>SageEvent objects can't be used on the client side because they contain SageTV objects, which aren't serializable so instead these metadata objects are used between
+ * client and server to describe/reference SageEvent objects.</p>
  * @author dbattams
  * @version $Id$
  */
