@@ -139,7 +139,7 @@
   	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
   	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.ver.name}.zip" targetfilename="${sagealert.ver.name}.zip" summary="SageAlert snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
   	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.clnt.ver.name}.zip" targetfilename="${sagealert.clnt.ver.name}.zip" summary="SageAlert RPC client snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
-  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.ver.name}-javadocs.zip" targetfilename="${sagealert.clnt.ver.name}-javadocs.zip" summary="SageAlert server javadocs" labels="QA-Snapshot,Type-Docs" />
+  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.ver.name}-javadocs.zip" targetfilename="${sagealert.ver.name}-javadocs.zip" summary="SageAlert server javadocs" labels="QA-Snapshot,Type-Docs" />
   	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.clnt.ver.name}-javadocs.zip" targetfilename="${sagealert.clnt.ver.name}-javadocs.zip" summary="SageAlert RPC client javadocs" labels="QA-Snapshot,Type-Docs" />
   </target>
 	
