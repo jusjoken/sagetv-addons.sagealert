@@ -22,7 +22,7 @@
   <!-- Import svn tasks -->
   <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
 
-  <property name="sagealert.ver" value="0.0.3" />
+  <property name="sagealert.ver" value="1.0.0" />
   <property name="sagealert.ver.file" value="src/com/google/code/sagetvaddons/sagealert/client/Version.java" />
   <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
 

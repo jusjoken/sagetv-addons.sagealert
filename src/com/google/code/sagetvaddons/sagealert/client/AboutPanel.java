@@ -15,7 +15,12 @@
  */
 package com.google.code.sagetvaddons.sagealert.client;
 
-import com.google.gwt.user.client.ui.Label;
+import com.google.code.gwtsrwc.client.VersionLabel;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -23,8 +28,34 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *
  */
 final class AboutPanel extends VerticalPanel {
+	private VerticalPanel container;
+	private DisclosurePanel deps;
+	private VerticalPanel depsContainer;
+	
 	AboutPanel() {
-		add(new Label("You are running SageAlert v" + Version.getFullVersion()));
-		add(new Label("Author: Derek Battams <derek AT battams DOT ca>"));
+		deps = new DisclosurePanel("Additional Libraries", false);
+
+		depsContainer = new VerticalPanel();
+		depsContainer.add(new HTML("<b>GWT:</b> " + GWT.getVersion() + " | <a target=\"_blank\" href=\"http://code.google.com/webtoolkit/\">Project Site</a>"));
+		depsContainer.add(new HTML("<b>GKusnick's Studio Tools (for SageTV):</b> <a target=\"_blank\" href=\"http://forums.sagetv.com/forums/downloads.php?do=file&id=128\">Download Site</a>"));
+		depsContainer.add(new HTML("<b>Apache Commons:</b> <a target=\"_blank\" href=\"http://commons.apache.org/\">Project Site</a>"));
+		depsContainer.add(new HTML("<b>gwtsrwc:</b> " + VersionLabel.getVersion() + " | <a target=\"_blank\" href=\"http://gwtsrwc.googlecode.com/\">Project Site</a>"));
+		depsContainer.add(new HTML("<b>JSON.org:</b> <a target=\"_blank\" href=\"http://www.json.org/\">Web Site</a>"));
+		depsContainer.add(new HTML("<b>log4j:</b> <a target=\"_blank\" href=\"http://logging.apache.org/\">Project Site</a>"));
+		depsContainer.add(new HTML("<b>twitter4j:</b> <a target=\"_blank\" href=\"http://yusuke.homeip.net/twitter4j/en/index.html\">Project Site</a>"));
+		depsContainer.add(new HTML("<b>libgrowl:</b> 0.1.1 + local patches for password support | <a target=\"_blank\" href=\"http://libgrowl.sf.net/\">Project Site</a>"));
+		depsContainer.add(new HTML("<b>JavaMail:</b> <a target=\"_blank\" href=\"http://java.sun.com/products/javamail/\">Web Site</a>"));
+		depsContainer.add(new HTML("<b>SQLite JDBC:</b> <a target=\"_blank\" href=\"http://www.zentus.com/sqlitejdbc/\">Project Site</a>"));
+		depsContainer.add(new HTML("<b>XML-RPC:</b> <a target=\"_blank\" href=\"http://www.xmlrpc.com\">Project Site</a>"));
+		deps.add(depsContainer);
+		
+		container = new VerticalPanel();
+		container.add(new HTML("<b>SageAlert v" + Version.getFullVersion() + "</b>"));
+		container.add(new HTML("<b>Author:</b> Derek Battams <derek AT battams DOT ca>"));
+		container.add(new HTML("<b>Project Site:</b> <a target=\"_blank\" href=\"http://sagetv-addons.googlecode.com\">http://sagetv-addons.googlecode.com</a>"));
+		container.add(deps);
+		setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		add(container);
 	}
 }
