@@ -76,7 +76,7 @@ public final class HandlerServiceImpl extends RemoteServiceServlet implements	Ha
 					} catch(NoSuchFieldException e) {
 						LOG.error("Class '" + cls.getCanonicalName() + "' does not provide field: static SageEventMetaData EVENT_METADATA");
 					} catch(IllegalAccessException e) {
-						LOG.trace("Unexpected error", e);
+						LOG.error("Unexpected error", e);
 					}
 					EVENT_METADATA.add(new SageEventMetaData(cls.getCanonicalName(), title, desc));
 				}
