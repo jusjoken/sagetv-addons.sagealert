@@ -100,7 +100,10 @@ final class GrowlServer implements SageEventHandler {
 		new NotificationType("Recording Finished"),
 		new NotificationType("UI Connected"),
 		new NotificationType("UI Disconnected"),
-		new NotificationType("Playing Media")
+		new NotificationType("Playing Media"),
+		new NotificationType("Remote Info"),
+		new NotificationType("Remote Warning"),
+		new NotificationType("Remote Error")
 	};
 	
 	private GrowlServerSettings settings;
@@ -171,6 +174,12 @@ final class GrowlServer implements SageEventHandler {
 			return 7;
 		if(e instanceof PlayingMediaEvent)
 			return 8;
+		if(e instanceof RemoteInfoEvent)
+			return 9;
+		if(e instanceof RemoteWarningEvent)
+			return 10;
+		if(e instanceof RemoteErrorEvent)
+			return 11;
 		return 0; // Unknown event; someone probably added a new event and didn't map it here
 	}
 }

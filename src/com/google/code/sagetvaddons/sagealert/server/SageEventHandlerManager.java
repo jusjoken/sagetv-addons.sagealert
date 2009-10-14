@@ -68,8 +68,7 @@ final class SageEventHandlerManager implements HasHandlers {
 			}
 			s.add(h);
 		} catch(ClassNotFoundException x) {
-			LOG.trace("Class not found error", x);
-			LOG.error(x);			
+			LOG.error("Class not found error", x);
 		}
 		List<NotificationServerSettings> handlers = new ArrayList<NotificationServerSettings>();
 		handlers.add(h.getSettings());
@@ -110,8 +109,7 @@ final class SageEventHandlerManager implements HasHandlers {
 		try {
 			s = handlers.get(Class.forName(e.getClassName()));
 		} catch(ClassNotFoundException x) {
-			LOG.trace("Invalid class name", x);
-			LOG.error(x);
+			LOG.error("Invalid class name", x);
 		}
 		if(s != null)
 			s.remove(h);				
@@ -155,8 +153,7 @@ final class SageEventHandlerManager implements HasHandlers {
 		try {
 			set = handlers.get(Class.forName(e.getClassName()));
 		} catch(ClassNotFoundException x) {
-			LOG.trace("Invalid event class", x);
-			LOG.error(x);
+			LOG.error("Invalid event class", x);
 		}
 		if(set != null)
 			set.clear();

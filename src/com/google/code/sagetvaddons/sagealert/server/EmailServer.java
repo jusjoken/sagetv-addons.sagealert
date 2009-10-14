@@ -72,12 +72,10 @@ final class EmailServer implements SageEventHandler {
 			constructMsg();
 			sendMessage();
 		} catch(NotificationRecipientException x) {
-			LOG.trace("Invalid SMTP settings", x);
-			LOG.error(x);
+			LOG.error("Invalid SMTP settings", x);
 			LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
 		} catch(MessagingException x) {
-			LOG.trace("Error sending email", x);
-			LOG.error(x);
+			LOG.error("Error sending email", x);
 			LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
 		}
 	}

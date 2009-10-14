@@ -81,7 +81,7 @@ public final class HandlerServiceImpl extends RemoteServiceServlet implements	Ha
 					EVENT_METADATA.add(new SageEventMetaData(cls.getCanonicalName(), title, desc));
 				}
 			} catch(IOException e) {
-				LOG.trace("IO exception reading registered class file", e);
+				LOG.error("IO exception reading registered class file", e);
 				throw new RuntimeException(e);
 			}
 		}

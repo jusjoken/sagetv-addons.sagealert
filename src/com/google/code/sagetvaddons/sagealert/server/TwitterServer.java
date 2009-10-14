@@ -120,8 +120,7 @@ final class TwitterServer implements SageEventHandler {
 			twitter.updateStatus(msg);
 			LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
 		} catch(TwitterException x) {
-			LOG.trace("Twitter exception", x);
-			LOG.error("'" + e.getSubject() + "' notification FAILED to '" + settings + "'");
+			LOG.error("Twitter exception", x);
 		}		
 	}
 }

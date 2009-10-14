@@ -32,6 +32,7 @@ import com.google.code.sagetvaddons.sagealert.client.TwitterSettings;
  * @version $Id$
  */
 final class NotificationServerFactory {
+	static private final Logger LOG = Logger.getLogger(NotificationServerFactory.class);
 
 	/**
 	 * Given a settings object, inspect it's concrete type and return a server instance appropriate for it
@@ -47,7 +48,7 @@ final class NotificationServerFactory {
 			return new EmailServer((EmailSettings)settings);
 		String msg = "Unsupported server settings type: " + settings.getClass().getCanonicalName();
 		RuntimeException e = new RuntimeException(msg);
-		Logger.getLogger(NotificationServerFactory.class).trace(msg, e);
+		LOG.error(msg, e);
 		throw e;
 	}
 	

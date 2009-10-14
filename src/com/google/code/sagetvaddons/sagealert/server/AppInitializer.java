@@ -103,14 +103,11 @@ public final class AppInitializer implements ServletContextListener {
 				LOG.info("Launched monitor thread: " + cls.getSimpleName());
 			}
 		} catch(IOException e) {
-			LOG.trace("IO error detected", e);
-			LOG.error(e);
+			LOG.error("IO error detected", e);
 		} catch(IllegalAccessException e) {
-			LOG.trace("Constructor is not visible", e);
-			LOG.error(e);
+			LOG.error("Constructor is not visible", e);
 		} catch(InstantiationException e) {
-			LOG.trace("Unable to instantiate monitor class", e);
-			LOG.error(e);
+			LOG.error("Unable to instantiate monitor class", e);
 		}
 	}
 	
@@ -128,8 +125,7 @@ public final class AppInitializer implements ServletContextListener {
 					metadata = new SageEventMetaData(cls.getCanonicalName(), cls.getSimpleName(), cls.getCanonicalName());
 					LOG.warn("Class '" + cls.getCanonicalName() + "' does not define static SageEventMetaData EVENT_METADATA field; using generic one instead (you probably want to fix this)");
 				} catch(IllegalAccessException e) {
-					LOG.trace("Unexpected exception thrown", e);
-					LOG.fatal(e);
+					LOG.fatal("Unexpected exception thrown", e);
 				}
 
 				for(NotificationServerSettings s : DataStore.getInstance().getHandlers(metadata)) {
@@ -138,8 +134,7 @@ public final class AppInitializer implements ServletContextListener {
 				}
 			}
 		} catch(IOException e) {
-			LOG.trace("IO exception thrown", e);
-			LOG.fatal(e);
+			LOG.fatal("IO exception thrown", e);
 		}
 				
 		LOG.info("Registered " + count + " saved handler(s).");

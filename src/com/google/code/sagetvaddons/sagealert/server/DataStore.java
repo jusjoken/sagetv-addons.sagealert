@@ -109,7 +109,7 @@ final class DataStore {
 			conn = DriverManager.getConnection("jdbc:sqlite:" + dataStore.getAbsolutePath());
 		} catch(SQLException e) {
 			String msg = "Error opening data store";
-			LOG.trace(msg, e);
+			LOG.fatal(msg, e);
 			throw new IOException(msg, e);
 		}
 	}
@@ -122,7 +122,7 @@ final class DataStore {
 			Statement stmt = null;
 			if(!e.getMessage().matches(ERR_MISSING_TABLE)) {
 				String msg = "Error on initial data store read";
-				LOG.trace(msg, e);
+				LOG.fatal(msg, e);
 				throw new IOException(msg, e);
 			}
 
@@ -147,9 +147,9 @@ final class DataStore {
 				try	{
 					conn.rollback();
 				} catch(SQLException e3) {
-					LOG.trace(msg, e3);
+					LOG.fatal(msg, e3);
 				}
-				LOG.trace(msg, e2);
+				LOG.fatal(msg, e2);
 				throw new IOException(msg);
 			}
 			finally	{
@@ -158,7 +158,7 @@ final class DataStore {
 						stmt.close();
 					} catch(SQLException e4) {
 						String msg = "Unable to cleanup data store resources";
-						LOG.trace(msg, e4);
+						LOG.fatal(msg, e4);
 						throw new IOException(msg);
 					}
 				}
@@ -167,7 +167,7 @@ final class DataStore {
 					conn.setAutoCommit(true);
 				} catch(SQLException e3) {
 					String msg = "Unable to reset data store auto commit";
-					LOG.trace(msg, e3);
+					LOG.fatal(msg, e3);
 					throw new IOException(msg);
 				}
 			}
@@ -193,10 +193,10 @@ final class DataStore {
 			pstmt.setString(3, data);
 			pstmt.executeUpdate();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace("pStmt close error", e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error("pStmt close error", e); }
 		}
 	}
 	
@@ -218,7 +218,7 @@ final class DataStore {
 			while(rset.next())
 				objs.add(reflectReporter(type, rset.getString(1), rset.getString(2)));
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			try {
 				if(rset != null)
@@ -226,7 +226,7 @@ final class DataStore {
 				if(pstmt != null)
 					pstmt.close();
 			} catch(SQLException e) {
-				LOG.trace(SQL_ERROR, e);
+				LOG.error(SQL_ERROR, e);
 			}
 		}
 		return objs;
@@ -246,10 +246,10 @@ final class DataStore {
 			pstmt.setString(1, clsName);
 			pstmt.executeUpdate();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -268,10 +268,10 @@ final class DataStore {
 			pstmt.setString(2, key);
 			pstmt.executeUpdate();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -291,7 +291,7 @@ final class DataStore {
 			while(rset.next())
 				reporters.add(reflectReporter(rset.getString(1), rset.getString(2), rset.getString(3)));
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		}  finally {
 			try {
 				if(rset != null)
@@ -299,7 +299,7 @@ final class DataStore {
 				if(stmt != null)
 					stmt.close();
 			} catch(SQLException e) {
-				LOG.trace(SQL_ERROR, e);
+				LOG.error(SQL_ERROR, e);
 			}
 		}
 		return reporters;
@@ -322,7 +322,7 @@ final class DataStore {
 			while(rset.next())
 				handlers.add(reflectReporter(rset.getString(1), rset.getString(2), rset.getString(3)));
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			try {
 				if(rset != null)
@@ -330,7 +330,7 @@ final class DataStore {
 				if(stmt != null)
 					stmt.close();
 			} catch(SQLException e) {
-				LOG.trace(SQL_ERROR, e);
+				LOG.error(SQL_ERROR, e);
 			}
 		}
 		return handlers;
@@ -347,15 +347,15 @@ final class DataStore {
 			method.setAccessible(true);
 			method.invoke(obj, key, data);
 		} catch(ClassNotFoundException e) {
-			LOG.trace("Class not found", e);
+			LOG.error("Class not found", e);
 		} catch(NoSuchMethodException e) {
-			LOG.trace("No such method", e);
+			LOG.error("No such method", e);
 		} catch(InvocationTargetException e) {
-			LOG.trace("Invocation target exception", e);
+			LOG.error("Invocation target exception", e);
 		} catch(InstantiationException e) {
-			LOG.trace("Instantiation exception", e);
+			LOG.error("Instantiation exception", e);
 		} catch(IllegalAccessException e) {
-			LOG.trace("Illegal access", e);
+			LOG.error("Illegal access", e);
 		}
 		return obj;
 	}
@@ -383,10 +383,10 @@ final class DataStore {
 			if(handlers.size() > 0)
 				pstmt.executeBatch();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -410,10 +410,10 @@ final class DataStore {
 			}
 			pstmt.executeBatch();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -436,10 +436,10 @@ final class DataStore {
 			}
 			pstmt.executeBatch();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -455,10 +455,10 @@ final class DataStore {
 			logQry(qry);
 			stmt.executeUpdate(qry);
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(stmt != null)
-				try { stmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { stmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -481,7 +481,7 @@ final class DataStore {
 				return rset.getString(1);
 			return defaultVal;
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 			return defaultVal;
 		} finally {
 			try {
@@ -490,7 +490,7 @@ final class DataStore {
 				if(pstmt != null)
 					pstmt.close();
 			} catch(SQLException e) {
-				LOG.trace(SQL_ERROR, e);
+				LOG.error(SQL_ERROR, e);
 			}
 		}
 	}
@@ -519,10 +519,10 @@ final class DataStore {
 			pstmt.setString(2, val);
 			pstmt.executeUpdate();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -544,8 +544,7 @@ final class DataStore {
 				list.add(buildClient(rset.getString(1).substring(CLNT_SETTING_PREFIX.length()), data));
 			}
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
-			LOG.error(e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			try {
 				if(rset != null)
@@ -553,7 +552,7 @@ final class DataStore {
 				if(stmt != null)
 					stmt.close();
 			} catch(SQLException e) {
-				LOG.trace(SQL_ERROR, e);
+				LOG.error(SQL_ERROR, e);
 			}
 		}
 		return list;
@@ -604,11 +603,10 @@ final class DataStore {
 			}
 			pstmt.executeBatch();
 		} catch(SQLException e) {
-			LOG.trace(SQL_ERROR, e);
-			LOG.error(e);
+			LOG.error(SQL_ERROR, e);
 		} finally {
 			if(pstmt != null)
-				try { pstmt.close(); } catch(SQLException e) { LOG.trace(SQL_ERROR, e); }
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
 	}
 	
@@ -660,8 +658,7 @@ final class DataStore {
 			jobj = new JSONObject(jsonEnc);
 			return new SmtpSettings(jobj.getString("host"), jobj.getInt("port"), jobj.getString("user"), jobj.getString("pwd"), jobj.getString("from"), jobj.getBoolean("ssl"));
 		} catch(JSONException e) {
-			LOG.trace("JSON error", e);
-			LOG.error(e);
+			LOG.error("JSON error", e);
 			return null;
 		}
 	}
@@ -681,8 +678,7 @@ final class DataStore {
 			jobj.put("ssl", settings.useSsl());
 			setSetting(SMTP_SETTINGS, jobj.toString());
 		} catch(JSONException e) {
-			LOG.trace("JSON error", e);
-			LOG.error(e);
+			LOG.error("JSON error", e);
 		}
 	}
 }
