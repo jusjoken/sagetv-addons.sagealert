@@ -87,7 +87,7 @@ public final class AppInitializer implements ServletContextListener {
 		
 		registerCurrentHandlers();
 		launchMonitorThreads();
-
+		SageEventHandlerManager.getInstance().fire(new AppStartedEvent());
 		LOG.info("Context initialized...");
 	}
 	
