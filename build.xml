@@ -121,10 +121,19 @@
 
   <target name="dist" depends="war">
   	<touch file="SageAlert.context.xml" />
+    <loadfile srcfile="bld.stable" property="sagealert.stable" failonerror="true">
+       <filterchain>
+          <striplinebreaks/>
+       </filterchain>
+    </loadfile>
+    <exec executable="svn" failonerror="true" output="sagealert.r${revision.max}.stable.changes">
+       <arg value="log"/>
+       <arg value="-r${sagealert.stable}:${revision.max}"/>
+    </exec>
 	<zip destfile="${sagealert.ver.name}.zip">
   	   <zipfileset dir="." prefix="jetty/contexts" includes="SageAlert.context.xml" />
 	   <zipfileset dir="." prefix="jetty/webapps" includes="SageAlert.war" />
-	   <fileset dir="." includes="sagealert.log4j.properties" />
+	   <fileset dir="." includes="sagealert.log4j.properties,sagealert.r${revision.max}.stable.changes" />
   	</zip>
   	<zip destfile="${sagealert.ver.name}-javadocs.zip">
   	   <zipfileset dir="doc/server" prefix="${sagealert.ver.name}/javadocs" />
