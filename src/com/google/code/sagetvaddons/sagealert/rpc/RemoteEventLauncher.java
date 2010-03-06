@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -50,10 +50,12 @@ final public class RemoteEventLauncher {
 	 * @param url The base URL of the SageAlert server to generate the alerts on; the URL must point to a valid, active SageAlert installation and must not contain a trailing slash (i.e. http://192.168.0.1/sagealert)
 	 * @param id The HTTP user id required to connect to SageAlert; null if no id is required
 	 * @param pwd The HTTP password required to connect to SageAlert; null if no password is required
+	 * @param userAgent The value of the HTTP UserAgent header for all RPC calls to the server; default value used if null or zero-length
 	 * @throws MalformedURLException If the URL argument is invalid
 	 * @throws ApiVersionException If the client and server are not running the same RPC API version
+	 * @since 1.0.2
 	 */
-	public RemoteEventLauncher(URL url, String id, String pwd) throws MalformedURLException, ApiVersionException {
+	public RemoteEventLauncher(URL url, String id, String pwd, String userAgent) throws MalformedURLException, ApiVersionException {
 		if(!url.toString().endsWith("/sagealert"))
 			throw new MalformedURLException("SageAlert URL must end with '/sagealert' and no trailing slash!");
 		this.url = new URL(url.toString() + "/xmlrpc");
@@ -63,6 +65,8 @@ final public class RemoteEventLauncher {
 			rpcConfig.setBasicUserName(id);
 			rpcConfig.setBasicPassword(pwd != null ? pwd : "");
 		}
+		if(userAgent != null && userAgent.length() > 0)
+			rpcConfig.setUserAgent(userAgent);
 		rpcClnt = new XmlRpcClient();
 		rpcClnt.setConfig(rpcConfig);
 		
@@ -75,15 +79,27 @@ final public class RemoteEventLauncher {
 			throw new ApiVersionException("Unable to verify server RPC API version; your SageAlert server probably needs to be upgraded!");
 		}
 	}
+
+	/**
+	 * Class constructor; using default value for UserAgent header
+	 * @param url The base URL of the SageAlert server to generate the alerts on; the URL must point to a valid, active SageAlert installation and must not contain a trailing slash (i.e. http://192.168.0.1/sagealert)
+	 * @param id The HTTP user id required to connect to SageAlert; null if no id is required
+	 * @param pwd The HTTP password required to connect to SageAlert; null if no password is required
+	 * @throws MalformedURLException If the URL argument is invalid
+	 * @throws ApiVersionException If the client and server are not running the same RPC API version
+	 */
+	public RemoteEventLauncher(URL url, String id, String pwd) throws MalformedURLException, ApiVersionException {
+		this(url, id, pwd, null);
+	}
 	
 	/**
-	 * Constructor that assumes there is no id/password required to connect to the SageAlert server
+	 * Constructor that assumes there is no id/password required to connect to the SageAlert server and uses the default value for the UserAgent header
 	 * @param url The base URL of the SageAlert server with no trailing slash (i.e. http://192.168.0.1./sagealert)
 	 * @throws MalformedURLException Thrown if the given URL is invalid
 	 * @throws ApiVersionException Thrown if this client and the SageAlert server are not speaking the same RPC API version
 	 */
 	public RemoteEventLauncher(URL url) throws MalformedURLException, ApiVersionException {
-		this(url, null, null);
+		this(url, null, null, null);
 	}
 	
 	// Make the actual RPC call on the server
@@ -156,6 +172,24 @@ final public class RemoteEventLauncher {
 	 */
 	public String getPassword() {
 		return rpcConfig.getBasicPassword();
+	}
+	
+	/**
+	 * Set the UserAgent header for the RPC call
+	 * @param header The value of the HTTP UserAgent header when making all RPC calls to the server
+	 * @since 1.0.2
+	 */
+	public void setUserAgent(String header) {
+		rpcConfig.setUserAgent(header);
+	}
+
+	/**
+	 * Returns the value of the HTTP UserAgent header being used for all RPC calls to the server
+	 * @return The value of the UserAgent header
+	 * @since 1.0.2
+	 */
+	public String getUserAgent() {
+		return rpcConfig.getUserAgent();
 	}
 	
 	/**
