@@ -1,89 +1,81 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-/*
- *      Copyright 2009 Battams, Derek
- *       
- *       Licensed under the Apache License, Version 2.0 (the "License");
- *       you may not use this file except in compliance with the License.
- *       You may obtain a copy of the License at
- *
- *          http://www.apache.org/licenses/LICENSE-2.0
- *
- *       Unless required by applicable law or agreed to in writing, software
- *       distributed under the License is distributed on an "AS IS" BASIS,
- *       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *       See the License for the specific language governing permissions and
- *       limitations under the License.
- *
- *       $Id$
- */
--->
 <project name="SageAlert" default="build" basedir=".">
-  <!-- Import svn tasks -->
-  <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
+	  <!-- Import svn tasks -->
+	  <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
 
-  <property name="sagealert.ver" value="1.0.2" />
-  <property name="sagealert.ver.file" value="src/com/google/code/sagetvaddons/sagealert/client/Version.java" />
-  <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
+  <!-- Arguments to gwtc and devmode targets -->
+  <property name="gwt.args" value="" />
 
   <!-- Configure path to GWT SDK -->
-  <property name="gwt.sdk" location="C:/gwt-windows-1.7.0" />
+  <property name="gwt.sdk" location="C:/gwt-2.0.3" />
 
+  <property name="app.ver" value="2.0.0" />
+  <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
+  <property name="src.token" value="@@" />
+  <property name="bld.dir" value="bld" />
+  <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
+	
   <path id="project.class.path">
     <pathelement location="war/WEB-INF/classes"/>
     <pathelement location="${gwt.sdk}/gwt-user.jar"/>
     <fileset dir="${gwt.sdk}" includes="gwt-dev*.jar"/>
     <!-- Add any additional non-server libs (such as JUnit) -->
     <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
-  </path>
-	
-  <path id="rpc.class.path">
-	<fileset dir="libs" includes="*.jar" />
+  	<fileset dir="${sage.libs}" includes="**/*.jar"/>
+  	<pathelement location="C:/Program Files/SageTV/SageTV/Sage.jar"/>
   </path>
 
-  <target name="init_gcupload">
-    <available file="${gc.upload.settings}" property="gc.upload.enable" />
-  </target>
+	  <target name="tstamp" description="Generate current timestamp">
+	    <tstamp>
+	      <format property="app.bld.date" pattern="yyyy.MM.dd" />
+	    </tstamp>
+	    <svn javahl="true">
+	            <wcVersion path="." />
+	    </svn>
+	  </target>
+	  	
+	  <target name="rmgensrc" description="Delete generated src files">
+	  	<delete failonerror="false" verbose="true">
+	  		<fileset dir="." includes="*.plugin.xml" />
+	  		<fileset dir="src" includes="**/Version.java" />
+	  	</delete>
+	  </target>
+		
+	  <target name="gensrc" depends="tstamp,rmgensrc" description="Create generated src files">
+	  	<copy todir="." overwrite="true" verbose="true">
+	  	  <fileset dir=".">
+	  	    <include name="**/*.in"/>
+	  	  </fileset>
+	  	  <mapper type="glob" from="*.in" to="*"/>
+	  	  <filterset begintoken="${src.token}" endtoken="${src.token}">
+	  	    <filter token="VER_NUM" value="${app.ver}"/>
+	  	    <filter token="BLD_NUM" value="${revision.max-with-flags}"/>
+	  	  	<filter token="MOD_DATE" value="${app.bld.date}"/>
+	  	  </filterset>
+	    </copy> 
+	  </target>
 
-  <target name="init_svn" depends="init_gcupload" description="Set SVN revision variables">
-    <svn javahl="true">
-      <wcVersion path="." />
-    </svn>
-  	<property name="sagealert.ver.name" value="sagealert-${sagealert.ver}.${revision.max-with-flags}" />
-  	<property name="sagealert.clnt.ver.name" value="sagealert-rpc-client-${sagealert.ver}.${revision.max-with-flags}" />
-  </target>
-
-  <target name="libs" depends="init_svn" description="Copy libs to WEB-INF/lib">
+  <target name="libs" depends="gensrc" description="Copy libs to WEB-INF/lib">
     <mkdir dir="war/WEB-INF/lib" />
     <copy todir="war/WEB-INF/lib" file="${gwt.sdk}/gwt-servlet.jar" />
     <!-- Add any additional server libs that need to be copied -->
   </target>
 
-  <!-- Dynamically generate the version information into the VersionLabel widget -->
-  <target name="ver_update" depends="libs">
-    <replace file="${sagealert.ver.file}" summary="yes">
-	  <replacefilter token="@@BLD_NUM@@" value="${revision.max-with-flags}" />
-	  <replacefilter token="@@VER_NUM@@" value="${sagealert.ver}" />
-	</replace>
-  </target>
-	
   <target name="javac" depends="libs" description="Compile java source">
     <mkdir dir="war/WEB-INF/classes"/>
+  	<mkdir dir="${bld.dir}"/>
     <javac srcdir="src" includes="**" encoding="utf-8"
-        destdir="war/WEB-INF/classes"
+        destdir="${bld.dir}"
         source="1.5" target="1.5" nowarn="true"
-        debug="true" debuglevel="lines,vars,source"
-    	excludes="**/sagealert/rpc/**">
+        debug="true" debuglevel="lines,vars,source">
       <classpath refid="project.class.path"/>
     </javac>
     <copy todir="war/WEB-INF/classes">
-      <fileset dir="src" excludes="**/*.java"/>
+      <fileset dir="${bld.dir}" excludes="**/shared/*,**/*.java,**/Plugin.*"/>
     </copy>
-  	<mkdir dir="doc/server" />
-  	<javadoc sourcepath="src" destdir="doc/server" access="protected" excludepackagenames="com.google.code.sagetvaddons.sagealert.rpc.*,org.apache.xmlrpc.*" classpathref="project.class.path" />
   </target>
 
-  <target name="gwtc" depends="ver_update,javac" description="GWT compile to JavaScript">
+  <target name="gwtc" depends="javac" description="GWT compile to JavaScript">
     <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
       <classpath>
         <pathelement location="src"/>
@@ -92,15 +84,13 @@
       <!-- add jvmarg -Xss16M or similar if you see a StackOverflowError -->
       <jvmarg value="-Xmx256M"/>
       <!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
+      <arg line="${gwt.args}"/>
       <arg value="com.google.code.sagetvaddons.sagealert.SageAlert"/>
     </java>
-    <svn javahl="true">
-        <revert file="${sagealert.ver.file}" />
-    </svn>
   </target>
 
-  <target name="hosted" depends="javac" description="Run hosted mode">
-    <java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
+  <target name="devmode" depends="javac" description="Run development mode">
+    <java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode">
       <classpath>
         <pathelement location="src"/>
         <path refid="project.class.path"/>
@@ -109,9 +99,74 @@
       <arg value="-startupUrl"/>
       <arg value="SageAlert.html"/>
       <!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
+      <arg line="${gwt.args}"/>
       <arg value="com.google.code.sagetvaddons.sagealert.SageAlert"/>
     </java>
   </target>
+
+<!--
+Test targets suppressed because -junit argument was not specified when running webAppCreator.
+
+  <target name="javac.tests" depends="javac" description="Compiles test code">
+    <javac srcdir="test" includes="**" encoding="utf-8"
+      source="1.5" target="1.5" nowarn="true"
+      debug="true" debuglevel="lines,vars,source">
+      <classpath location="path_to_the_junit_jar"/>
+      <classpath refid="project.class.path"/>
+    </javac>
+  </target>
+  
+  <target name="test.dev" depends="javac.tests" description="Run development mode tests">
+    <mkdir dir="reports/htmlunit.dev" />
+    <junit fork="yes" printsummary="yes" haltonfailure="yes">
+      <jvmarg line="-Xmx256m" />
+      <sysproperty key="gwt.args" value="-standardsMode -logLevel WARN" />
+      <sysproperty key="java.awt.headless" value="true" />
+      <classpath>
+        <pathelement location="src" />
+        <pathelement location="test" />
+        <path refid="project.class.path" />
+        <pathelement location="path_to_the_junit_jar" />
+      </classpath>
+      <batchtest todir="reports/htmlunit.dev" >
+        <fileset dir="test" >
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
+      <formatter type="plain" />
+      <formatter type="xml" />
+    </junit>
+  </target>
+
+  <target name="test.prod" depends="javac.tests" description="Run production mode tests">
+    <mkdir dir="reports/htmlunit.prod" />
+    <junit fork="yes" printsummary="yes" haltonfailure="yes">
+      <jvmarg line="-Xmx256m" />
+      <sysproperty key="gwt.args" value="-prod -standardsMode -logLevel WARN -standardsMode -out www-test" />
+      <sysproperty key="java.awt.headless" value="true" />
+      <classpath>
+        <pathelement location="src" />
+        <pathelement location="test" />
+        <path refid="project.class.path" />
+        <pathelement location="path_to_the_junit_jar" />
+      </classpath>
+      <batchtest todir="reports/htmlunit.prod" >
+        <fileset dir="test" >
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
+      <formatter type="plain" />
+      <formatter type="xml" />
+    </junit>
+  </target>
+
+  <target name="test" description="Run development and production mode tests">
+    <antcall target="test.dev" />
+    <antcall target="test.prod" />
+  </target>
+-->
+
+  <target name="hosted" depends="devmode" description="Run development mode (NOTE: the 'hosted' target is deprecated)" />
 
   <target name="build" depends="gwtc" description="Build this project" />
 
@@ -119,71 +174,52 @@
     <zip destfile="SageAlert.war" basedir="war"/>
   </target>
 
-  <target name="dist" depends="war">
-  	<touch file="SageAlert.context.xml" />
-    <loadfile srcfile="bld.stable" property="sagealert.stable" failonerror="true">
-       <filterchain>
-          <striplinebreaks/>
-       </filterchain>
-    </loadfile>
-    <exec executable="svn" failonerror="true" output="sagealert.r${revision.max}.stable.changes">
-       <arg value="log"/>
-       <arg value="-r${sagealert.stable}:${revision.max}"/>
-    </exec>
-	<zip destfile="${sagealert.ver.name}.zip">
-  	   <zipfileset dir="." prefix="jetty/contexts" includes="SageAlert.context.xml" />
-	   <zipfileset dir="." prefix="jetty/webapps" includes="SageAlert.war" />
-	   <fileset dir="." includes="sagealert.log4j.properties,sagealert.r${revision.max}.stable.changes" />
-  	</zip>
-  	<zip destfile="${sagealert.ver.name}-javadocs.zip">
-  	   <zipfileset dir="doc/server" prefix="${sagealert.ver.name}/javadocs" />
-  	</zip>
+  <target name="jars" depends="war">
+	<jar destfile="sagealert-common.jar" basedir="${bld.dir}" includes="**/shared/*" filesonly="true" />
+  	<jar destfile="sagealert.jar" basedir="${bld.dir}" includes="**/Plugin.class" filesonly="true" />
+  </target>
+	
+  <target name="app_plugin" depends="common_plugin">
+  	<delete dir="app_plugin" failonerror="false" />
+  	<property name="app_base" value="app_plugin/plugins/sagealert" />
+    <mkdir dir="${app_base}" />
+  	<filelist id="bins" dir="." files="sagealert.jar,SageAlert.war,SageAlert.context.xml,sagealert.log4j.properties" />
+  	<copy todir="${app_base}">
+  	  <filelist refid="bins" />
+  	</copy>
+  	<zip destfile="sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="sagealert.jar" />
+  	<checksum file="sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" property="bin.jar.md5" />
+  	<replace file="app.plugin.xml" token="@@JAR_MD5@@" value="${bin.jar.md5}" />
+  	<zip destfile="sagealert-web-${app.ver}.${revision.max-with-flags}.zip" basedir="app_plugin" excludes="**/*.properties" />
+  	<checksum file="sagealert-web-${app.ver}.${revision.max-with-flags}.zip" property="bin.web.md5" />
+  	<replace file="app.plugin.xml" token="@@WEB_MD5@@" value="${bin.web.md5}" />
+  	<zip destfile="sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" basedir="app_plugin" includes="**/*.properties" />
+  	<checksum file="sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" property="bin.conf.md5" />
+  	<replace file="app.plugin.xml" token="@@CONF_MD5@@" value="${bin.conf.md5}" />
+  </target>
+	
+  <target name="common_plugin" depends="jars">
+  	<delete dir="common_plugin" failonerror="false" />
+  	<property name="common_base" value="common_plugin" />
+    <mkdir dir="${common_base}" />
+  	<filelist id="bins" dir="." files="sagealert-common.jar" />
+  	<copy todir="${common_base}">
+  	  <filelist refid="bins" />
+  	</copy>
+  	<zip destfile="sagealert-common-${app.ver}.${revision.max-with-flags}.zip" basedir="${common_base}" includes="sagealert-common.jar" />
+  	<checksum file="sagealert-common-${app.ver}.${revision.max-with-flags}.zip" property="bin.common.md5" />
+  	<replace file="common.plugin.xml" token="@@COMMON_MD5@@" value="${bin.common.md5}" />
   </target>
 
-  <target name="gcode" depends="dist,rpc_clnt" description="Upload build to Google Code">
-	<fail message="${gc.upload.settings} file does not exist!" unless="gc.upload.enable" />
-	<property file="${gc.upload.settings}" />
-    <fail message="gc.username must be defined in ${gc.upload.settings}" unless="gc.username" />
-    <fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
-  	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
-  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.ver.name}.zip" targetfilename="${sagealert.ver.name}.zip" summary="SageAlert snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
-  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.clnt.ver.name}.zip" targetfilename="${sagealert.clnt.ver.name}.zip" summary="SageAlert RPC client snapshot build" labels="QA-Snapshot,Type-Archive,OpSys-All" />
-  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.ver.name}-javadocs.zip" targetfilename="${sagealert.ver.name}-javadocs.zip" summary="SageAlert server javadocs" labels="QA-Snapshot,Type-Docs" />
-  	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="${sagealert.clnt.ver.name}-javadocs.zip" targetfilename="${sagealert.clnt.ver.name}-javadocs.zip" summary="SageAlert RPC client javadocs" labels="QA-Snapshot,Type-Docs" />
-  </target>
-	
-  <target name="rpc_clnt" depends="init_svn" description="Build the RPC client package">
-  	<mkdir dir="rpcbin" />
-    <javac srcdir="src" includes="**/sagealert/rpc/**" excludes="**/Test*.java" encoding="utf-8"
-        destdir="rpcbin/"
-        source="1.5" target="1.5" nowarn="true"
-        debug="true" debuglevel="lines,vars,source">
-      <classpath refid="project.class.path"/>
-      <classpath refid="rpc.class.path" />
-    </javac>
-  	<jar destfile="sagealert-rpc-client.jar" basedir="rpcbin" />
-  	<mkdir dir="doc/client" />
-  	<javadoc sourcepath="src" destdir="doc/client" classpath="libs/xmlrpc-client-3.1.2.jar" classpathref="project.class.path" access="protected" packagenames="com.google.code.sagetvaddons.sagealert.rpc.*" Overview="clnt_pkg_overview.html" failonerror="true" /> 
-  	<zip destfile="${sagealert.clnt.ver.name}.zip">
-  	   <zipfileset dir="." prefix="${sagealert.clnt.ver.name}/jars" includes="sagealert-rpc-client.jar" />
-  	   <zipfileset dir="libs" prefix="${sagealert.clnt.ver.name}/jars" includes="*.jar" />
-  	   <zipfileset dir="war/WEB-INF/lib" prefix="${sagealert.clnt.ver.name}/jars" includes="ws-commons-util-1.0.2.jar,commons-logging-1.1.jar,xmlrpc-common-3.1.2.jar,xmlrpc-client-3.1.2.jar" />
-  	</zip>
-  	<zip destfile="${sagealert.clnt.ver.name}-javadocs.zip">
-  	   <zipfileset dir="doc/client" prefix="${sagealert.clnt.ver.name}/javadocs" />
-  	</zip>
-  </target>
-	
-  <target name="clean" description="Cleans this project">
+  <target name="clean" depends="rmgensrc" description="Cleans this project">
     <delete dir="war/WEB-INF/classes" failonerror="false" />
     <delete dir="war/sagealert" failonerror="false" />
-  	<delete dir="rpcbin" failonerror="false" />
-  	<delete dir="doc" failonerror="false" />
-    <delete failonerror="false">
-      <fileset dir="." includes="SageAlert.war,sagealert*.zip,sagealert-rpc*.jar" />
+  	<delete dir="${bld.dir}" failonerror="false" />
+  	<delete dir="common_plugin" failonerror="false" />
+  	<delete dir="app_plugin" failonerror="false" />
+  	<delete failonerror="false">
+  	  <fileset dir="." includes="sagealert-*.zip,SageAlert.war,sagealert.jar,sagealert-common.jar" />
     </delete>
-    <svn javahl="true">
-        <revert file="${sagealert.ver.file}" />
-    </svn>
   </target>
+
 </project>

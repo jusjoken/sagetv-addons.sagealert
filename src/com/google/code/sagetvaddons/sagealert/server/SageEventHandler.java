@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
-import com.google.code.sagetvaddons.sagealert.client.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
 /**
  * All event handlers must implement this interface.
@@ -27,7 +28,7 @@ public interface SageEventHandler {
 	 * Called when an event is fired to a handler
 	 * @param e The event being fired
 	 */
-	public void onEvent(SageEvent e);
+	public void onEvent(SageAlertEvent e);
 	
 	/**
 	 * Return the settings object used to initialize the handler

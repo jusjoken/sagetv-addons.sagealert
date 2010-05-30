@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
-import com.google.code.sagetvaddons.sagealert.client.SettingsService;
-import com.google.code.sagetvaddons.sagealert.client.SmtpSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
+import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -30,7 +30,6 @@ public final class SettingsServiceImpl extends RemoteServiceServlet implements S
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.client.SettingsService#getSetting(java.lang.String, java.lang.String)
 	 */
-	@Override
 	public String getSetting(String var, String defaultVal) {
 		return DataStore.getInstance().getSetting(var, defaultVal);
 	}
@@ -38,17 +37,14 @@ public final class SettingsServiceImpl extends RemoteServiceServlet implements S
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.client.SettingsService#setSetting(java.lang.String, java.lang.String)
 	 */
-	@Override
 	public void setSetting(String var, String val) {
 		DataStore.getInstance().setSetting(var, val);
 	}
 
-	@Override
 	public SmtpSettings getSmtpSettings() {
 		return DataStore.getInstance().getSmtpSettings();
 	}
 
-	@Override
 	public void saveSmtpSettings(SmtpSettings settings) {
 		DataStore.getInstance().saveSmtpSettings(settings);
 	}

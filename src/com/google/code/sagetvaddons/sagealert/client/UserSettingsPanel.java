@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 package com.google.code.sagetvaddons.sagealert.client;
 
-import com.google.code.gwtsrwc.client.ValidatedIntegerTextBox;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsServiceAsync;
+import com.google.code.sagetvaddons.sagealert.shared.UserSettings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,8 +41,8 @@ final class UserSettingsPanel extends VerticalPanel {
 	
 	private FlexTable tbl;
 	private HorizontalPanel toolbar;
-	private ValidatedMinutesTextBox recMonSleep, uiMonSleep, conflictMonSleep, conflictReportDelay, sysMsgMonSleep, lowSpaceMonSleep, viewingClntMonSleep;
-	private ValidatedIntegerTextBox lowSpaceThreshold;
+	private TextBox recMonSleep, uiMonSleep, conflictMonSleep, conflictReportDelay, sysMsgMonSleep, lowSpaceMonSleep, viewingClntMonSleep;
+	private TextBox lowSpaceThreshold;
 	private TextBox timeShort, timeMed, timeLong;
 	private SettingsServiceAsync rpc;
 	
@@ -49,14 +51,14 @@ final class UserSettingsPanel extends VerticalPanel {
 		tbl = new FlexTable();
 		toolbar = new HorizontalPanel();
 		
-		recMonSleep = new ValidatedMinutesTextBox(1, 15);
-		uiMonSleep = new ValidatedMinutesTextBox(1, 120);
-		conflictMonSleep = new ValidatedMinutesTextBox(1, 120);
-		conflictReportDelay = new ValidatedMinutesTextBox(0, 720);
-		sysMsgMonSleep = new ValidatedMinutesTextBox(1, 5);
-		lowSpaceMonSleep = new ValidatedMinutesTextBox(1, 120);
-		lowSpaceThreshold = new ValidatedIntegerTextBox(0, 1024);
-		viewingClntMonSleep = new ValidatedMinutesTextBox(1, 15);
+		recMonSleep = new TextBox();
+		uiMonSleep = new TextBox();
+		conflictMonSleep = new TextBox();
+		conflictReportDelay = new TextBox();
+		sysMsgMonSleep = new TextBox();
+		lowSpaceMonSleep = new TextBox();
+		lowSpaceThreshold = new TextBox();
+		viewingClntMonSleep = new TextBox();
 		timeShort = new TextBox();
 		timeMed = new TextBox();
 		timeLong = new TextBox();
@@ -112,7 +114,6 @@ final class UserSettingsPanel extends VerticalPanel {
 		
 		Button saveBtn = new Button("Save");
 		saveBtn.addClickHandler(new ClickHandler() {
-			@Override
 			public void onClick(ClickEvent event) {
 				checkValidity();
 			}
@@ -121,7 +122,6 @@ final class UserSettingsPanel extends VerticalPanel {
 		
 		Button resetBtn = new Button("Reset");
 		resetBtn.addClickHandler(new ClickHandler(){
-			@Override
 			public void onClick(ClickEvent event) {
 				reloadValues();
 			}
@@ -134,12 +134,10 @@ final class UserSettingsPanel extends VerticalPanel {
 	
 	private void setInputValue(final TextBox box, String var, String defaultVal) {
 		rpc.getSetting(var, defaultVal, new AsyncCallback<String>() {
-			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert(caught.getLocalizedMessage());
 			}
 
-			@Override
 			public void onSuccess(String result) {
 				box.setValue(result);
 			}
@@ -147,23 +145,23 @@ final class UserSettingsPanel extends VerticalPanel {
 	}
 	
 	private void checkValidity() {
-		if(!recMonSleep.isValueValid())
-			recMonSleep.setFocus(true);
-		else if(!uiMonSleep.isValueValid())
-			uiMonSleep.setFocus(true);
-		else if(!conflictMonSleep.isValueValid())
-			conflictMonSleep.setFocus(true);
-		else if(!sysMsgMonSleep.isValueValid())
-			sysMsgMonSleep.setFocus(true);
-		else if(!lowSpaceMonSleep.isValueValid())
-			lowSpaceMonSleep.setFocus(true);
-		else if(!lowSpaceThreshold.isValueValid())
-			lowSpaceThreshold.setFocus(true);
-		else if(!conflictReportDelay.isValueValid())
-			conflictReportDelay.setFocus(true);
-		else if(!viewingClntMonSleep.isValueValid())
-			viewingClntMonSleep.setFocus(true);
-		else {
+//		if(!recMonSleep.isValueValid())
+//			recMonSleep.setFocus(true);
+//		else if(!uiMonSleep.isValueValid())
+//			uiMonSleep.setFocus(true);
+//		else if(!conflictMonSleep.isValueValid())
+//			conflictMonSleep.setFocus(true);
+//		else if(!sysMsgMonSleep.isValueValid())
+//			sysMsgMonSleep.setFocus(true);
+//		else if(!lowSpaceMonSleep.isValueValid())
+//			lowSpaceMonSleep.setFocus(true);
+//		else if(!lowSpaceThreshold.isValueValid())
+//			lowSpaceThreshold.setFocus(true);
+//		else if(!conflictReportDelay.isValueValid())
+//			conflictReportDelay.setFocus(true);
+//		else if(!viewingClntMonSleep.isValueValid())
+//			viewingClntMonSleep.setFocus(true);
+//		else {
 			saveSetting(recMonSleep.getName(), recMonSleep.getValue());
 			saveSetting(uiMonSleep.getName(), uiMonSleep.getValue());
 			saveSetting(conflictMonSleep.getName(), conflictMonSleep.getValue());
@@ -175,18 +173,15 @@ final class UserSettingsPanel extends VerticalPanel {
 			saveSetting(timeShort.getName(), timeShort.getValue());
 			saveSetting(timeMed.getName(), timeMed.getValue());
 			saveSetting(timeLong.getName(), timeLong.getValue());
-		}
+//		}
 	}
 	
 	private void saveSetting(String var, String val) {
 		rpc.setSetting(var, val, new AsyncCallback<Void>() {
-
-			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert(caught.getLocalizedMessage());
 			}
 
-			@Override
 			public void onSuccess(Void result) {
 				
 			}			

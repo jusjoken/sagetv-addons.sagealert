@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -16,146 +16,156 @@
 package com.google.code.sagetvaddons.sagealert.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BaseListLoader;
+import com.extjs.gxt.ui.client.data.BeanModel;
+import com.extjs.gxt.ui.client.data.BeanModelReader;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoader;
+import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.Record;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CellEditor;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
+import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
+import com.extjs.gxt.ui.client.widget.grid.ColumnData;
+import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
+import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
+import com.extjs.gxt.ui.client.widget.grid.Grid;
+import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.google.code.sagetvaddons.sagealert.shared.Client;
+import com.google.code.sagetvaddons.sagealert.shared.ClientService;
+import com.google.code.sagetvaddons.sagealert.shared.ClientServiceAsync;
+import com.google.code.sagetvaddons.sagealert.shared.Client.EventType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+
 
 /**
  * A GUI widget for modifying client alias and notification settings
  * @author dbattams
  * @version $Id$
  */
-final class ClientSettingsPanel extends VerticalPanel {
+final class ClientSettingsPanel extends ContentPanel {
 	static private final ClientSettingsPanel INSTANCE = new ClientSettingsPanel();
 	static final ClientSettingsPanel getInstance() { return INSTANCE; }
 	
-	private FlexTable tbl;	
+	private ClientServiceAsync rpc;
+	private RpcProxy<List<Client>> proxy;
+	private BeanModelReader reader;
+	ListLoader<ListLoadResult<Client>> loader;
+	private ListStore<BeanModel> store;
+	private List<ColumnConfig> cols;
+	private Grid<BeanModel> grid;	
+	
+	private GridCellRenderer<BeanModel> btnRenderer;
 	
 	/**
 	 * Constructor
 	 */
-	ClientSettingsPanel() {
-		setSize("100%", "100%");
+	private ClientSettingsPanel() {
+		setLayout(new FitLayout());
 		
-		tbl = new FlexTable();
-		tbl.setText(0, 0, "Client ID");
-		tbl.setText(0, 1, "Alias");
-		tbl.setText(0, 2, "Enable Viewing Notifications?");
-		
-		
-		Button save = new Button("Save Alias Changes");
-		save.addClickHandler(new ClickHandler(){
-			@Override
-			public void onClick(ClickEvent event) {
-				final Collection<Client> saved = new ArrayList<Client>();
-				for(int i = 1; i < tbl.getRowCount(); ++i) {
-					String id = ((TextBox)tbl.getWidget(i, 0)).getValue();
-					if(id.length() > 0)
-						saved.add(new Client(id, ((TextBox)tbl.getWidget(i, 1)).getValue(), ((CheckBox)tbl.getWidget(i, 2)).getValue()));
-				}
-				saveClients(saved);
-			}
-		});
-		
-		Button reset = new Button("Cancel");
-		reset.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				loadClients();
-			}
-		});
-		
-		loadClients();
-		
-		add(new Label("SageAlert cannot send viewing notifications for remote PC clients (those listed by IP address here), regardless if the checkbox is checked or not."));
-		add(new Label("Clients/extenders/placeshifters are added to this table the first time they connect to this instance of SageAlert (click the tab or cancel button to force refresh of tab)."));
-		add(tbl);
-		
-		HorizontalPanel toolbar = new HorizontalPanel();
-		toolbar.setSpacing(5);
-		toolbar.add(save);
-		toolbar.add(reset);
-		setSpacing(8);
-		add(toolbar);
-	}
-	
-	private void saveClients(final Collection<Client> clients) {
-		ClientServiceAsync rpc = GWT.create(ClientService.class);
-		for(Client c : clients)
-			rpc.saveClient(c, new AsyncCallback<Void>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert(caught.getLocalizedMessage());
-				}
+		btnRenderer = new GridCellRenderer<BeanModel>() {
 
-				@Override
-				public void onSuccess(Void result) {
+			public Object render(final BeanModel model, String property, final ColumnData config, int rowIndex, int colIndex, ListStore<BeanModel> store, Grid<BeanModel> grid) {
+				Button btn = new Button("Edit", new SelectionListener<ButtonEvent>() {
+
+					@Override
+					public void componentSelected(ButtonEvent ce) {
+						EventType type;
+						if(config.id.equals("notifyOnStart"))
+							type = EventType.STARTS;
+						else
+							type = EventType.STOPS;
+						ClientReporterConfigWindow w = new ClientReporterConfigWindow((Client)model.getBean(), type);
+						w.show();
+						w.center();
+					}
 					
-				}
-			});
-		DeferredCommand.addCommand(new Command() {
-			@Override
-			public void execute() {
-				if(clients.size() > 0)
-					loadClients();
+				});
+				return btn;
 			}
-		});
-	}
-	
-	private void loadClients() {
-		ClientServiceAsync rpc = GWT.create(ClientService.class);
-		rpc.getClients(new AsyncCallback<Collection<Client>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getLocalizedMessage());
-			}
+			
+		};
+		rpc = GWT.create(ClientService.class);
+		proxy = new RpcProxy<List<Client>>() {
 
 			@Override
-			public void onSuccess(Collection<Client> result) {
-				while(tbl.getRowCount() > 1)
-					tbl.removeRow(1);
-				
-				for(Client c : result)
-					addRow(c.getId(), c.getAlias(), c.doNotify());
+			protected void load(Object loadConfig, AsyncCallback<List<Client>> callback) {
+				rpc.getClients(callback);
 			}
+			
+		};
+		reader = new BeanModelReader();
+		loader = new BaseListLoader<ListLoadResult<Client>>(proxy, reader);
+		store = new ListStore<BeanModel>(loader);
+		loader.load();
+		cols = new ArrayList<ColumnConfig>();
+		cols.add(new ColumnConfig("id", "UI Context", 200));
+		
+		ColumnConfig cfg = new ColumnConfig("alias", "Alias", 120);
+		cfg.setEditor(new CellEditor(new TextField<String>()));
+		cols.add(cfg);
+	
+		cfg = new CheckColumnConfig("notifyOnStart", "Start", 50);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+		
+		cfg = new CheckColumnConfig("notifyOnStop", "Stop", 50);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+				
+		ColumnModel cm = new ColumnModel(cols);
+		grid = new EditorGrid<BeanModel>(store, cm);
+		grid.setLazyRowRender(0);
+		grid.setSize(620, 285);
+		add(grid);
+		
+		ToolBar btns = new ToolBar();
+		Button save = new Button("Save");
+		save.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				List<Client> clnts = new ArrayList<Client>();
+				for(Record r : store.getModifiedRecords())
+					clnts.add((Client)((BeanModel)r.getModel()).getBean());
+				rpc.saveClients(clnts, new AsyncCallback<Void>() {
+
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERROR", caught.getLocalizedMessage(), null);
+					}
+
+					public void onSuccess(Void result) {
+						store.commitChanges();
+						MessageBox.alert("Completed", "Clients updated on the server successfully!", null);
+					}
+					
+				});
+			}
+			
 		});
-	}
-	
-	/**
-	 * Reload the registered clients on the panel
-	 */
-	public void refresh() {
-		loadClients();
-	}
-	
-	private void addRow(String idVal, String aliasVal, boolean doNotify) {
-		int newRow = tbl.insertRow(tbl.getRowCount());
-		
-		TextBox id = new TextBox();
-		id.setValue(idVal);
-		if(idVal != null && idVal.length() > 0)
-			id.setEnabled(false);
-		
-		TextBox alias = new TextBox();
-		alias.setValue(aliasVal);
-		
-		tbl.setWidget(newRow, 0, id);
-		tbl.setWidget(newRow, 1, alias);
-		CheckBox box = new CheckBox();
-		box.setValue(doNotify, false);
-		tbl.setWidget(newRow, 2, box);
-	}
+		Button cancel = new Button("Cancel");
+		cancel.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				store.rejectChanges();
+			}
+			
+		});
+		btns.add(save);
+		btns.add(cancel);
+		setBottomComponent(btns);
+	}	
 }

@@ -1,0 +1,91 @@
+<SageTVPlugin>
+       <Name>SageAlert</Name>
+       <Identifier>sagealert</Identifier>
+       <Description>
+SageAlert listens for important/interesting SageTV events and will send notifications of those events to various notification platforms.
+ 
+Currently, SageAlert supports sending notifications to the following server types:
+ 
+* Email
+* Twitter
+* Growl
+ 
+Simply load the web GUI for SageAlert and configure the various events by telling SageAlert which notifications to send for each supported event type.  Then when those events are received by SageAlert, you will receive the notification(s) as configured.
+ 
+Typical uses of SageAlert include:
+ 
+* Post tweets of interesting events to a Twitter account for your HTPC.  Your SageTV server can tweet what it's recording, when clients connect/disconnect, when users are watching tv (and what they're watching, etc.).
+ 
+* Receive an email any time someone connects to the SageTV server.
+ 
+* Receive an email any time a system message is posted by SageTV.  This is an excellent way to receive instant alerts of possible problems with your SageTV server.
+ 
+* If your cell phone provider has an email to SMS gateway (most do these days) then you can receive text messages about system messages, connected users, etc.
+ 
+At this time, all configuration of SageAlert is done via the web GUI, which is installed at the /sagealert/ context in your Jetty plugin.  A future version of SageAlert may introduce some configuration options into the STV.
+ 
+Other plugins can also register and fire events to SageAlert, which can then be configured for notification.  (NOTE: This feature is currently not implemented.)
+       </Description>
+       <Author>Slugger</Author>
+       <CreationDate>2010.05.29</CreationDate>
+       <ModificationDate>@@MOD_DATE@@</ModificationDate>
+       <Version beta="true">@@VER_NUM@@.@@BLD_NUM@@</Version>
+       <ResourcePath>plugins/sagealert</ResourcePath>
+       <Webpage>http://sagetv-addons.googlecode.com</Webpage>
+       <PluginType>Standard</PluginType>
+       <Dependency>
+       	<JVM/>
+       	<MinVersion>1.5.0</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Core/>
+       	<MinVersion>7.0.9</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Plugin>log4j</Plugin>
+       	<MinVersion>1.2.15</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Plugin>json</Plugin>
+       	<MinVersion>1.0</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Plugin>GKusnickToolsLib</Plugin>
+       	<MinVersion>0.8.2</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Plugin>javamail</Plugin>
+       	<MinVersion>1.4.3</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Plugin>libgrowl</Plugin>
+       	<MinVersion>0.1.1.1</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Plugin>twitter4j</Plugin>
+       	<MinVersion>2.1.2</MinVersion>
+       </Dependency>
+       <Dependency>
+       	<Plugin>commons-io</Plugin>
+       	<MinVersion>1.4</MinVersion>
+       </Dependency>
+       <Package>
+               <PackageType>JAR</PackageType>
+               <Location>http://sagetv-addons.googlecode.com/files/sagealert-jar-@@VER_NUM@@.@@BLD_NUM@@.zip</Location>
+               <MD5>@@JAR_MD5@@</MD5>
+               <Overwrite>true</Overwrite> <!-- Defaults to true -->
+       </Package>
+       <Package>
+               <PackageType>System</PackageType>
+               <Location>http://sagetv-addons.googlecode.com/files/sagealert-web-@@VER_NUM@@.@@BLD_NUM@@.zip</Location>
+               <MD5>@@WEB_MD5@@</MD5>
+               <Overwrite>true</Overwrite> <!-- Defaults to true -->
+       </Package>
+       <Package>
+               <PackageType>System</PackageType>
+               <Location>http://sagetv-addons.googlecode.com/files/sagealert-conf-@@VER_NUM@@.@@BLD_NUM@@.zip</Location>
+               <MD5>@@CONF_MD5@@</MD5>
+               <Overwrite>false</Overwrite> <!-- Defaults to true -->
+       </Package>
+       <ImplementationClass>com.google.code.sagetvaddons.sagealert.server.Plugin</ImplementationClass>
+</SageTVPlugin>

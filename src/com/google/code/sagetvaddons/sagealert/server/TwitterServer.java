@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -24,8 +24,13 @@ import org.apache.log4j.Logger;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.http.AccessToken;
 
-import com.google.code.sagetvaddons.sagealert.client.TwitterSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.TwitterSettings;
 
 /**
  * An event handler that notifies Twitter
@@ -36,7 +41,16 @@ final class TwitterServer implements SageEventHandler {
 	static private final Map<TwitterSettings, TwitterServer> SERVERS = new HashMap<TwitterSettings, TwitterServer>();
 	static private final Logger LOG = Logger.getLogger(TwitterServer.class);
 	static private final String TWEET_HASH = " #SageAlert";
-	static private final int MAX_MSG_LENGTH = 129; // Twiiter is 140 subtract the TWEET_HASH
+	static private final int MAX_MSG_LENGTH = 140 - TWEET_HASH.length(); // Twiiter is 140 subtract the TWEET_HASH
+	static final String C_KEY = "kZn7jCpged0emxGqWdg";
+	static final String C_HUSH = "unmEgRvFyO3LYqMTxVSaMada8k6QWkI7wqEuE6GOqE";
+	static private final Configuration TWIT_CONF = new ConfigurationBuilder()
+		.setHttpReadTimeout(5000)
+		.setHttpRetryCount(3)
+		.setOAuthConsumerKey(C_KEY)
+		.setOAuthConsumerSecret(C_HUSH)
+		.build();
+	static private final TwitterFactory TWIT_FACTORY = new TwitterFactory(TWIT_CONF);
 	
 	/**
 	 * Get the Twitter server for the given Twitter settings
@@ -84,17 +98,20 @@ final class TwitterServer implements SageEventHandler {
 	synchronized static public final void removeServer(TwitterServer server) {
 		SERVERS.remove(server);
 	}
-		
+			
 	private TwitterSettings settings;
 	private Twitter twitter;
 	
 	protected TwitterServer(TwitterSettings settings) {
 		this.settings = settings;
-		twitter = new Twitter(settings.getId(), settings.getPwd());
-		twitter.setSource("SageAlert");
+		twitter = TWIT_FACTORY.getOAuthAuthorizedInstance(new AccessToken(settings.getToken(), settings.getSecret()));
+		try {
+			settings.setAlias(twitter.getScreenName());
+		} catch(TwitterException e) {
+			LOG.error("Twitter error", e);
+		}
 	}
 
-	@Override
 	public TwitterSettings getSettings() {
 		return settings;
 	}
@@ -106,21 +123,25 @@ final class TwitterServer implements SageEventHandler {
 	@Override
 	public String toString() { return settings.toString(); }
 
-	@Override
-	public void onEvent(SageEvent e) {
-		String msg;
+	public void onEvent(final SageAlertEvent e) {
+		final StringBuffer msg = new StringBuffer();
 		if(e.getMediumDescription().length() <= MAX_MSG_LENGTH)
-			msg = e.getMediumDescription() + TWEET_HASH;
+			msg.append(e.getMediumDescription() + TWEET_HASH);
 		else {
-			msg = e.getMediumDescription().substring(0, MAX_MSG_LENGTH - 3);
-			msg = msg.concat("..." + TWEET_HASH);
+			msg.append(e.getMediumDescription().substring(0, MAX_MSG_LENGTH - 3));
+			msg.append("..." + TWEET_HASH);
 		}
 		
-		try {
-			twitter.updateStatus(msg);
-			LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
-		} catch(TwitterException x) {
-			LOG.error("Twitter exception", x);
-		}		
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					twitter.updateStatus(msg.toString());
+					LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
+				} catch(TwitterException x) {
+					LOG.error("Twitter exception", x);
+				}		
+			}
+		}.start();
 	}
 }

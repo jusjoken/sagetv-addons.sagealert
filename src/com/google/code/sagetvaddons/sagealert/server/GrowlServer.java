@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import net.sf.libgrowl.NotificationType;
 
 import org.apache.log4j.Logger;
 
-import com.google.code.sagetvaddons.sagealert.client.GrowlServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.GrowlServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
 /**
  * An event handler that notifies a Growl server
@@ -132,8 +133,7 @@ final class GrowlServer implements SageEventHandler {
 		return isRegistered;
 	}
 		
-	@Override
-	public GrowlServerSettings getSettings() {
+	synchronized public GrowlServerSettings getSettings() {
 		return settings;
 	}
 
@@ -141,45 +141,51 @@ final class GrowlServer implements SageEventHandler {
 	 * Replace the settings used to connect to the server
 	 * @param settings The new settings to be used to connect to this server
 	 */
-	public void updateSettings(GrowlServerSettings settings) {
+	synchronized public void updateSettings(GrowlServerSettings settings) {
 		this.settings = settings;
 	}
 	
 	@Override
 	public String toString() { return settings.toString(); }
 
-	@Override
-	public void onEvent(SageEvent e) {
-		Notification msg = new Notification(GROWL_APP, NOTIFICATION_TYPES[getNotificationType(e)], e.getSubject(), e.getLongDescription());
-		if((isRegistered || register()) && gConn.notify(msg) == IResponse.OK)
-			LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
-		else
-			LOG.error("'" + e.getSubject() + "' notification FAILED to '" + settings + "'");
+	public void onEvent(final SageAlertEvent e) {
+		new Thread() {
+			@Override
+			public void run() {
+				synchronized(GrowlServer.this) {
+					Notification msg = new Notification(GROWL_APP, NOTIFICATION_TYPES[getNotificationType(e)], e.getSubject(), e.getLongDescription());
+					if((isRegistered || register()) && gConn.notify(msg) == IResponse.OK)
+						LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
+					else
+						LOG.error("'" + e.getSubject() + "' notification FAILED to '" + settings + "'");
+				}
+			}
+		}.start();
 	}
 
-	private int getNotificationType(SageEvent e) {
-		if(e instanceof SystemMessageEvent)
-			return 1;
-		if(e instanceof LowSpaceEvent)
-			return 2;
-		if(e instanceof RecordingConflictEvent)
-			return 3;
-		if(e instanceof RecordingStartedEvent)
-			return 4;
-		if(e instanceof RecordingFinishedEvent)
-			return 5;
-		if(e instanceof UiConnectedEvent)
-			return 6;
-		if(e instanceof UiDisconnectedEvent)
-			return 7;
-		if(e instanceof PlayingMediaEvent)
-			return 8;
-		if(e instanceof RemoteInfoEvent)
-			return 9;
-		if(e instanceof RemoteWarningEvent)
-			return 10;
-		if(e instanceof RemoteErrorEvent)
-			return 11;
+	private int getNotificationType(SageAlertEvent e) {
+//		if(e instanceof SystemMessageEvent)
+//			return 1;
+//		if(e instanceof LowSpaceEvent)
+//			return 2;
+//		if(e instanceof RecordingConflictEvent)
+//			return 3;
+//		if(e instanceof RecordingStartedEvent)
+//			return 4;
+//		if(e instanceof RecordingFinishedEvent)
+//			return 5;
+//		if(e instanceof UiConnectedEvent)
+//			return 6;
+//		if(e instanceof UiDisconnectedEvent)
+//			return 7;
+//		if(e instanceof PlayingMediaEvent)
+//			return 8;
+//		if(e instanceof RemoteInfoEvent)
+//			return 9;
+//		if(e instanceof RemoteWarningEvent)
+//			return 10;
+//		if(e instanceof RemoteErrorEvent)
+//			return 11;
 		return 0; // Unknown event; someone probably added a new event and didn't map it here
 	}
 }

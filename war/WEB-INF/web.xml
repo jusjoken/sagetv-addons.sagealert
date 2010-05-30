@@ -5,7 +5,7 @@
 
 <!--
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -70,15 +70,14 @@
     <url-pattern>/sagealert/SettingsService</url-pattern>
   </servlet-mapping>
 
-  <!-- Apache XML-RPC config -->
-  <servlet>
-    <servlet-name>XmlRpcServlet</servlet-name>
-    <servlet-class>com.google.code.sagetvaddons.sagealert.server.XmlRpcServletWithClientIpAddr</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>XmlRpcServlet</servlet-name>
-    <url-pattern>/xmlrpc</url-pattern>
-  </servlet-mapping>
+ <servlet>
+   <servlet-name>TwitterService</servlet-name>
+   <servlet-class>com.google.code.sagetvaddons.sagealert.server.TwitterServiceImpl</servlet-class>
+ </servlet>
+ <servlet-mapping>
+   <servlet-name>TwitterService</servlet-name>
+   <url-pattern>/sagealert/TwitterService</url-pattern>
+ </servlet-mapping>
     
   <!-- Default page to serve -->
   <welcome-file-list>

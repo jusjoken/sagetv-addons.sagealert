@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -18,192 +18,67 @@ package com.google.code.sagetvaddons.sagealert.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.google.code.sagetvaddons.sagealert.shared.GrowlServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.ReporterService;
+import com.google.code.sagetvaddons.sagealert.shared.ReporterServiceAsync;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * Widget to register/configure Growl instances
  * @author dbattams
  * @version $Id$
  */
-final class GrowlSettingsPanel extends VerticalPanel {
-	static private final GrowlSettingsPanel INSTANCE = new GrowlSettingsPanel();
-	static final GrowlSettingsPanel getInstance() { return INSTANCE; }
-	
-	private FlexTable grid;
-	private HorizontalPanel btnContainer;
-	private Button saveBtn;
-	private Button addBtn;
-	
-	private List<GrowlServerSettings> deleted;
-	
-	private GrowlSettingsPanel() {
-		deleted = new ArrayList<GrowlServerSettings>();
-		grid = new FlexTable();
-		grid.setWidth("100%");
-		grid.setText(0, 0, "Host");
-		grid.setText(0, 1, "Password");
-		grid.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				HTMLTable.Cell clicked = ((HTMLTable)event.getSource()).getCellForEvent(event);
-				int row = clicked.getRowIndex();
-				String host = ((TextBox)grid.getWidget(row, 0)).getValue();
-				String pwd  = ((TextBox)grid.getWidget(row, 1)).getValue();
+final class GrowlSettingsPanel extends FormPanel {
 
-				if(clicked.getCellIndex() == 2) {
-					deleted.add(new GrowlServerSettings(host, pwd));
-					grid.removeRow(row);
-				} else if(clicked.getCellIndex() == 3 && Window.confirm("Are you sure you want to test this Growl server?")) {
-					HandlerServiceAsync rpc = GWT.create(HandlerService.class);
-					rpc.testServer(new GrowlServerSettings(host, pwd), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert(caught.getLocalizedMessage());
-						}
+	GrowlSettingsPanel() {
+		setHeading("Add Growl Server");
+		setWidth(480);
+		
+		final TextField<String> host = new TextField<String>();
+		host.setAllowBlank(false);
+		host.setFieldLabel("Host");
+		add(host);
+		
+		final TextField<String> pwd = new TextField<String>();
+		pwd.setPassword(true);
+		pwd.setFieldLabel("Password (optional)");
+		add(pwd);
+		
+		Button save = new Button("Create");
+		save.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							Window.alert("Test notification sent to Growl server; check SageAlert logs if notification not received.");
-						}
-					});
-				}
-			}
-		});
-		
-		btnContainer = new HorizontalPanel();
-		btnContainer.setSpacing(8);
-		
-		addBtn = new Button("Add Growl Server");
-		addBtn.addClickHandler(new ClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				int newRow = grid.insertRow(grid.getRowCount());
-				grid.setWidget(newRow, 0, new TextBox());
-				grid.setWidget(newRow, 1, new PasswordTextBox());
-				Label delLbl = new Label("Delete");
-				delLbl.addStyleName("sageHyperlink");
-				grid.setWidget(newRow, 2, delLbl);
-				Label tstLbl = new Label("Test");
-				tstLbl.addStyleName("sageHyperlink");
-				grid.setWidget(newRow, 3, tstLbl);
-				((TextBox)grid.getWidget(newRow, 0)).setFocus(true);
-			}
-		});
-		btnContainer.add(addBtn);
-		
-		saveBtn = new Button("Save");
-		saveBtn.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				final List<GrowlServerSettings> settings = new ArrayList<GrowlServerSettings>();
-				for(int i = 1; i < grid.getRowCount(); ++i) {
-					TextBox host = (TextBox)grid.getWidget(i, 0);
-					TextBox pwd  = (TextBox)grid.getWidget(i, 1);
-					if(host.getValue().length() > 0)
-						settings.add(new GrowlServerSettings(host.getValue(), pwd.getValue()));
-				}
+			public void componentSelected(ButtonEvent ce) {
+				if(!GrowlSettingsPanel.this.isValid())
+					return;
 				ReporterServiceAsync rpc = GWT.create(ReporterService.class);
-				if(deleted.size() > 0)
-					rpc.delete(new ArrayList<NotificationServerSettings>(deleted), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert(caught.getLocalizedMessage());
-						}
+				List<NotificationServerSettings> list = new ArrayList<NotificationServerSettings>();
+				final GrowlServerSettings s = new GrowlServerSettings(host.getValue(), pwd.getValue());
+				list.add(s);
+				rpc.save(list, new AsyncCallback<Void>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							deleted.clear();
-							rpcSave(settings);
-						}
-					});
-				else
-					rpcSave(settings);
-			}
-		});
-		btnContainer.add(saveBtn);
-		
-		Button cancel = new Button("Cancel");
-		cancel.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				deleted.clear();
-				loadGrid();
-			}
-		});
-		btnContainer.add(cancel);
-		
-		setWidth("100%");
-		add(grid);
-		add(btnContainer);
-	}
-	
-	@Override
-	public void onLoad() {
-		loadGrid();
-	}
-	
-	private void rpcSave(List<GrowlServerSettings> settings) {
-		ReporterServiceAsync rpc = GWT.create(ReporterService.class);
-		rpc.save(new ArrayList<NotificationServerSettings>(settings), new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Save failed; reloading old settings...");
-				loadGrid();
+					public void onFailure(Throwable caught) {
+						MessageBox.alert("ERROR", caught.getLocalizedMessage(), null);
+						
+					}
+
+					public void onSuccess(Void result) {
+						MessageBox.alert("Result", "Growl server added!", null);
+						MenuDataStore.get().addReporter(s, "Growl");
+					}
+					
+				});
 			}
 			
-			@Override
-			public void onSuccess(Void result) {
-				loadGrid();
-			}
-		});		
-	}
-	
-	private void loadGrid() {
-		saveBtn.setEnabled(false);
-		while(grid.getRowCount() != 1)
-			grid.removeRow(1);
-		ReporterServiceAsync rpc = GWT.create(ReporterService.class);
-		rpc.getReporters(GrowlServerSettings.class.getName(), new AsyncCallback<List<NotificationServerSettings>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getLocalizedMessage());
-			}
-
-			@Override
-			public void onSuccess(List<NotificationServerSettings> result) {
-				for(NotificationServerSettings n : result) {
-					GrowlServerSettings s = (GrowlServerSettings)n;
-					TextBox host = new TextBox();
-					host.setValue(s.getHost());
-					host.setEnabled(false);
-					PasswordTextBox pwd = new PasswordTextBox();
-					pwd.setValue(s.getPassword());
-					pwd.setEnabled(false);
-					int rowId = grid.insertRow(grid.getRowCount());
-					grid.setWidget(rowId, 0, host);
-					grid.setWidget(rowId, 1, pwd);
-					Label delLbl = new Label("Delete");
-					delLbl.addStyleName("sageHyperlink");
-					grid.setWidget(rowId, 2, delLbl);
-					Label tstLbl = new Label("Test");
-					tstLbl.addStyleName("sageHyperlink");
-					grid.setWidget(rowId, 3, tstLbl);
-				}
-				saveBtn.setEnabled(true);
-			}
-		});				
-	}
+		});
+		add(save);
+	}	
 }

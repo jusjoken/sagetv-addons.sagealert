@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/gwt-windows-1.7.0/gwt-user.jar"/>
-	<classpathentry kind="lib" path="C:/gwt-windows-1.7.0/gwt-dev-windows.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gkusnick.sagetv.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/libgrowl.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-codec-1.4.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtsrwc.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/twitter4j-2.0.9.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/json.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/mail.jar"/>
-	<classpathentry kind="lib" path="libs/xmlrpc-client-3.1.2.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/xmlrpc-common-3.1.2.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/xmlrpc-server-3.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/gwt-2.0.3/gwt-user.jar"/>
+	<classpathentry kind="lib" path="C:/gwt-2.0.3/gwt-dev.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="var" path="SAGELIB/log4j-1.2.15.jar"/>
+	<classpathentry kind="var" path="SAGELIB/json.jar"/>
+	<classpathentry kind="var" path="SAGELIB/gkusnick.sagetv.jar"/>
+	<classpathentry kind="var" path="SAGELIB/mail.jar"/>
+	<classpathentry kind="var" path="ANT_LIB"/>
+	<classpathentry kind="var" path="SAGE_HOME/Sage.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GXT_2_1_1"/>
+	<classpathentry kind="var" path="SAGELIB/libgrowl.jar"/>
+	<classpathentry kind="var" path="SAGELIB/twitter4j-core-2.1.2.jar"/>
+	<classpathentry kind="var" path="SAGELIB/commons-io-1.4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

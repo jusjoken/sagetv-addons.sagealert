@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package com.google.code.sagetvaddons.sagealert.server;
 
 import java.util.List;
 
-import com.google.code.sagetvaddons.sagealert.client.NotificationServerSettings;
-import com.google.code.sagetvaddons.sagealert.client.ReporterService;
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.ReporterService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -33,25 +33,21 @@ public final class ReporterServiceImpl extends RemoteServiceServlet implements
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.client.ReporterService#getAllReporters()
 	 */
-	@Override
 	public List<NotificationServerSettings> getAllReporters() {
 		return DataStore.getInstance().getAllReporters();
 	}
 
-	@Override
 	public void delete(List<NotificationServerSettings> settings) {
 		for(NotificationServerSettings s : settings) {
-			SageEventHandlerManager.getInstance().removeHandlerFromAllEvents(NotificationServerFactory.getInstance(s));
+			SageEventHandlerManager.get().removeHandlerFromAllEvents(NotificationServerFactory.getInstance(s));
 			DataStore.getInstance().deleteReporter(s.getClass().getCanonicalName(), s.getDataStoreKey());
 		}
 	}
 
-	@Override
 	public List<NotificationServerSettings> getReporters(String type) {
 		return DataStore.getInstance().getReporters(type);
 	}
 
-	@Override
 	public void save(List<NotificationServerSettings> settings) {
 		for(NotificationServerSettings s : settings)
 			DataStore.getInstance().saveReporter(s);

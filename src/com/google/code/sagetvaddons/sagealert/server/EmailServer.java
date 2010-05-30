@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -27,8 +27,9 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 
-import com.google.code.sagetvaddons.sagealert.client.EmailSettings;
-import com.google.code.sagetvaddons.sagealert.client.SmtpSettings;
+import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 
 /**
  * Event handler that sends events via email
@@ -42,7 +43,7 @@ final class EmailServer implements SageEventHandler {
 	private EmailSettings emailSettings;
 	private SmtpSettings smtpSettings;
 	private Session session;
-	private SageEvent event;
+	private SageAlertEvent event;
 	private MimeMessage message;
 	
 	/**
@@ -56,7 +57,6 @@ final class EmailServer implements SageEventHandler {
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#getSettings()
 	 */
-	@Override
 	public EmailSettings getSettings() {
 		return emailSettings;
 	}
@@ -64,20 +64,26 @@ final class EmailServer implements SageEventHandler {
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.server.SageEvent)
 	 */
-	@Override
-	public void onEvent(SageEvent e) {
-		event = e;
-		try {
-			connectToSmtp();
-			constructMsg();
-			sendMessage();
-		} catch(NotificationRecipientException x) {
-			LOG.error("Invalid SMTP settings", x);
-			LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
-		} catch(MessagingException x) {
-			LOG.error("Error sending email", x);
-			LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
-		}
+	public void onEvent(final SageAlertEvent e) {
+		new Thread() {
+			@Override
+			public void run() {
+				synchronized(EmailServer.this) {
+					event = e;
+					try {
+						connectToSmtp();
+						constructMsg();
+						sendMessage();
+					} catch(NotificationRecipientException x) {
+						LOG.error("Invalid SMTP settings", x);
+						LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
+					} catch(MessagingException x) {
+						LOG.error("Error sending email", x);
+						LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
+					}
+				}
+			}
+		}.start();
 	}
 	
 	private void connectToSmtp() throws NotificationRecipientException {

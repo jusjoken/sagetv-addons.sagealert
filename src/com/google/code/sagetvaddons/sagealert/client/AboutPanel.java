@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.google.code.sagetvaddons.sagealert.client;
 
-import com.google.code.gwtsrwc.client.VersionLabel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -39,7 +38,6 @@ final class AboutPanel extends VerticalPanel {
 		depsContainer.add(new HTML("<b>GWT:</b> " + GWT.getVersion() + " | <a target=\"_blank\" href=\"http://code.google.com/webtoolkit/\">Project Site</a>"));
 		depsContainer.add(new HTML("<b>GKusnick's Studio Tools (for SageTV):</b> <a target=\"_blank\" href=\"http://forums.sagetv.com/forums/downloads.php?do=file&id=128\">Download Site</a>"));
 		depsContainer.add(new HTML("<b>Apache Commons:</b> <a target=\"_blank\" href=\"http://commons.apache.org/\">Project Site</a>"));
-		depsContainer.add(new HTML("<b>gwtsrwc:</b> " + VersionLabel.getVersion() + " | <a target=\"_blank\" href=\"http://gwtsrwc.googlecode.com/\">Project Site</a>"));
 		depsContainer.add(new HTML("<b>JSON.org:</b> <a target=\"_blank\" href=\"http://www.json.org/\">Web Site</a>"));
 		depsContainer.add(new HTML("<b>log4j:</b> <a target=\"_blank\" href=\"http://logging.apache.org/\">Project Site</a>"));
 		depsContainer.add(new HTML("<b>twitter4j:</b> <a target=\"_blank\" href=\"http://yusuke.homeip.net/twitter4j/en/index.html\">Project Site</a>"));

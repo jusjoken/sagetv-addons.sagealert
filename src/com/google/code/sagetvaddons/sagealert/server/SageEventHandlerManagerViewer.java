@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public final class SageEventHandlerManagerViewer extends HttpServlet {
 		resp.setHeader("Cache-Control", "no-cache, must-revalidate");
 		PrintWriter w = resp.getWriter();
 		w.write("Event Handler Manager state as of " + new Date() + "\n\n");
-		w.write(SageEventHandlerManager.getInstance().dumpState());
+		w.write(SageEventHandlerManager.get().dumpState());
 		w.close();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.google.code.sagetvaddons.sagealert.client.NotificationServerSettings;
-import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
 /**
  * The lone event handler manager; manages all handler registrations/removals and fires events to proper handlers 
@@ -43,127 +43,81 @@ final class SageEventHandlerManager implements HasHandlers {
 	 * Single accessor
 	 * @return The single instance of the manager
 	 */
-	static final SageEventHandlerManager getInstance() { return INSTANCE; }
+	static final SageEventHandlerManager get() { return INSTANCE; }
 
 
-	private Map<Class<?>, Set<SageEventHandler>> handlers;
+	private Map<String, Set<SageEventHandler>> handlers;
 	
 	private SageEventHandlerManager() {
-		handlers = new HashMap<Class<?>, Set<SageEventHandler>>();
+		handlers = new HashMap<String, Set<SageEventHandler>>();
 	}
 
-	@Override
-	synchronized public void addHandler(SageEventHandler h, SageEvent e) {
-		addHandler(h, e.getEventMetaData());
-	}
-	
-	@Override
-	synchronized public void addHandler(SageEventHandler h, SageEventMetaData e) {
-		try {
-			Class<?> cls = Class.forName(e.getClassName());
-			Set<SageEventHandler> s = handlers.get(cls);
-			if(s == null) {
-				s = new HashSet<SageEventHandler>();
-				handlers.put(cls, s);
-			}
-			s.add(h);
-		} catch(ClassNotFoundException x) {
-			LOG.error("Class not found error", x);
+	synchronized public void addHandler(SageEventHandler h, String eventId) {
+		Set<SageEventHandler> s = handlers.get(eventId);
+		if(s == null) {
+			s = new HashSet<SageEventHandler>();
+			handlers.put(eventId, s);
 		}
+		s.add(h);
 		List<NotificationServerSettings> handlers = new ArrayList<NotificationServerSettings>();
 		handlers.add(h.getSettings());
-		DataStore.getInstance().registerHandlers(e, handlers);
+		DataStore.getInstance().registerHandlers(eventId, handlers);
 	}
-	
-	@Override
-	synchronized public void addHandlers(Collection<SageEventHandler> list, SageEvent e) {
-		for(SageEventHandler h : list)
-			addHandler(h, e.getEventMetaData());
-	}
-	
-	@Override
-	synchronized public void fire(SageEvent e) {
-		Set<SageEventHandler> s = handlers.get(e.getClass());
-		if(s != null) {
+		
+	synchronized public void fire(SageAlertEvent e) {
+		Set<SageEventHandler> s = handlers.get(e.getSource());
+		if(s != null && s.size() > 0) {
 			for(SageEventHandler h : s) {
 				h.onEvent(e);
-				LOG.debug("Event '" + e.getClass().getCanonicalName() + "' fired to '" + h + "'");
+				LOG.debug("Event '" + e.getSource() + "' fired to '" + h + "'");
 			}
-		} else {
-			LOG.debug("No registered handlers for fired event: " + e.getClass().getCanonicalName());
-		}
+		} else
+			LOG.info("No SageAlert handlers registered for fired event: " + e.getSource());
 	}
- 
-	@Override
-	synchronized public void removeAllHandlers(SageEvent e) {
-		removeAllHandlers(e.getEventMetaData());
-	}
-	
-	@Override
-	synchronized public void removeHandler(SageEventHandler h, SageEvent e) {
-		removeHandler(h, e.getEventMetaData());
-	}
-	
-	synchronized private void removeHandler(SageEventHandler h, SageEventMetaData e) {
+ 		
+	synchronized public void removeHandler(SageEventHandler h, String eventId) {
 		Set<SageEventHandler> s = null;
-		try {
-			s = handlers.get(Class.forName(e.getClassName()));
-		} catch(ClassNotFoundException x) {
-			LOG.error("Invalid class name", x);
-		}
+		s = handlers.get(eventId);
 		if(s != null)
 			s.remove(h);				
 		List<NotificationServerSettings> list = new ArrayList<NotificationServerSettings>();
 		list.add(h.getSettings());
-		DataStore.getInstance().removeHandlers(e, list);
+		DataStore.getInstance().removeHandlers(eventId, list);
 	}
 
-	@Override
 	synchronized public void removeHandlerFromAllEvents(SageEventHandler h) {
-		for(Class<?> key : handlers.keySet())
+		for(String key : handlers.keySet())
 			handlers.get(key).remove(h);
 		List<NotificationServerSettings> list = new ArrayList<NotificationServerSettings>();
 		list.add(h.getSettings());		
 		DataStore.getInstance().removeHandlers(list);
 	}
 
-	@Override
-	synchronized public void removeHandlers(Collection<SageEventHandler> list, SageEvent e) {
+	synchronized public void removeHandlers(Collection<SageEventHandler> list, String eventId) {
 		for(SageEventHandler h : list)
-			removeHandler(h, e);
+			removeHandler(h, eventId);
 	}
 
-	@Override
-	public Set<SageEventHandler> getHandlers(SageEvent e) {
-		return getHandlers(e.getClass());
+	public Set<SageEventHandler> getHandlers(String eventId) {
+		return handlers.get(eventId);
 	}
 	
-	private Set<SageEventHandler> getHandlers(Class<?> c) {
-		return handlers.get(c);
+	public void addHandlers(Collection<SageEventHandler> h, String eventId) {
+		addHandlers(h, eventId);
 	}
 
-	@Override
-	public void addHandlers(Collection<SageEventHandler> h, SageEventMetaData e) {
-		addHandlers(h, e);
-	}
-
-	@Override
-	synchronized public void removeAllHandlers(SageEventMetaData e) {
+	synchronized public void removeAllHandlers(String eventId) {
 		Set<SageEventHandler> set = null;
-		try {
-			set = handlers.get(Class.forName(e.getClassName()));
-		} catch(ClassNotFoundException x) {
-			LOG.error("Invalid event class", x);
-		}
+		set = handlers.get(eventId);
 		if(set != null)
 			set.clear();
-		DataStore.getInstance().removeAllHandlers(e);
+		DataStore.getInstance().removeAllHandlers(eventId);
 	}
 	
 	synchronized String dumpState() {
 		StringWriter w = new StringWriter();
-		for(Class<?> c : handlers.keySet()) {
-			w.write(c.getCanonicalName() + "\n");
+		for(String c : handlers.keySet()) {
+			w.write(c + "\n");
 			for(SageEventHandler h : handlers.get(c))
 				w.write("\t" + h + "\n");
 			w.write("\n");

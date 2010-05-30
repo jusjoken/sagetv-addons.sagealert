@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009 Battams, Derek
+ *      Copyright 2009-2010 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -36,18 +36,19 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mortbay.jetty.security.Password;
 
-import com.google.code.sagetvaddons.sagealert.client.Client;
-import com.google.code.sagetvaddons.sagealert.client.IsDataStoreSerializable;
-import com.google.code.sagetvaddons.sagealert.client.NotificationServerSettings;
-import com.google.code.sagetvaddons.sagealert.client.SageEventMetaData;
-import com.google.code.sagetvaddons.sagealert.client.SmtpSettings;
+import com.google.code.sagetvaddons.sagealert.shared.Client;
+import com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable;
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 
 /**
  * @author dbattams
  *
  */
-final class DataStore {
+final public class DataStore {
+	static private final int SCHEMA_VERSION = 1;
 	static private final ThreadLocal<DataStore> THREAD_DATA_STORES = new ThreadLocal<DataStore>() {
 		@Override
 		protected DataStore initialValue() {
@@ -64,7 +65,7 @@ final class DataStore {
 	 * Return the thread local instance of the data store; create it if necessary
 	 * @return An instance of the data store
 	 */
-	static final DataStore getInstance() {
+	static final public DataStore getInstance() {
 		return THREAD_DATA_STORES.get();
 	}
 	
@@ -90,12 +91,12 @@ final class DataStore {
 	
 	private DataStore() throws ClassNotFoundException, IOException {
 		Class.forName("org.sqlite.JDBC");
-		dataStore = new File("sagealert.sqlite");
+		dataStore = new File("plugins/sagealert/sagealert.sqlite");
 		openConnection();
 		synchronized(DataStore.class) {
 			if(!dbInitialized) {
 				loadDDL();
-//				upgradeSchema();
+				upgradeSchema();
 				dbInitialized = true;
 				LOG.debug("Using '" + dataStore.getAbsolutePath() + "' as SQLite database file.");
 			}
@@ -175,6 +176,102 @@ final class DataStore {
 		return;
 	}
 	
+	private int getSchema() throws IOException
+	{
+		String qry = "SELECT val FROM settings WHERE var = 'schema'";
+		Statement stmt = null;
+		ResultSet rs = null;
+		try
+		{
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(qry);
+			return rs.getInt(1);
+		}
+		catch(SQLException e)
+		{
+			if(!e.getMessage().matches(ERR_MISSING_TABLE)) {
+				LOG.trace(SQL_ERROR, e);
+				LOG.error(e);
+			}
+			return 0;
+		}
+		finally
+		{
+			try
+			{
+				if(rs != null)
+					rs.close();
+				if(stmt != null)
+					stmt.close();
+			}
+			catch(SQLException e)
+			{
+				LOG.trace(SQL_ERROR, e);
+				LOG.error(e);
+				throw new IOException("Unable to cleanup SQL resources", e);
+			}
+		}
+	}
+	
+	private void upgradeSchema() throws IOException
+	{	
+		Statement stmt = null;
+		try
+		{
+			int i = getSchema();
+			if(i < SCHEMA_VERSION)
+			{
+				conn.setAutoCommit(false);
+				stmt = conn.createStatement();
+				while(i < SCHEMA_VERSION)
+				{
+					String qry;
+					switch(i)
+					{
+					case 1:
+						// First schema change goes here
+
+						break;						
+					}
+					i++;
+				}
+				conn.commit();
+			}
+		}
+		catch(SQLException e)
+		{
+			try
+			{
+				conn.rollback();
+			}
+			catch(SQLException e2)
+			{
+				LOG.trace(SQL_ERROR, e2);
+				LOG.error(e2);
+			}
+
+			LOG.trace(SQL_ERROR, e);
+			LOG.fatal(e);
+			throw new IOException("Error upgrading data store", e);
+		}
+		finally
+		{
+			try
+			{
+				if(stmt != null)
+				{
+					stmt.close();
+				}
+				conn.setAutoCommit(true);
+			}
+			catch(SQLException e)
+			{
+				LOG.trace(SQL_ERROR, e);
+				throw new IOException("Unable to cleanup SQL resources", e);				
+			}
+		}
+	}
+	
 	/**
 	 * Save a reporter to the data store
 	 * @param reporter The reporter to be saved
@@ -185,8 +282,11 @@ final class DataStore {
 		try {
 			pstmt = conn.prepareStatement(qry);
 			String type = reporter.getClass().getCanonicalName();
-			String key = reporter.getDataStoreKey();
+			String key = Password.obfuscate(reporter.getDataStoreKey());
 			String data = reporter.getDataStoreData();
+			if(data == null)
+				data = "";
+			data = Password.obfuscate(data);
 			logQry(qry, type, key, data);
 			pstmt.setString(1, type);
 			pstmt.setString(2, key);
@@ -265,7 +365,7 @@ final class DataStore {
 			pstmt = conn.prepareStatement(qry);
 			logQry(qry, type, key);
 			pstmt.setString(1, type);
-			pstmt.setString(2, key);
+			pstmt.setString(2, Password.obfuscate(key));
 			pstmt.executeUpdate();
 		} catch(SQLException e) {
 			LOG.error(SQL_ERROR, e);
@@ -310,8 +410,8 @@ final class DataStore {
 	 * @param event A description of the event
 	 * @return A list of all handlers for the given event description
 	 */
-	public List<NotificationServerSettings> getHandlers(SageEventMetaData event) {
-		String qry = "SELECT l.type, l.key, r.data FROM listeners AS l OUTER JOIN reporters AS r ON (l.type = r.type AND l.key = r.key) WHERE event = '" + event.getClassName() + "'";
+	public List<NotificationServerSettings> getHandlers(String event) {
+		String qry = "SELECT l.type, l.key, r.data FROM listeners AS l OUTER JOIN reporters AS r ON (l.type = r.type AND l.key = r.key) WHERE event = '" + event + "'";
 		List<NotificationServerSettings> handlers = new ArrayList<NotificationServerSettings>();
 		Statement stmt = null;
 		ResultSet rset = null;
@@ -345,7 +445,7 @@ final class DataStore {
 			obj = (NotificationServerSettings)ctor.newInstance((Object[])null);
 			Method method = cls.getDeclaredMethod("unserialize", new Class<?>[] {String.class, String.class});
 			method.setAccessible(true);
-			method.invoke(obj, key, data);
+			method.invoke(obj, Password.deobfuscate(key), Password.deobfuscate(data));
 		} catch(ClassNotFoundException e) {
 			LOG.error("Class not found", e);
 		} catch(NoSuchMethodException e) {
@@ -362,22 +462,21 @@ final class DataStore {
 
 	/**
 	 * Register the given handlers for the given event
-	 * @param event A description of the event to attach the handlers to
+	 * @param event The event name to attach the handlers to
 	 * @param handlers The list of handlers to attach to the given event
 	 */
-	public void registerHandlers(SageEventMetaData event, List<NotificationServerSettings> handlers) {
+	public void registerHandlers(String event, List<NotificationServerSettings> handlers) {
 		String qry = "REPLACE INTO listeners (event, type, key) VALUES (?, ?, ?)";
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(qry);
-			String eventName = event.getClassName();
-			pstmt.setString(1, eventName);
+			pstmt.setString(1, event);
 			for(IsDataStoreSerializable obj : handlers) {
 				String clsName = obj.getClass().getCanonicalName();
 				String key = obj.getDataStoreKey();
-				logQry(qry, eventName, clsName, key);
+				logQry(qry, event, clsName, key);
 				pstmt.setString(2, clsName);
-				pstmt.setString(3, key);
+				pstmt.setString(3, Password.obfuscate(key));
 				pstmt.addBatch();
 			}
 			if(handlers.size() > 0)
@@ -392,11 +491,11 @@ final class DataStore {
 	
 	/**
 	 * Remove the given handlers from the given event
-	 * @param event The event description to detach the handlers from
+	 * @param event The event name to detach the handlers from
 	 * @param handlers The list of handlers to detach from the given event
 	 */
-	public void removeHandlers(SageEventMetaData event, List<NotificationServerSettings> handlers) {
-		String qry = "DELETE FROM listeners WHERE event = '" + event.getClassName() + "' AND type = ? AND key = ?";
+	public void removeHandlers(String event, List<NotificationServerSettings> handlers) {
+		String qry = "DELETE FROM listeners WHERE event = ? AND type = ? AND key = ?";
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(qry);
@@ -404,8 +503,9 @@ final class DataStore {
 				String clsName = s.getClass().getCanonicalName();
 				String key = s.getDataStoreKey();
 				logQry(qry, clsName, key);
-				pstmt.setString(1, clsName);
-				pstmt.setString(2, key);
+				pstmt.setString(1, event);
+				pstmt.setString(2, clsName);
+				pstmt.setString(3, Password.obfuscate(key));
 				pstmt.addBatch();
 			}
 			pstmt.executeBatch();
@@ -431,7 +531,7 @@ final class DataStore {
 				String key = s.getDataStoreKey();
 				logQry(qry, clsName, key);
 				pstmt.setString(1, clsName);
-				pstmt.setString(2, key);
+				pstmt.setString(2, Password.obfuscate(key));
 				pstmt.addBatch();
 			}
 			pstmt.executeBatch();
@@ -447,8 +547,8 @@ final class DataStore {
 	 * Remove all handlers from a given event; this only removes them from the data store; active handlers remain active until the handler manager is told otherwise
 	 * @param event The event for which all handlers should be removed
 	 */
-	public void removeAllHandlers(SageEventMetaData event) {
-		String qry = "DELETE FROM listeners WHERE event = '" + event.getClassName() + "'";
+	public void removeAllHandlers(String event) {
+		String qry = "DELETE FROM listeners WHERE event = '" + event + "'";
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
@@ -460,6 +560,30 @@ final class DataStore {
 			if(stmt != null)
 				try { stmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
 		}
+	}
+	
+	public String[] getRegisteredEvents() {
+		String qry = "SELECT DISTINCT event FROM listeners";
+		Statement stmt = null;
+		ResultSet rs = null;
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			stmt = conn.createStatement();
+			logQry(qry);
+			rs = stmt.executeQuery(qry);
+			while(rs.next())
+				list.add(rs.getString(1));
+		} catch(SQLException e) {
+			LOG.error(SQL_ERROR, e);
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+			} catch(SQLException e) {
+				LOG.error(SQL_ERROR, e);
+			}
+		}
+		return list.toArray(new String[list.size()]);
 	}
 	
 	/**
@@ -530,9 +654,9 @@ final class DataStore {
 	 * Retrieve the collection of all clients stored in the data store
 	 * @return A Collection of Client instances; the list may be empty, but not null
 	 */
-	public Collection<Client> getClients() {
+	public List<Client> getClients() {
 		String qry = "SELECT var, val FROM settings WHERE var LIKE '" + CLNT_SETTING_PREFIX + "%'";
-		Collection<Client> list = new ArrayList<Client>();
+		List<Client> list = new ArrayList<Client>();
 		Statement stmt = null;
 		ResultSet rset = null;
 		try {
@@ -564,20 +688,12 @@ final class DataStore {
 	 * @return A Client instance representing the given Client id
 	 */
 	public Client getClient(String id) {
-		return buildClient(id, getSetting(CLNT_SETTING_PREFIX + id, "0"));
+		return buildClient(id, getSetting(CLNT_SETTING_PREFIX + id, ""));
 	}
 	
 	// First char of data is 0/1 for notify flag; rest of string is alias
 	private Client buildClient(String id, String data) {
-		String alias;
-		if(data.length() > 1)
-			alias = data.substring(1);
-		else
-			alias = "";
-		boolean notify = false;
-		if(data.charAt(0) == '1')
-			notify = true;
-		return new Client(id, alias, notify);		
+		return new Client(id, data);
 	}
 	
 	/**
@@ -585,7 +701,7 @@ final class DataStore {
 	 * @param c The Client instance to be saved
 	 */
 	public void saveClient(Client c) {
-		setSetting(CLNT_SETTING_PREFIX + c.getId(), (c.doNotify() ? "1" : "0") + c.getAlias());
+		setSetting(CLNT_SETTING_PREFIX + c.getId(), c.getAlias());
 	}
 	
 	/**
@@ -620,7 +736,7 @@ final class DataStore {
 		if(getSetting(CLNT_SETTING_PREFIX + id) != null)
 			return false;
 		
-		saveClient(buildClient(id, "0"));
+		saveClient(buildClient(id, ""));
 		return true;
 	}
 	
@@ -650,12 +766,14 @@ final class DataStore {
 	 */
 	public SmtpSettings getSmtpSettings() {
 		String jsonEnc = getSetting(SMTP_SETTINGS);
-		if(jsonEnc == null)
-			return null;
+		if(jsonEnc == null) {
+			LOG.error("No SMTP settings found; you will not be able to send email based alerts until you configure your SMTP settings!");
+			return new SmtpSettings("", -1, "", "", "", false);
+		}
 		
 		JSONObject jobj = null;
 		try {
-			jobj = new JSONObject(jsonEnc);
+			jobj = new JSONObject(Password.deobfuscate(jsonEnc));
 			return new SmtpSettings(jobj.getString("host"), jobj.getInt("port"), jobj.getString("user"), jobj.getString("pwd"), jobj.getString("from"), jobj.getBoolean("ssl"));
 		} catch(JSONException e) {
 			LOG.error("JSON error", e);
@@ -676,9 +794,9 @@ final class DataStore {
 			jobj.put("pwd", settings.getPwd());
 			jobj.put("from", settings.getSenderAddress());
 			jobj.put("ssl", settings.useSsl());
-			setSetting(SMTP_SETTINGS, jobj.toString());
+			setSetting(SMTP_SETTINGS, Password.obfuscate(jobj.toString()));
 		} catch(JSONException e) {
 			LOG.error("JSON error", e);
 		}
-	}
+	}	
 }
