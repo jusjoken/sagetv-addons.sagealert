@@ -211,6 +211,24 @@ Test targets suppressed because -junit argument was not specified when running w
   	<replace file="common.plugin.xml" token="@@COMMON_MD5@@" value="${bin.common.md5}" />
   </target>
 
+  <target name="deliver" depends="app_plugin" description="Upload build to Google Code">
+	<available file="${gc.upload.settings}" property="gc.upload.enable" />
+	<fail message="${gc.upload.settings} file does not exist!" unless="gc.upload.enable" />
+	<property file="${gc.upload.settings}" />
+	<fail message="gc.username must be defined in ${gc.upload.settings}" unless="gc.username" />
+	<fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
+	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
+	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" summary="SageAlert v2 snapshot build (plugin JAR)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
+	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-web-${app.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-web-${app.ver}.${revision.max-with-flags}.zip" summary="SageAlert v2 snapshot build (J2EE app)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
+	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" summary="SageAlert v2 snapshot build (config files)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
+	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="sagealert-common-${app.ver}.${revision.max-with-flags}.zip" targetfilename="sagealert-common-${app.ver}.${revision.max-with-flags}.zip" summary="SageAlert v2 snapshot build (common JAR)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
+  </target>
+
+  <target name="submit" depends="deliver" description="Submit plugin to SageTV repository">
+	<taskdef classname="com.google.code.sagetvaddons.dev.ant.task.SageTvPluginSubmitter" name="sagesubmit" />
+	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="sagealert" reqtype="UPGRADE" descriptor="common.plugin.xml" />
+  </target>
+	
   <target name="clean" depends="rmgensrc" description="Cleans this project">
     <delete dir="war/WEB-INF/classes" failonerror="false" />
     <delete dir="war/sagealert" failonerror="false" />
