@@ -69,6 +69,10 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        	<Plugin>commons-io</Plugin>
        	<MinVersion>1.4</MinVersion>
        </Dependency>
+       <Dependency>
+       	<Plugin>sqlitejdbc</Plugin>
+       	<MinVersion>0.56</MinVersion>
+       </Dependency>
        <Package>
                <PackageType>JAR</PackageType>
                <Location>http://sagetv-addons.googlecode.com/files/sagealert-jar-@@VER_NUM@@.@@BLD_NUM@@.zip</Location>
@@ -88,4 +92,9 @@ Other plugins can also register and fire events to SageAlert, which can then be 
                <Overwrite>false</Overwrite> <!-- Defaults to true -->
        </Package>
        <ImplementationClass>com.google.code.sagetvaddons.sagealert.server.Plugin</ImplementationClass>
+       <ReleaseNotes>
+Changes in @@VER_NUM@@.@@BLD_NUM@@
+ 
+* Fix packaging issue where various web resources were not included in the war (making the web GUI useless)
+       </ReleaseNotes>
 </SageTVPlugin>

@@ -19,9 +19,4 @@
                <MD5>@@COMMON_MD5@@</MD5>
                <Overwrite>true</Overwrite> <!-- Defaults to true -->
        </Package>
-       <ReleaseNotes>
-Changes in @@VER_NUM@@.@@BLD_NUM@@
- 
-* Fix packaging issue where various web resources were not included in the war (making the web GUI useless)
-       </ReleaseNotes>
 </SageTVPlugin>
