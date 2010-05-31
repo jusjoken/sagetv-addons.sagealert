@@ -8,7 +8,8 @@
 
   <!-- Configure path to GWT SDK -->
   <property name="gwt.sdk" location="C:/gwt-2.0.3" />
-
+  <property name="gxt.home" location="C:/Users/dbattams/sagelibs/gxt-2.1.1" />
+	
   <property name="app.ver" value="2.0.0" />
   <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
   <property name="src.token" value="@@" />
@@ -171,6 +172,9 @@ Test targets suppressed because -junit argument was not specified when running w
   <target name="build" depends="gwtc" description="Build this project" />
 
   <target name="war" depends="build" description="Create a war file">
+  	<copy todir="war/resources">
+  		<fileset dir="${gxt.home}/resources" />	
+  	</copy>	
     <zip destfile="SageAlert.war" basedir="war"/>
   </target>
 
@@ -226,7 +230,8 @@ Test targets suppressed because -junit argument was not specified when running w
 
   <target name="submit" depends="deliver" description="Submit plugin to SageTV repository">
 	<taskdef classname="com.google.code.sagetvaddons.dev.ant.task.SageTvPluginSubmitter" name="sagesubmit" />
-	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="sagealert" reqtype="UPGRADE" descriptor="common.plugin.xml" />
+	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="sagealert-common" reqtype="UPGRADE" descriptor="common.plugin.xml" />
+	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="sagealert" reqtype="UPGRADE" descriptor="app.plugin.xml" />
   </target>
 	
   <target name="clean" depends="rmgensrc" description="Cleans this project">
