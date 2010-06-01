@@ -15,6 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.client;
 
+import com.extjs.gxt.ui.client.data.BeanModelLookup;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -88,7 +89,7 @@ final class TwitterSettingsPanel extends FormPanel {
 					}
 
 					public void onSuccess(TwitterSettings result) {
-						MenuDataStore.get().addReporter(result, "Twitter");
+						MenuDataStore.get().addReporter(BeanModelLookup.get().getFactory(result.getClass()).createModel(result), "Twitter");
 						Window.alert(result.getAlias() + " registered with SageAlert!");
 						SageAlertViewport.get().setCenterContent(null);
 					}

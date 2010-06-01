@@ -50,6 +50,7 @@ final class SmtpSettingsPanel extends FormPanel {
 		
 		final TextField<String> pwd = new TextField<String>();
 		pwd.setFieldLabel("Password");
+		pwd.setPassword(true);
 		
 		final CheckBox useSsl = new CheckBox();
 		useSsl.setFieldLabel("Connect over SSL");

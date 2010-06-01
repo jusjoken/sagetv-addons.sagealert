@@ -23,6 +23,7 @@
  */
 -->
 <web-app>
+  <display-name>SageAlert v2.x</display-name>
   
   <!-- Servlets -->
   <servlet>

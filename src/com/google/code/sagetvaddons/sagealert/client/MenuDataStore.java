@@ -136,17 +136,17 @@ final class MenuDataStore extends TreeStore<ModelData> {
 		});
 	}
 	
-	public void addReporter(NotificationServerSettings s, String type) {
+	public void addReporter(BeanModel s, String type) {
 		for(BaseModelData d : srvTypes)
 			if(d.get("id").equals(type)) {
-				add(d, (ModelData)s, false);
+				add(d, s, false);
 				return;
 			}
 		Window.alert("Invalid server type! [" + type + "]");
 	}
 	
-	public void rmReporter(NotificationServerSettings s) {
-		remove((ModelData)s);
+	public void rmReporter(BeanModel s) {
+		remove(s);
 	}
 	
 	public List<NotificationServerSettings> getReporters() {

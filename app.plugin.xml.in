@@ -42,6 +42,10 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        	<MinVersion>7.0.9</MinVersion>
        </Dependency>
        <Dependency>
+       	<Plugin>jetty</Plugin>
+       	<MinVersion>2.0.1</MinVersion>
+       </Dependency>
+       <Dependency>
        	<Plugin>log4j</Plugin>
        	<MinVersion>1.2.15</MinVersion>
        </Dependency>
@@ -99,6 +103,9 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Add commons-logging dependency to help twitter4j
+* Fix bug where SMTP password was being displayed in clear text on the GUI
+* Fix bug where listeners (email, Twitter, Growl accounts) had their delete option disabled
+* Fix bug where adding/deleting listeners did not immediately add them to the tree panel
+* Add updates to support Jetty plugin 2.0.1; require Jetty plugin 2.0.1 or newer
        </ReleaseNotes>
 </SageTVPlugin>

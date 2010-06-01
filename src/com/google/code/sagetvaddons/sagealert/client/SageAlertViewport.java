@@ -44,7 +44,7 @@ final class SageAlertViewport extends Viewport {
 		westPanel = new ContentPanel();
 		westPanel.setScrollMode(Scroll.AUTOY);
 		BorderLayoutData westData = new BorderLayoutData(LayoutRegion.WEST, 280);
-		westPanel.add(new MenuTreePanel(MenuDataStore.get()));
+		westPanel.add(MenuTreePanel.get(MenuDataStore.get()));
 		westPanel.setHeaderVisible(false);
 					
 		centerPanel = new ContentPanel();

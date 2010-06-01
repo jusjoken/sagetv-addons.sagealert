@@ -18,6 +18,7 @@ package com.google.code.sagetvaddons.sagealert.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BeanModelLookup;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -72,7 +73,7 @@ final class GrowlSettingsPanel extends FormPanel {
 
 					public void onSuccess(Void result) {
 						MessageBox.alert("Result", "Growl server added!", null);
-						MenuDataStore.get().addReporter(s, "Growl");
+						MenuDataStore.get().addReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s), "Growl");
 					}
 					
 				});

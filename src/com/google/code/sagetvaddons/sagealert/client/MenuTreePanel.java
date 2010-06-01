@@ -18,6 +18,9 @@ package com.google.code.sagetvaddons.sagealert.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BeanModel;
+import com.extjs.gxt.ui.client.data.BeanModelFactory;
+import com.extjs.gxt.ui.client.data.BeanModelLookup;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -42,7 +45,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 final class MenuTreePanel extends TreePanel<ModelData> {
-
+	private static MenuTreePanel INSTANCE = null;
+	static final MenuTreePanel get() { return INSTANCE; }
+	static final MenuTreePanel get(TreeStore<ModelData> store) {
+		INSTANCE = new MenuTreePanel(store);
+		return INSTANCE;
+	}
+	
 	private class ReporterContextMenu extends Menu {
 		MenuItem create;
 		MenuItem delete;
@@ -72,7 +81,7 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 
 				@Override
 				public void componentSelected(MenuEvent ce) {
-					final NotificationServerSettings s = (NotificationServerSettings)MenuTreePanel.this.getSelectionModel().getSelectedItem();
+					final NotificationServerSettings s = ((BeanModel)MenuTreePanel.this.getSelectionModel().getSelectedItem()).getBean();
 					MessageBox.confirm("Confirm Removal", "Are you sure you want to delete this reporter: '" + s + "'?", new Listener<MessageBoxEvent>() {
 
 						public void handleEvent(MessageBoxEvent be) {
@@ -88,7 +97,7 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 									}
 
 									public void onSuccess(Void result) {
-										MenuDataStore.get().rmReporter(s);
+										MenuDataStore.get().rmReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s));
 										MessageBox.alert("Success", "The reporter was deleted successfully!", null);
 									}
 									
@@ -106,7 +115,7 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 		public void onShow() {
 			super.onShow();
 			ModelData d = getSelectionModel().getSelectedItem();
-			if(!(d instanceof NotificationServerSettings))
+			if(!(d instanceof BeanModel))
 				delete.disable();
 			if(store.getParent(d) == null || (isLeaf(d) && !store.getParent(d).get("id").equals("Servers")))
 				create.disable();
@@ -120,7 +129,7 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 		}
 	}
 
-	public MenuTreePanel(final TreeStore<ModelData> store) {
+	private MenuTreePanel(final TreeStore<ModelData> store) {
 		super(store);
 		setDisplayProperty("id");
 		this.addListener(Events.OnClick, new Listener<TreePanelEvent<ModelData>>() {
