@@ -25,9 +25,12 @@
    <Set name="defaultsDescriptor">
      <SystemProperty name="jetty.home" default="."/>/etc/webdefault.xml
    </Set>
+   <!-- Remove use of tmp dir because there are still file locking issues on Windows -->
+   <!--
    <Set name="tempDirectory">
     <SystemProperty name="jetty.home" default="."/>/webapps/SageAlert
   </Set>
+  -->
    <Set name="contextPath">/sagealert</Set>
    <Set name="war"><SystemProperty name="jetty.home" default="."/>/webapps/SageAlert.war</Set>
    <Set name="extractWAR">true</Set>
