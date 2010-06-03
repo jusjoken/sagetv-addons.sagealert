@@ -103,9 +103,6 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Fix bug where SMTP password was being displayed in clear text on the GUI
-* Fix bug where listeners (email, Twitter, Growl accounts) had their delete option disabled
-* Fix bug where adding/deleting listeners did not immediately add them to the tree panel
-* Add updates to support Jetty plugin 2.0.1; require Jetty plugin 2.0.1 or newer
+* Revert back to using system tmp dir for war deployment; fixes possible file locking issues on Windows
        </ReleaseNotes>
 </SageTVPlugin>
