@@ -171,14 +171,15 @@ Test targets suppressed because -junit argument was not specified when running w
 
   <target name="build" depends="gwtc" description="Build this project" />
 
-  <target name="war" depends="build" description="Create a war file">
+  <target name="war" depends="jars" description="Create a war file">
   	<copy todir="war/resources">
   		<fileset dir="${gxt.home}/resources" />	
-  	</copy>	
+  	</copy>
+  	<copy todir="war/WEB-INF/lib" file="sagealert-common.jar" failonerror="true" />
     <zip destfile="SageAlert.war" basedir="war"/>
   </target>
 
-  <target name="jars" depends="war">
+  <target name="jars" depends="build">
 	<jar destfile="sagealert-common.jar" basedir="${bld.dir}" includes="**/shared/*" filesonly="true" />
   	<jar destfile="sagealert.jar" basedir="${bld.dir}" includes="**/Plugin.class" filesonly="true" />
   </target>
@@ -202,7 +203,7 @@ Test targets suppressed because -junit argument was not specified when running w
   	<replace file="app.plugin.xml" token="@@CONF_MD5@@" value="${bin.conf.md5}" />
   </target>
 	
-  <target name="common_plugin" depends="jars">
+  <target name="common_plugin" depends="war">
   	<delete dir="common_plugin" failonerror="false" />
   	<property name="common_base" value="common_plugin" />
     <mkdir dir="${common_base}" />
