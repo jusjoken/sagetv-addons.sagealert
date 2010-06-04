@@ -86,10 +86,6 @@ public final class HandlerServiceImpl extends RemoteServiceServlet implements	Ha
 		mgr.removeHandler(h, "SageAlert_TestEvent");
 	}
 
-	public Collection<String> getAllEvents() {
-		return Arrays.asList(CoreEventsManager.CORE_EVENTS);
-	}
-
 	public SageAlertEventMetadata getMetadata(String eventId) {
 		return SageAlertEventMetadataManager.get().getMetadata(eventId);
 	}

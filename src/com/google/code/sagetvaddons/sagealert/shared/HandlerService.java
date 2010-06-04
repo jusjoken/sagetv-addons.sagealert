@@ -41,13 +41,7 @@ public interface HandlerService extends RemoteService {
 	 * @param handlers The list of handlers to attach to the event
 	 */
 	public void setHandlers(String event, List<NotificationServerSettings> handlers);
-	
-	/**
-	 * Get a collection of all events defined and registered with the server
-	 * @return A collection of all registered event descriptions; the list may be empty if no events are registered
-	 */
-	public Collection<String> getAllEvents();
-	
+		
 	/**
 	 * Get the metadata for the specified event id
 	 * @param eventId The unique event id

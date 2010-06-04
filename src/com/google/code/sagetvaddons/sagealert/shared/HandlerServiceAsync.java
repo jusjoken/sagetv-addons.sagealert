@@ -40,13 +40,7 @@ public interface HandlerServiceAsync {
 	 * @param cb The callback object to be called when the async call completes
 	 */
 	public void setHandlers(String event, List<NotificationServerSettings> handlers, AsyncCallback<Void> cb);
-	
-	/**
-	 * Get a collection of all the registered events from the server
-	 * @param cb The callback object to be called when the async call completes
-	 */
-	public void getAllEvents(AsyncCallback<Collection<String>> cb);
-	
+		
 	/**
 	 * Test a notification server
 	 * @param settings Server settings to be tested

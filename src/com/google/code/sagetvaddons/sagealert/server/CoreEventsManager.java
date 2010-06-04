@@ -35,7 +35,7 @@ final public class CoreEventsManager {
 	static final public String REC_STARTED = "RecordingStarted"; //
 	static final public String REC_COMPLETED = "RecordingCompleted"; //
 	static final public String PLUGINS_LOADED = "AllPluginsLoaded"; //
-	static final public String CONFLICTS = "ConflictStatusChanged";
+	static final public String CONFLICTS = "ConflictStatusChanged"; //
 	static final public String SYSMSG_POSTED = "SystemMessagePosted"; //
 	static final public String INFO_SYSMSG_POSTED = "InfoSysMsgPosted"; //
 	static final public String WARN_SYSMSG_POSTED = "WarnSysMsgPosted"; //
@@ -45,9 +45,13 @@ final public class CoreEventsManager {
 	static final public String PLAYBACK_STOPPED = "PlaybackStopped"; //
 	static final public String CLIENT_CONNECTED = "ClientConnected"; //
 	static final public String CLIENT_DISCONNECTED = "ClientDisconnected"; //
-	
-	static final public String[] CORE_EVENTS = new String[] {AppStartedEvent.EVENT_ID, REC_STARTED, REC_COMPLETED, CLIENT_CONNECTED, CLIENT_DISCONNECTED, EPG_UPDATED};
-	
+	static final public String MEDIA_DELETED = "MediaFileRemoved"; //
+	static final public String MEDIA_DELETED_LOW_SPACE = "Diskspace"; //
+	static final public String MEDIA_DELETED_KEEP_AT_MOST = "KeepAtMost"; //
+	static final public String MEDIA_DELETED_USER = "User"; //
+	static final public String MEDIA_DELETED_VERIFY_FAILED = "VerifyFailed"; //
+	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED = "PartialOrUnwanted"; //
+		
 	private final SageTVPluginRegistry PLUGIN_REG = (SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry();
 	
 	private CoreEventsManager() {}
@@ -97,6 +101,14 @@ final public class CoreEventsManager {
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), CONFLICTS);
 		mgr.putMetadata(new SageAlertEventMetadata(CONFLICTS, "Recording Conflicts", "Fired when the conflict status of your recording schedule changes."));
 		LOG.info("Subscribed to " + CONFLICTS + " event!");
+		
+		PLUGIN_REG.eventSubscribe(MediaDeletedEventsListener.get(), MEDIA_DELETED);
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_LOW_SPACE, "Media Deleted (Low Space)", "Event fired when a media file is deleted by the core due to low disk space."));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_KEEP_AT_MOST, "Media Delete (Keep at Most)", "Event fired when a media file is deleted by the core due to a keep at most rule."));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_USER, "Media Deleted (User)", "Event fired when a user deletes a media file."));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_VERIFY_FAILED, "Media Deleted (Verify Failed)", "Event fired when a media file is deleted by the core due to a verification failure."));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_PARTIAL_OR_UNWANTED, "Media Deleted (Partial/Unwanted)", "Event fired when a media file is deleted by the core because it is a partial file or it's unwanted."));
+		LOG.info("Subscribed to " + MEDIA_DELETED + " event!");
 	}
 	
 	public void destroy() {
@@ -132,5 +144,8 @@ final public class CoreEventsManager {
 		
 		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), CONFLICTS);
 		LOG.info("Unsubscribed from " + CONFLICTS + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(MediaDeletedEventsListener.get(), MEDIA_DELETED);
+		LOG.info("Unsubscribed from " + MEDIA_DELETED + " event!");
 	}
 }

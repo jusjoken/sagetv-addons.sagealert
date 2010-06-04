@@ -103,6 +103,6 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Revert back to using system tmp dir for war deployment; fixes possible file locking issues on Windows
+* Add support for MediaFileRemoved events (requires SageTV 7.0.10 or higher; plugin still works on older versions, it just won't handle these events)
        </ReleaseNotes>
 </SageTVPlugin>
