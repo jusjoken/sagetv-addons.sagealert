@@ -32,7 +32,7 @@ import sage.SageTVPluginRegistry;
  */
 public final class Plugin implements SageTVPlugin {
 	static private Logger LOG = null;
-	static private final File RES_DIR = new File("plugins/sagealert");
+	static public final File RES_DIR = new File("plugins/sagealert");
 	
 	/**
 	 * 

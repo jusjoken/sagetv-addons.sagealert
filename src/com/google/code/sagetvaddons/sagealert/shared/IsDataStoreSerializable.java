@@ -47,4 +47,13 @@ public interface IsDataStoreSerializable {
 	 * @return The serialization of all remaining state fields not included in the key value of the instance
 	 */
 	public String getDataStoreData();
+	
+	/**
+	 * <p>The deserialization method for an object retrieved from the data store.</p>
+	 * 
+	 * <p>This method takes the packed key and data values from the data store and restores the state of the object based on the values received.</p>
+	 * @param key The key value(s) for this object
+	 * @param data The data value(s) for this object
+	 */
+	public void unserialize(String key, String data);
 }

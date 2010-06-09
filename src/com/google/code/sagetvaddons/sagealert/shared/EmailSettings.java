@@ -103,8 +103,7 @@ public final class EmailSettings implements NotificationServerSettings {
 		return true;
 	}
 
-	@SuppressWarnings("unused")
-	private void unserialize(String key, String data) {
+	public void unserialize(String key, String data) {
 		address = key;
 		msgType = data;
 	}

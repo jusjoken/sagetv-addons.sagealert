@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BeanModel;
-import com.extjs.gxt.ui.client.data.BeanModelFactory;
 import com.extjs.gxt.ui.client.data.BeanModelLookup;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.Events;
@@ -71,6 +70,8 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 						SageAlertViewport.get().setCenterContent(new EmailSettingsPanel());
 					} else if(srvType.equals("Growl"))
 						SageAlertViewport.get().setCenterContent(new GrowlSettingsPanel());
+					else if(srvType.equals("CSV File"))
+						SageAlertViewport.get().setCenterContent(new CsvLogFileSettingsPanel());
 				}			
 			});
 			this.add(create);

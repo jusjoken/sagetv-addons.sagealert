@@ -102,10 +102,6 @@ final class SageEventHandlerManager implements HasHandlers {
 		return handlers.get(eventId);
 	}
 	
-	public void addHandlers(Collection<SageEventHandler> h, String eventId) {
-		addHandlers(h, eventId);
-	}
-
 	synchronized public void removeAllHandlers(String eventId) {
 		Set<SageEventHandler> set = null;
 		set = handlers.get(eventId);
@@ -123,5 +119,10 @@ final class SageEventHandlerManager implements HasHandlers {
 			w.write("\n");
 		}
 		return w.toString();
+	}
+
+	public void addHandlers(Collection<SageEventHandler> h, String e) {
+		for(SageEventHandler s : h)
+			addHandler(s, e);
 	}
 }

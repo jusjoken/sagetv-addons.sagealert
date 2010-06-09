@@ -116,7 +116,7 @@ public final class GrowlServerSettings implements NotificationServerSettings {
 	 * @param key Hostname
 	 * @param data Password
 	 */
-	protected void unserialize(String key, String data) {
+	public void unserialize(String key, String data) {
 		host = key;
 		password = data;
 	}

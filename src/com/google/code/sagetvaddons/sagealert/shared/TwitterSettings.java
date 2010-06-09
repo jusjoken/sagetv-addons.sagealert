@@ -62,7 +62,7 @@ public final class TwitterSettings implements NotificationServerSettings {
 	 * @param key Hostname
 	 * @param data Password
 	 */
-	synchronized protected void unserialize(String key, String data) {
+	synchronized public void unserialize(String key, String data) {
 		String[] tokStr = key.split("&", 2);
 		token = tokStr[0];
 		secret = tokStr[1];
