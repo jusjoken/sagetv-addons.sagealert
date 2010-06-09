@@ -64,7 +64,7 @@ class CsvLogFileServer extends LogFileServer {
 			msg.append("\"" + FMT.format(new Date()) + "\",");
 		}
 		msg.append("\"" + e.getSubject().replaceAll("\"", "\"\"") + "\",");
-		msg.append("\"" + e.getLongDescription().replaceAll("\"", "\"\"") + "\"");
+		msg.append("\"" + e.getLongDescription().replaceAll("\"", "\"\"") + "\"\n");
 		try {
 			FileUtils.writeStringToFile(getTarget(), msg.toString(), "UTF-8");
 			LOG.info("Alert for '" + e.getSubject() + "' event written successfully to '" + getTarget() + "'");
