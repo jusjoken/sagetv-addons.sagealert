@@ -16,10 +16,10 @@
 package com.google.code.sagetvaddons.sagealert.server;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.apache.commons.io.output.LockableFileWriter;
 import org.apache.log4j.Logger;
 
 
@@ -44,7 +44,7 @@ abstract class LogFileServer implements SageEventHandler {
 		if(this.target.exists() && !this.target.canWrite())
 			throw new IllegalArgumentException("Unable to write to target log file! [" + this.target + "]");
 		try {
-			w = new LockableFileWriter(this.target, true);
+			w = new FileWriter(this.target, true);
 		} catch(IOException e) {
 			LOG.error("IO Error", e);
 			throw new RuntimeException(e);
