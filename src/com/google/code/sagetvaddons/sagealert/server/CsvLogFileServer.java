@@ -17,10 +17,10 @@ package com.google.code.sagetvaddons.sagealert.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.google.code.sagetvaddons.sagealert.shared.CsvLogFileSettings;
@@ -66,7 +66,9 @@ class CsvLogFileServer extends LogFileServer {
 		msg.append("\"" + e.getSubject().replaceAll("\"", "\"\"") + "\",");
 		msg.append("\"" + e.getLongDescription().replaceAll("\"", "\"\"") + "\"\n");
 		try {
-			FileUtils.writeStringToFile(getTarget(), msg.toString(), "UTF-8");
+			Writer w = getWriter();
+			w.append(msg.toString());
+			w.flush();
 			LOG.info("Alert for '" + e.getSubject() + "' event written successfully to '" + getTarget() + "'");
 		} catch(IOException x) {
 			LOG.error("IO Error", x);

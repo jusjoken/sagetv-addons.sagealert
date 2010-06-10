@@ -9,6 +9,7 @@ Currently, SageAlert supports sending notifications to the following server type
 * Email
 * Twitter
 * Growl
+* CSV file
  
 Simply load the web GUI for SageAlert and configure the various events by telling SageAlert which notifications to send for each supported event type.  Then when those events are received by SageAlert, you will receive the notification(s) as configured.
  
@@ -103,6 +104,6 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Fix issue 126: Add CSV log file server type; allows recording of events to a basic CSV file
+* Fix bug where CSV log files weren't being appended to, but, instead, overwritten on each event
        </ReleaseNotes>
 </SageTVPlugin>

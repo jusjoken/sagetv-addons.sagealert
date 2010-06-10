@@ -16,14 +16,23 @@
 package com.google.code.sagetvaddons.sagealert.server;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+
+import org.apache.commons.io.output.LockableFileWriter;
+import org.apache.log4j.Logger;
+
+
 
 /**
  * @author dbattams
  *
  */
 abstract class LogFileServer implements SageEventHandler {
-
+	static private final Logger LOG = Logger.getLogger(LogFileServer.class);
+	
 	File target;
+	Writer w;
 	
 	/**
 	 * 
@@ -34,6 +43,12 @@ abstract class LogFileServer implements SageEventHandler {
 			throw new IllegalArgumentException("Unable to create base directory for log! [" + this.target.getParent() + "]");
 		if(this.target.exists() && !this.target.canWrite())
 			throw new IllegalArgumentException("Unable to write to target log file! [" + this.target + "]");
+		try {
+			w = new LockableFileWriter(this.target, true);
+		} catch(IOException e) {
+			LOG.error("IO Error", e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -41,5 +56,20 @@ abstract class LogFileServer implements SageEventHandler {
 	 */
 	public File getTarget() {
 		return target;
+	}
+	
+	public Writer getWriter() {
+		return w;
+	}
+	
+	@Override
+	protected void finalize() {
+		if(w != null) {
+			try {
+				w.close();
+			} catch(IOException e) {
+				LOG.error("IO Error", e);
+			}
+		}
 	}
 }
