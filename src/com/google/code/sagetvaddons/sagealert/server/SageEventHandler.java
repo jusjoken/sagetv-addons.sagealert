@@ -35,4 +35,9 @@ public interface SageEventHandler {
 	 * @return The handler's connection settings
 	 */
 	public NotificationServerSettings getSettings();
+	
+	/**
+	 * Cleanup any resources associated with the handler
+	 */
+	public void destroy();
 }

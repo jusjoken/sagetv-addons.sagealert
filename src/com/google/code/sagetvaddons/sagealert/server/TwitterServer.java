@@ -15,9 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -67,37 +65,6 @@ final class TwitterServer implements SageEventHandler {
 			srv.updateSettings(settings); // In case the pwd was updated
 		return srv;
 	}
-	
-	synchronized static public final void deleteServer(TwitterSettings settings) {
-		TwitterServer old = SERVERS.remove(settings);
-		if(old != null)
-			LOG.debug("Deleted '" + old + "' from the cache.");
-		else
-			LOG.debug("Server '" + old + "' does not exist in cache.");
-		LOG.debug(SERVERS.size() + " server(s) remain in the cache.");
-	}
-	
-	synchronized static public final List<TwitterSettings> getAllServerSettings() {
-		List<TwitterSettings> servers = new ArrayList<TwitterSettings>();
-		for(TwitterServer gs : SERVERS.values())
-			servers.add(gs.getSettings());
-		return servers;
-	}
-
-	synchronized static public final List<TwitterServer> getAllServers() {
-		List<TwitterServer> servers = new ArrayList<TwitterServer>();
-		for(TwitterServer gs : SERVERS.values())
-			servers.add(gs);
-		return servers;
-	}
-
-	synchronized static public final void removeServer(TwitterSettings settings) {
-		SERVERS.remove(getServer(settings));
-	}
-	
-	synchronized static public final void removeServer(TwitterServer server) {
-		SERVERS.remove(server);
-	}
 			
 	private TwitterSettings settings;
 	private Twitter twitter;
@@ -143,5 +110,9 @@ final class TwitterServer implements SageEventHandler {
 				}		
 			}
 		}.start();
+	}
+
+	public void destroy() {
+		
 	}
 }

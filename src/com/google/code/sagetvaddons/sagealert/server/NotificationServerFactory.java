@@ -48,7 +48,7 @@ final class NotificationServerFactory {
 		if(settings instanceof EmailSettings)
 			return new EmailServer((EmailSettings)settings);
 		if(settings instanceof CsvLogFileSettings)
-			return new CsvLogFileServer((CsvLogFileSettings)settings);
+			return CsvLogFileServer.get((CsvLogFileSettings)settings);
 		String msg = "Unsupported server settings type: " + settings.getClass().getCanonicalName();
 		RuntimeException e = new RuntimeException(msg);
 		LOG.error(msg, e);

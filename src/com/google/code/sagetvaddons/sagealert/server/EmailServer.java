@@ -172,4 +172,9 @@ final class EmailServer implements SageEventHandler {
 		}
 		return true;
 	}
+
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
 }

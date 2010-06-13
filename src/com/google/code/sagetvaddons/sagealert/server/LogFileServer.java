@@ -37,7 +37,7 @@ abstract class LogFileServer implements SageEventHandler {
 	/**
 	 * 
 	 */
-	public LogFileServer(File target) {
+	protected LogFileServer(File target) {
 		this.target = new File(new File(Plugin.RES_DIR, "alertLogs"), target.getName());
 		if(!this.target.getParentFile().isDirectory() && !this.target.getParentFile().mkdirs())
 			throw new IllegalArgumentException("Unable to create base directory for log! [" + this.target.getParent() + "]");
@@ -61,15 +61,14 @@ abstract class LogFileServer implements SageEventHandler {
 	public Writer getWriter() {
 		return w;
 	}
-	
-	@Override
-	protected void finalize() {
+		
+	public void destroy() {
 		if(w != null) {
 			try {
 				w.close();
 			} catch(IOException e) {
 				LOG.error("IO Error", e);
 			}
-		}
+		}		
 	}
 }

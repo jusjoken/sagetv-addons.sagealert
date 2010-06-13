@@ -15,9 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.sf.libgrowl.Application;
@@ -55,42 +53,7 @@ final class GrowlServer implements SageEventHandler {
 			srv.updateSettings(settings); // In case the pwd was updated
 		return srv;
 	}
-	
-	/**
-	 * Remove the server for the given settings from the server cache
-	 * @param settings The settings for a server instance to be removed
-	 */
-	synchronized static final void deleteServer(GrowlServerSettings settings) {
-		GrowlServer old = SERVERS.remove(settings);
-		if(old != null)
-			LOG.debug("Deleted '" + old + "' from the cache.");
-		else
-			LOG.debug("Server '" + old + "' does not exist in cache.");
-		LOG.debug(SERVERS.size() + " server(s) remain in the cache.");
-	}
-	
-	/**
-	 * Get a list of all the server settings stored in the server cache
-	 * @return The list of server settings in the server cache
-	 */
-	synchronized static final List<GrowlServerSettings> getAllServerSettings() {
-		List<GrowlServerSettings> servers = new ArrayList<GrowlServerSettings>();
-		for(GrowlServer gs : SERVERS.values())
-			servers.add(gs.getSettings());
-		return servers;
-	}
 
-	/**
-	 * Get a list of all the servers in the cache.
-	 * @return The list of all servers in the cache
-	 */
-	synchronized static final List<GrowlServer> getAllServers() {
-		List<GrowlServer> servers = new ArrayList<GrowlServer>();
-		for(GrowlServer gs : SERVERS.values())
-			servers.add(gs);
-		return servers;
-	}
-	
 	static private final Application GROWL_APP = new Application("SageTV");
 	static private final NotificationType[] NOTIFICATION_TYPES = {
 		new NotificationType("General"),
@@ -187,5 +150,10 @@ final class GrowlServer implements SageEventHandler {
 //		if(e instanceof RemoteErrorEvent)
 //			return 11;
 		return 0; // Unknown event; someone probably added a new event and didn't map it here
+	}
+
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
 	}
 }

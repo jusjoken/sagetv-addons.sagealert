@@ -55,6 +55,10 @@ public final class AppInitializer implements ServletContextListener {
 	 */
 	public void contextDestroyed(ServletContextEvent sce) {
 		CoreEventsManager.get().destroy();
+		for(NotificationServerSettings s : DataStore.getInstance().getAllReporters()) {
+			SageEventHandler h = NotificationServerFactory.getInstance(s);
+			h.destroy();
+		}
 	}
 
 	/* (non-Javadoc)

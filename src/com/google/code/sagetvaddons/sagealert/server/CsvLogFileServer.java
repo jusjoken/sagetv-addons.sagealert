@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -33,6 +35,19 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
  */
 class CsvLogFileServer extends LogFileServer {
 	static private final Logger LOG = Logger.getLogger(CsvLogFileServer.class);
+	
+	static private final Map<CsvLogFileSettings, CsvLogFileServer> SERVERS = new HashMap<CsvLogFileSettings, CsvLogFileServer>();
+	
+	synchronized static final CsvLogFileServer get(CsvLogFileSettings settings) {
+		CsvLogFileServer srv = SERVERS.get(settings);
+		if(srv == null) {
+			srv = new CsvLogFileServer(settings);
+			SERVERS.put(settings, srv);
+			LOG.debug(SERVERS.size() + " server(s) now in cache.");
+		}
+		return srv;
+	}
+	
 	static private final SimpleDateFormat FMT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss Z");
 	
 	private CsvLogFileSettings settings;
@@ -41,7 +56,7 @@ class CsvLogFileServer extends LogFileServer {
 	/**
 	 * @param target
 	 */
-	public CsvLogFileServer(CsvLogFileSettings settings) {
+	private CsvLogFileServer(CsvLogFileSettings settings) {
 		super(new File(settings.getTarget()));
 		this.settings = settings;
 		msg = new StringBuilder();
