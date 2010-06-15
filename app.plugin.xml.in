@@ -104,6 +104,6 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Fix bugs with LogFileServer (CSV file logger)
+* The media file removed (user) event now logs which context UI initiated the delete operation; provides ability to log all user deletes (requires SageTV 7.0.11 or later)
        </ReleaseNotes>
 </SageTVPlugin>

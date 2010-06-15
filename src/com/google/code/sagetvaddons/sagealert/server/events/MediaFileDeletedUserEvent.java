@@ -16,6 +16,7 @@
 package com.google.code.sagetvaddons.sagealert.server.events;
 
 import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
+import com.google.code.sagetvaddons.sagealert.server.DataStore;
 
 import gkusnick.sagetv.api.MediaFileAPI.MediaFile;
 
@@ -25,26 +26,43 @@ import gkusnick.sagetv.api.MediaFileAPI.MediaFile;
  */
 public final class MediaFileDeletedUserEvent extends MediaFileDeletedEvent {
 
+	private String alias;
+	
 	/**
 	 * @param mf
 	 */
-	public MediaFileDeletedUserEvent(MediaFile mf) {
+	public MediaFileDeletedUserEvent(MediaFile mf, String deletedBy) {
 		super(mf);
-		// TODO Auto-generated constructor stub
+		if(deletedBy != null && deletedBy.length() > 0)
+			alias = DataStore.getInstance().getClient(deletedBy).getAlias();
+		else
+			alias = null;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
 	 */
 	public String getLongDescription() {
-		return "The following media file was deleted by the user: " + getTitle();
+		StringBuilder msg = new StringBuilder("The following media file was deleted by ");
+		if(alias != null)
+			msg.append("'" + alias + "'");
+		else
+			msg.append("the user");
+		msg.append(": " + getTitle());
+		return msg.toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
 	 */
 	public String getMediumDescription() {
-		return "File deleted (user): " + getTitle();
+		StringBuilder msg = new StringBuilder("File deleted by ");
+		if(alias != null)
+			msg.append("'" + alias + "'");
+		else
+			msg.append("user");
+		msg.append(": " + getTitle());
+		return msg.toString();
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +83,9 @@ public final class MediaFileDeletedUserEvent extends MediaFileDeletedEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
 	 */
 	public String getSubject() {
-		return "Media file deleted (user)";
+		StringBuilder msg = new StringBuilder("Media file deleted by user");
+		if(alias != null)
+			msg.append(" '" + alias + "'");
+		return msg.toString();
 	}
-
 }

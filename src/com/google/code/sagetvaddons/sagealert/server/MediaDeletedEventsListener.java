@@ -48,6 +48,7 @@ final class MediaDeletedEventsListener implements SageTVEventListener {
 		LOG.info("Event received: " + arg0);
 		MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(arg1.get("MediaFile"));
 		String reason = (String)arg1.get("Reason");
+		String deletedBy = (String)arg1.get("UIContext");
 		if(reason == null || reason.length() == 0) {
 			LOG.warn("Handling of this event requires SageTV 7.0.10 or newer; event ignored.");
 			return;
@@ -60,7 +61,7 @@ final class MediaDeletedEventsListener implements SageTVEventListener {
 		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_PARTIAL_OR_UNWANTED))
 			SageEventHandlerManager.get().fire(new MediaFileDeletedPartialOrUnwantedEvent(mf));
 		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_USER))
-			SageEventHandlerManager.get().fire(new MediaFileDeletedUserEvent(mf));
+			SageEventHandlerManager.get().fire(new MediaFileDeletedUserEvent(mf, deletedBy));
 		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_VERIFY_FAILED))
 			SageEventHandlerManager.get().fire(new MediaFileDeletedVerifyFailedEvent(mf));
 		else
