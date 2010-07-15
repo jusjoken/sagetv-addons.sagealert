@@ -774,7 +774,34 @@ final public class DataStore {
 		JSONObject jobj = null;
 		try {
 			jobj = new JSONObject(Password.deobfuscate(jsonEnc));
-			return new SmtpSettings(jobj.getString("host"), jobj.getInt("port"), jobj.getString("user"), jobj.getString("pwd"), jobj.getString("from"), jobj.getBoolean("ssl"));
+			String host, user, pwd, from;
+			int port;
+			boolean ssl;
+			if(jobj.has("host"))
+				host = jobj.getString("host");
+			else
+				host = "";
+			if(jobj.has("port"))
+				port = jobj.getInt("port");
+			else
+				port = -1;
+			if(jobj.has("user"))
+				user = jobj.getString("user");
+			else
+				user = "";
+			if(jobj.has("pwd"))
+				pwd = jobj.getString("pwd");
+			else
+				pwd = "";
+			if(jobj.has("from"))
+				from = jobj.getString("from");
+			else
+				from = "";
+			if(jobj.has("ssl"))
+				ssl = jobj.getBoolean("ssl");
+			else
+				ssl = false;
+			return new SmtpSettings(host, port, user, pwd, from, ssl);
 		} catch(JSONException e) {
 			LOG.error("JSON error", e);
 			return null;
