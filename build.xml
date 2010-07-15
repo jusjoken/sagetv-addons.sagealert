@@ -12,6 +12,7 @@
 	
   <property name="app.ver" value="2.0.0" />
   <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
+  <property name="sage.jar" value="C:/Program Files/SageTV/SageTV/Sage.jar" />
   <property name="src.token" value="@@" />
   <property name="bld.dir" value="bld" />
   <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
@@ -23,7 +24,7 @@
     <!-- Add any additional non-server libs (such as JUnit) -->
     <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
   	<fileset dir="${sage.libs}" includes="**/*.jar"/>
-  	<pathelement location="C:/Program Files/SageTV/SageTV/Sage.jar"/>
+  	<pathelement location="${sage.jar}"/>
   </path>
 
 	  <target name="tstamp" description="Generate current timestamp">
