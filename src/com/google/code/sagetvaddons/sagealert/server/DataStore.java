@@ -689,7 +689,7 @@ final public class DataStore {
 	 */
 	public Client getClient(String id) {
 		String alias = getSetting(CLNT_SETTING_PREFIX + id, "");
-		if(alias.length() == 0)
+		if(alias.length() == 0 || alias.equals(id))
 			alias = WebServerSettings.lookupExtenderAlias(id);
 		return buildClient(id, alias);
 	}
