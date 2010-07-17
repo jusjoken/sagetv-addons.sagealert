@@ -42,10 +42,7 @@ final class WebServerSettings {
 			Properties props = new Properties();
 			try {
 				props.load(new FileReader(EXTENDER_PROPS));
-				Object val = props.get(id);
-				if(val == null)
-					return DEFAULT_VALUE;
-				return String.valueOf(val);
+				return props.getProperty(id, DEFAULT_VALUE);
 			} catch (IOException e) {
 				LOG.error("IO error", e);
 				return DEFAULT_VALUE;

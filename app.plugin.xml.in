@@ -104,7 +104,6 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Add support for "ImportLost" reason in MediaFileRemoved event
-* Fix issue 130: Add support for reading alias info from webserver's extenders.properties file
+* Fix bug where alias lookup in extenders.properties did not work correctly
        </ReleaseNotes>
 </SageTVPlugin>
