@@ -51,6 +51,7 @@ final public class CoreEventsManager {
 	static final public String MEDIA_DELETED_USER = "User"; //
 	static final public String MEDIA_DELETED_VERIFY_FAILED = "VerifyFailed"; //
 	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED = "PartialOrUnwanted"; //
+	static final public String MEDIA_DELETED_IMPORT_LOST = "ImportLost"; //
 		
 	private final SageTVPluginRegistry PLUGIN_REG = (SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry();
 	
@@ -108,6 +109,7 @@ final public class CoreEventsManager {
 		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_USER, "Media Deleted (User)", "Event fired when a user deletes a media file."));
 		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_VERIFY_FAILED, "Media Deleted (Verify Failed)", "Event fired when a media file is deleted by the core due to a verification failure."));
 		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_PARTIAL_OR_UNWANTED, "Media Deleted (Partial/Unwanted)", "Event fired when a media file is deleted by the core because it is a partial file or it's unwanted."));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_IMPORT_LOST, "Media Deleted (Import Lost)", "Event fired when a media file is removed from the core database because the import dir was removed."));
 		LOG.info("Subscribed to " + MEDIA_DELETED + " event!");
 	}
 	

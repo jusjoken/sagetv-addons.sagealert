@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import sage.SageTVEventListener;
 
+import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedImportLost;
 import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedKeepAtMostEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedLowSpaceEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedPartialOrUnwantedEvent;
@@ -64,6 +65,8 @@ final class MediaDeletedEventsListener implements SageTVEventListener {
 			SageEventHandlerManager.get().fire(new MediaFileDeletedUserEvent(mf, deletedBy));
 		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_VERIFY_FAILED))
 			SageEventHandlerManager.get().fire(new MediaFileDeletedVerifyFailedEvent(mf));
+		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_IMPORT_LOST))
+			SageEventHandlerManager.get().fire(new MediaFileDeletedImportLost(mf));
 		else
 			LOG.error("Unknown reason received, event ignored! [" + reason + "]");
 	}
