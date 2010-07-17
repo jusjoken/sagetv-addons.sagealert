@@ -104,6 +104,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Handle case where some SMTP settings may not be included in the JSON object stored in the data store
+* Add support for "ImportLost" reason in MediaFileRemoved event
+* Fix issue 130: Add support for reading alias info from webserver's extenders.properties file
        </ReleaseNotes>
 </SageTVPlugin>

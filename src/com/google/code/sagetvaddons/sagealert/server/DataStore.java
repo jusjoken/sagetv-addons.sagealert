@@ -688,10 +688,12 @@ final public class DataStore {
 	 * @return A Client instance representing the given Client id
 	 */
 	public Client getClient(String id) {
-		return buildClient(id, getSetting(CLNT_SETTING_PREFIX + id, ""));
+		String alias = getSetting(CLNT_SETTING_PREFIX + id, "");
+		if(alias.length() == 0)
+			alias = WebServerSettings.lookupExtenderAlias(id);
+		return buildClient(id, alias);
 	}
 	
-	// First char of data is 0/1 for notify flag; rest of string is alias
 	private Client buildClient(String id, String data) {
 		return new Client(id, data);
 	}
