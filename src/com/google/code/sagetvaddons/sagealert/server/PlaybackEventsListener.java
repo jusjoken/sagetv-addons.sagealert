@@ -44,7 +44,7 @@ final class PlaybackEventsListener implements SageTVEventListener {
 	public void sageEvent(String arg0, Map arg1) {
 		LOG.info("Event received: " + arg0);
 		MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(arg1.get("MediaFile"));
-		Client clnt = DataStore.getInstance().findClient((String)arg1.get("UIContext"));
+		Client clnt = DataStore.getInstance().getClient((String)arg1.get("UIContext"));
 		
 		if(CoreEventsManager.PLAYBACK_STARTED.equals(arg0)) {
 			SageEventHandlerManager.get().fire(new PlaybackStartedEvent(mf, clnt, Client.EventType.STARTS + "_" + clnt.getId()));

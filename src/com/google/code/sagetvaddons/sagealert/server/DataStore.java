@@ -663,10 +663,8 @@ final public class DataStore {
 			stmt = conn.createStatement();
 			logQry(qry);
 			rset = stmt.executeQuery(qry);
-			while(rset.next()) {
-				String data = rset.getString(2);
-				list.add(buildClient(rset.getString(1).substring(CLNT_SETTING_PREFIX.length()), data));
-			}
+			while(rset.next())
+				list.add(getClient(rset.getString(1).substring(CLNT_SETTING_PREFIX.length())));
 		} catch(SQLException e) {
 			LOG.error(SQL_ERROR, e);
 		} finally {
@@ -689,13 +687,12 @@ final public class DataStore {
 	 */
 	public Client getClient(String id) {
 		String alias = getSetting(CLNT_SETTING_PREFIX + id, "");
-		if(alias.length() == 0 || alias.equals(id))
-			alias = WebServerSettings.lookupExtenderAlias(id);
-		return buildClient(id, alias);
-	}
-	
-	private Client buildClient(String id, String data) {
-		return new Client(id, data);
+		if(alias.length() == 0 || alias.equals(id)) {
+			String webAlias = WebServerSettings.lookupExtenderAlias(id);
+			if(webAlias != null && webAlias.length() > 0)
+				alias = webAlias;
+		}
+		return new Client(id, alias);
 	}
 	
 	/**
@@ -738,20 +735,10 @@ final public class DataStore {
 		if(getSetting(CLNT_SETTING_PREFIX + id) != null)
 			return false;
 		
-		saveClient(buildClient(id, ""));
+		saveClient(getClient(id));
 		return true;
 	}
-	
-	/**
-	 * Same as getClient() except it returns a new Client with the alias set to the ID if the given Client is not in the data store
-	 * @param id The Client id to search for
-	 * @return The Client instance; initialized if not found
-	 */
-	public Client findClient(String id) {
-		id = massageClientId(id);
-		return buildClient(id, getSetting(CLNT_SETTING_PREFIX + id, "0" + id));
-	}
-	
+		
 	static private String massageClientId(String id) {
 		Pattern p = Pattern.compile("[^\\d]*(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*");
 		Matcher m = p.matcher(id);
