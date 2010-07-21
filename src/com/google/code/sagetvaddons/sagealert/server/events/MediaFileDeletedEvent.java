@@ -15,7 +15,9 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
+import gkusnick.sagetv.api.AiringAPI;
 import gkusnick.sagetv.api.MediaFileAPI;
+import gkusnick.sagetv.api.ShowAPI;
 
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
@@ -26,22 +28,28 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 abstract public class MediaFileDeletedEvent implements SageAlertEvent {
 
 	private MediaFileAPI.MediaFile mf;
-	
+
 	public MediaFileDeletedEvent(MediaFileAPI.MediaFile mf) {
 		this.mf = mf;
 	}
-	
+
 	protected MediaFileAPI.MediaFile getMedia() { return mf; }
 
 	public String getTitle() {
 		StringBuilder title = new StringBuilder(mf.GetMediaTitle());
-		if(mf.IsTVFile()) {
-			String subtitle = mf.GetMediaFileAiring().GetShow().GetShowEpisode();
-			if(subtitle != null && subtitle.length() > 0)
-				title.append(": " + subtitle);
-			title.append("/" + mf.GetMediaFileAiring().GetShow().GetShowExternalID());
+		AiringAPI.Airing a = mf.GetMediaFileAiring();
+		if(a != null && mf.IsTVFile()) {
+			ShowAPI.Show s = a.GetShow();
+			if(s != null) {
+				String subtitle = s.GetShowEpisode();
+				if(subtitle != null && subtitle.length() > 0)
+					title.append(": " + subtitle);
+				title.append("/" + s.GetShowExternalID());
+			}
 		}
 		title.append("/" + mf.GetMediaFileID());
+		if(a != null)
+			title.append("/" + a.GetAiringID());
 		return title.toString();
 	}
 }
