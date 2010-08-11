@@ -38,7 +38,10 @@ abstract class LogFileServer implements SageEventHandler {
 	 * 
 	 */
 	protected LogFileServer(File target) {
-		this.target = new File(new File(Plugin.RES_DIR, "alertLogs"), target.getName());
+		if(target.isAbsolute())
+			this.target = target;
+		else
+			this.target = new File(new File(Plugin.RES_DIR, "alertLogs"), target.getPath());
 		if(!this.target.getParentFile().isDirectory() && !this.target.getParentFile().mkdirs())
 			throw new IllegalArgumentException("Unable to create base directory for log! [" + this.target.getParent() + "]");
 		if(this.target.exists() && !this.target.canWrite())

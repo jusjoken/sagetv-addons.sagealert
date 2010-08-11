@@ -104,6 +104,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Fix bug where alias lookup in extenders.properties did not work correctly (finally fixed properly)
+* Append airing id to MediaFileDeleted events
+* Fix issue 138: Allow log file servers to write to arbitrary paths
        </ReleaseNotes>
 </SageTVPlugin>
