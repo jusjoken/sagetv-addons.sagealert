@@ -105,5 +105,6 @@ Other plugins can also register and fire events to SageAlert, which can then be 
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
 * GUI touchups
+* Fix issue 142: Add support for initiating TLS connections over the unencrypted SMTP port, when available
        </ReleaseNotes>
 </SageTVPlugin>

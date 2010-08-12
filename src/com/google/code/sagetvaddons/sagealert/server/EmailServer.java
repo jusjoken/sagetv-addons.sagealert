@@ -93,7 +93,7 @@ final class EmailServer implements SageEventHandler {
 		props.setProperty("mail.transport.protocol", "smtp");
 		if(smtpSettings.useSsl())
 			props.setProperty("mail.smtp.ssl.enable", "true");
-		
+		props.setProperty("mail.smtp.starttls.enable", "true");
 		props.setProperty("mail.smtp.port", Integer.toString(smtpSettings.getPort()));
 		
 		if(smtpSettings.getHost().length() == 0) {
