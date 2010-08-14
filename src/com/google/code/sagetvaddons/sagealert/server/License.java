@@ -60,7 +60,7 @@ final class License {
 		if(isLicensed)
 			LOG.info("License found and verified; all features of software enabled!");
 		else {
-			StringBuilder msg = new StringBuilder("Licensse file is invalid or not found; some features of this software have been disabled:\n");
+			StringBuilder msg = new StringBuilder("License file is invalid or not found; some features of this software have been disabled:\n");
 			msg.append("\tSMTP server support disabled.\n");
 			msg.append("\tOnly one notification sent per event.\n");
 			LOG.info(msg.toString());
