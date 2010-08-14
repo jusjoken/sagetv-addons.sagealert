@@ -40,7 +40,7 @@ final class SageAlertToolBar extends ToolBar {
 
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				MessageBox.confirm("Donations", "Donations are used for the sole purpose of defraying out of pocket expenses for developing my plugins.  These expenses include the purchase of addtional SageTV server licenses and hardware used to create the development environment used solely for the purposes of plugin development.  Donations are appreciated, but not required.  This software is fully functional with or without a donation.  Do you wish to donate?", new Listener<MessageBoxEvent>() {
+				MessageBox.confirm("Donations", "Donations are used for the sole purpose of defraying out of pocket expenses for developing my plugins.  These expenses include the purchase of addtional SageTV server licenses and hardware used to create the development environment used solely for the purposes of plugin development.  Donators will receive a license file that unlocks all features of this plugin.  Do you wish to donate?", new Listener<MessageBoxEvent>() {
 
 					public void handleEvent(MessageBoxEvent be) {
 						if(be.getButtonClicked().getText().toUpperCase().equals("YES")) {

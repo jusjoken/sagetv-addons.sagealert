@@ -67,7 +67,13 @@ final class SageEventHandlerManager implements HasHandlers {
 	synchronized public void fire(SageAlertEvent e) {
 		Set<SageEventHandler> s = handlers.get(e.getSource());
 		if(s != null && s.size() > 0) {
+			boolean eventFired = false;
 			for(SageEventHandler h : s) {
+				if(eventFired && !License.get().isLicensed()) {
+					LOG.warn("Only notifying one listener for event '" + e.getSubject() + "' because this copy of SageAlert is not licensed!");
+					break;
+				}
+				eventFired = true;
 				h.onEvent(e);
 				LOG.debug("Event '" + e.getSource() + "' fired to '" + h + "'");
 			}

@@ -39,13 +39,13 @@ import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 final class EmailServer implements SageEventHandler {
 
 	static private final Logger LOG = Logger.getLogger(EmailServer.class);
-	
+
 	private EmailSettings emailSettings;
 	private SmtpSettings smtpSettings;
 	private Session session;
 	private SageAlertEvent event;
 	private MimeMessage message;
-	
+
 	/**
 	 * Constructor
 	 * @param settings The details of where the event is to be sent (i.e. email address)
@@ -53,7 +53,7 @@ final class EmailServer implements SageEventHandler {
 	EmailServer(EmailSettings settings) {
 		emailSettings = settings;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#getSettings()
 	 */
@@ -65,37 +65,40 @@ final class EmailServer implements SageEventHandler {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.server.SageEvent)
 	 */
 	public void onEvent(final SageAlertEvent e) {
-		new Thread() {
-			@Override
-			public void run() {
-				synchronized(EmailServer.this) {
-					event = e;
-					try {
-						connectToSmtp();
-						constructMsg();
-						sendMessage();
-					} catch(NotificationRecipientException x) {
-						LOG.error("Invalid SMTP settings", x);
-						LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
-					} catch(MessagingException x) {
-						LOG.error("Error sending email", x);
-						LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
+		if(License.get().isLicensed()) {
+			new Thread() {
+				@Override
+				public void run() {
+					synchronized(EmailServer.this) {
+						event = e;
+						try {
+							connectToSmtp();
+							constructMsg();
+							sendMessage();
+						} catch(NotificationRecipientException x) {
+							LOG.error("Invalid SMTP settings", x);
+							LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
+						} catch(MessagingException x) {
+							LOG.error("Error sending email", x);
+							LOG.error("Email for '" + event.getSubject() + "' event FAILED to '" + emailSettings.getAddress() + "'");
+						}
 					}
 				}
-			}
-		}.start();
+			}.start();
+		} else
+			LOG.warn("Email notification ignored; your copy of SageAlert is not licensed!");
 	}
-	
+
 	private void connectToSmtp() throws NotificationRecipientException {
 		smtpSettings = DataStore.getInstance().getSmtpSettings();
 		Properties props = new Properties();
-		
+
 		props.setProperty("mail.transport.protocol", "smtp");
 		if(smtpSettings.useSsl())
 			props.setProperty("mail.smtp.ssl.enable", "true");
 		props.setProperty("mail.smtp.starttls.enable", "true");
 		props.setProperty("mail.smtp.port", Integer.toString(smtpSettings.getPort()));
-		
+
 		if(smtpSettings.getHost().length() == 0) {
 			String err = "Cannot send email notifications when no SMTP server host is defined!";
 			LOG.error(err);
@@ -104,7 +107,7 @@ final class EmailServer implements SageEventHandler {
 		props.setProperty("mail.smtp.host", smtpSettings.getHost());
 		session = Session.getInstance(props, null);
 	}
-	
+
 	private void constructMsg() throws MessagingException {
 		message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(smtpSettings.getSenderAddress().length() == 0 ? "sagealert@" + smtpSettings.getHost() : smtpSettings.getSenderAddress()));
@@ -120,7 +123,7 @@ final class EmailServer implements SageEventHandler {
 			txt = event.getLongDescription();
 		message.setText(txt);
 	}
-	
+
 	private void sendMessage() throws MessagingException {
 		Transport t = session.getTransport();
 		if(smtpSettings.getUser().length() > 0 && smtpSettings.getPwd().length() > 0)
@@ -130,7 +133,7 @@ final class EmailServer implements SageEventHandler {
 		t.sendMessage(message, message.getAllRecipients());
 		LOG.info("Email for '" + event.getSubject() + "' event sent successfully to '" + emailSettings.getAddress() + "'");
 	}
-	
+
 	@Override
 	public String toString() {
 		return emailSettings.toString();
@@ -144,7 +147,7 @@ final class EmailServer implements SageEventHandler {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((emailSettings == null) ? 0 : emailSettings.hashCode());
+		+ ((emailSettings == null) ? 0 : emailSettings.hashCode());
 		return result;
 	}
 
@@ -175,6 +178,6 @@ final class EmailServer implements SageEventHandler {
 
 	public void destroy() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

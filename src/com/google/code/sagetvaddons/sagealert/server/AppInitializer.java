@@ -65,6 +65,8 @@ public final class AppInitializer implements ServletContextListener {
 	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
+		LOG.info("Checking license...");
+		License.get();
 		LOG.info("Loading registered handlers...");
 		registerCurrentHandlers();
 		LOG.info("Registering event listeners with SageTV core...");
