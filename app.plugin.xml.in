@@ -110,7 +110,6 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Fix NPE exceptions in RecordingStarted and RecordingCompleted event handlers
-* Fix bug where PC clients were not having their UI context name properly converted to a plain IP address, which prevented media viewing notifications from working properly
+* Fix more NPE errors
        </ReleaseNotes>
 </SageTVPlugin>
