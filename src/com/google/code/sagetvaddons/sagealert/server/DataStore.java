@@ -225,7 +225,7 @@ final public class DataStore {
 				stmt = conn.createStatement();
 				while(i < SCHEMA_VERSION)
 				{
-					String qry;
+					// String qry;
 					switch(i)
 					{
 					case 1:
@@ -686,6 +686,7 @@ final public class DataStore {
 	 * @return A Client instance representing the given Client id
 	 */
 	public Client getClient(String id) {
+		id = massageClientId(id);
 		String alias = getSetting(CLNT_SETTING_PREFIX + id, "");
 		if(alias.length() == 0 || alias.equals(id)) {
 			String webAlias = WebServerSettings.lookupExtenderAlias(id);

@@ -2,9 +2,9 @@
        <Name>SageAlert</Name>
        <Identifier>sagealert</Identifier>
        <Description>
-WARNING: Starting with v3.0.0.920, SageAlert requires a license file to unlock all features!
- 
 SageAlert listens for important/interesting SageTV events and will send notifications of those events to various notification platforms.
+ 
+WARNING: Starting with v2.0.0.920, SageAlert requires a license file to unlock all features!
  
 Currently, SageAlert supports sending notifications to the following server types:
  
@@ -110,8 +110,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* GUI touchups
-* Require license key for SMTP support and for sending more than one notification per event
-* Fix issue 142: Add support for initiating TLS connections over the unencrypted SMTP port, when available
+* Fix NPE exceptions in RecordingStarted and RecordingCompleted event handlers
+* Fix bug where PC clients were not having their UI context name properly converted to a plain IP address, which prevented media viewing notifications from working properly
        </ReleaseNotes>
 </SageTVPlugin>

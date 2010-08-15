@@ -15,7 +15,11 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
+import gkusnick.sagetv.api.AiringAPI;
 import gkusnick.sagetv.api.MediaFileAPI;
+import gkusnick.sagetv.api.ShowAPI;
+
+import org.apache.log4j.Logger;
 
 import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
@@ -25,7 +29,8 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
  *
  */
 public final class RecordingCompletedEvent implements SageAlertEvent {
-
+	static private final Logger LOG = Logger.getLogger(RecordingCompletedEvent.class);
+	
 	private MediaFileAPI.MediaFile mf;
 	
 	public RecordingCompletedEvent(MediaFileAPI.MediaFile mf) {
@@ -34,9 +39,17 @@ public final class RecordingCompletedEvent implements SageAlertEvent {
 	
 	public String getLongDescription() {
 		StringBuilder msg = new StringBuilder("A recording has completed: '" + mf.GetMediaTitle());
-		String subtitle = mf.GetMediaFileAiring().GetShow().GetShowEpisode();
-		if(subtitle != null && subtitle.length() > 0)
-			msg.append(": " + subtitle);
+		AiringAPI.Airing a = mf.GetMediaFileAiring();
+		if(a != null) {
+			ShowAPI.Show s = a.GetShow();
+			if(s != null) {
+				String subtitle = s.GetShowEpisode();
+				if(subtitle != null && subtitle.length() > 0)
+					msg.append(": " + subtitle);
+			} else
+				LOG.warn("Airing show is unexpectedly null for Airing ID: " + a.GetAiringID());
+		} else
+			LOG.warn("MediaFile airing is unexpectedly null for MF ID: " + mf.GetMediaFileID());
 		msg.append("'");
 		return msg.toString();
 	}
