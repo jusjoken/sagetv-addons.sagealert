@@ -10,7 +10,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.DevMode"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-noserver -startupUrl http://192.168.1.10/sagealert/SageAlert.html&#10;com.google.code.sagetvaddons.sagealert.SageAlert"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-noserver -startupUrl http://192.168.1.11:8080/sagealert/SageAlert.html&#10;com.google.code.sagetvaddons.sagealert.SageAlert"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="SageAlert"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx256M"/>
 </launchConfiguration>

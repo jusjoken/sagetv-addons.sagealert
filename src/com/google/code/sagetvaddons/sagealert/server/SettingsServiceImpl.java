@@ -15,6 +15,8 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import com.google.code.sagetvaddons.sagealert.server.events.SmtpTestEvent;
+import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
 import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -47,5 +49,11 @@ public final class SettingsServiceImpl extends RemoteServiceServlet implements S
 
 	public void saveSmtpSettings(SmtpSettings settings) {
 		DataStore.getInstance().saveSmtpSettings(settings);
+	}
+
+	public void testSmtpSettings(String addr, SmtpSettings smtpSettings) {
+		EmailSettings msgSettings = new EmailSettings(addr, "Long");
+		EmailServer srv = new EmailServer(msgSettings, smtpSettings);
+		srv.onEvent(new SmtpTestEvent());
 	}
 }

@@ -16,6 +16,8 @@
 package com.google.code.sagetvaddons.sagealert.client;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -23,6 +25,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
 import com.google.code.sagetvaddons.sagealert.shared.SettingsServiceAsync;
 import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
@@ -87,7 +90,45 @@ final class SmtpSettingsPanel extends FormPanel {
 			}
 			
 		});
-		add(save);
+		
+		Button test = new Button("Test Settings");
+		test.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				MessageBox.prompt("Test SMTP Settings", "Enter the recipient address for the test email message:", new Listener<MessageBoxEvent>() {
+
+					public void handleEvent(MessageBoxEvent be) {
+						String clicked = be.getButtonClicked().getText().toUpperCase();
+						if(clicked.equals("OK")) {
+							String email = be.getMessageBox().getTextBox().getValue();
+							if(email == null || email.length() == 0)
+								MessageBox.alert("ERROR", "Recipient email cannot be empty!", null);
+							else {
+								rpc.testSmtpSettings(email, new SmtpSettings(host.getValue(), port.getValue().intValue(), id.getValue(), pwd.getValue(), sender.getValue(), useSsl.getValue()), new AsyncCallback<Void>() {
+
+									public void onFailure(Throwable caught) {
+										MessageBox.alert("ERROR", caught.getLocalizedMessage(), null);
+									}
+
+									public void onSuccess(Void result) {
+										MessageBox.alert("Test Email Sent", "The test email was sent.  Check your inbox or if it doesn't arrive then check the sagealert.log file for error messages.", null);
+									}
+									
+								});
+							}
+						}
+					}
+					
+				});
+			}
+			
+		});
+		
+		ToolBar tools = new ToolBar();
+		tools.add(save);
+		tools.add(test);
+		add(tools);
 		
 		rpc.getSmtpSettings(new AsyncCallback<SmtpSettings>() {
 
@@ -108,5 +149,5 @@ final class SmtpSettingsPanel extends FormPanel {
 			}
 			
 		});
-	}
+	}	
 }

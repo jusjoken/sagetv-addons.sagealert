@@ -40,18 +40,31 @@ final class EmailServer implements SageEventHandler {
 
 	static private final Logger LOG = Logger.getLogger(EmailServer.class);
 
-	private EmailSettings emailSettings;
-	private SmtpSettings smtpSettings;
+	private final EmailSettings emailSettings;
+	private final SmtpSettings smtpSettings;
 	private Session session;
 	private SageAlertEvent event;
 	private MimeMessage message;
 
 	/**
-	 * Constructor
-	 * @param settings The details of where the event is to be sent (i.e. email address)
+	 * Ctor
+	 * @param settings The details of where the event is to be sent (i.e. email recipient, etc.)
 	 */
 	EmailServer(EmailSettings settings) {
+		this(settings, null);
+	}
+	
+	/**
+	 * Constructor
+	 * @param settings The details of where the event is to be sent (i.e. email address)
+	 * @param smtpSettings The SMTP server settings to use
+	 */
+	EmailServer(EmailSettings settings, SmtpSettings smtpSettings) {
 		emailSettings = settings;
+		if(smtpSettings != null)
+			this.smtpSettings = smtpSettings;
+		else
+			this.smtpSettings = DataStore.getInstance().getSmtpSettings();
 	}
 
 	/* (non-Javadoc)
@@ -90,7 +103,6 @@ final class EmailServer implements SageEventHandler {
 	}
 
 	private void connectToSmtp() throws NotificationRecipientException {
-		smtpSettings = DataStore.getInstance().getSmtpSettings();
 		Properties props = new Properties();
 
 		props.setProperty("mail.transport.protocol", "smtp");

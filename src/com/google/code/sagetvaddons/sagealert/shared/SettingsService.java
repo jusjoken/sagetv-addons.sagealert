@@ -50,4 +50,11 @@ public interface SettingsService extends RemoteService {
 	 * Get the SmtpServer settings object from the data store
 	 */
 	public SmtpSettings getSmtpSettings();
+	
+	/**
+	 * Test the give SmtpSettings
+	 * @param addr The recipient address of the test email message
+	 * @param settings The settings to test
+	 */
+	public void testSmtpSettings(String addr, SmtpSettings settings);
 }

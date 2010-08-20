@@ -51,4 +51,12 @@ public interface SettingsServiceAsync {
 	 * @param cb The async callback
 	 */
 	public void getSmtpSettings(AsyncCallback<SmtpSettings> cb);
+	
+	/**
+	 * Test the given SmtpSettings
+	 * @param addr The recipient address of the test email message
+	 * @param settings The settings to test
+	 * @param cb The async callback
+	 */
+	public void testSmtpSettings(String addr, SmtpSettings settings, AsyncCallback<Void> cb);
 }
