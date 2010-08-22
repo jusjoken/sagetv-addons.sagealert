@@ -2,7 +2,7 @@
 <project name="SageAlert" default="build" basedir=".">
 	  <!-- Import svn tasks -->
 	  <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
-
+	  <taskdef resource="proguard/ant/task.properties" />
   <!-- Arguments to gwtc and devmode targets -->
   <property name="gwt.args" value="" />
 
@@ -65,6 +65,7 @@
 
   <target name="javac" depends="libs" description="Compile java source">
     <mkdir dir="war/WEB-INF/classes"/>
+    <mkdir dir="jars" />
   	<mkdir dir="${bld.dir}"/>
     <javac srcdir="src" includes="**" encoding="utf-8"
         destdir="${bld.dir}"
@@ -72,9 +73,6 @@
         debug="true" debuglevel="lines,vars,source">
       <classpath refid="project.class.path"/>
     </javac>
-    <copy todir="war/WEB-INF/classes">
-      <fileset dir="${bld.dir}" excludes="**/shared/*,**/*.java,**/Plugin.*"/>
-    </copy>
   </target>
 
   <target name="gwtc" depends="javac" description="GWT compile to JavaScript">
@@ -184,6 +182,26 @@ Test targets suppressed because -junit argument was not specified when running w
   <target name="jars" depends="build">
 	<jar destfile="sagealert-common.jar" basedir="${bld.dir}" includes="**/shared/*" filesonly="true" />
   	<jar destfile="sagealert.jar" basedir="${bld.dir}" includes="**/Plugin.class" filesonly="true" />
+	<jar destfile="jars/sagealert-web.jar" basedir="${bld.dir}" excludes="**/shared/*,**/*.java,**/Plugin.*" />
+	<proguard>
+	-libraryjars ${java.home}/lib/rt.jar:${sage.libs}/log4j-1.2.15.jar:${sage.libs}/json.jar:${sage.libs}/gkusnick.sagetv.jar:${sage.libs}/mail.jar:${sage.libs}/libgrowl.jar:${sage.libs}/twitter4j-core-2.1.2.jar:${sage.libs}/commons-io-1.4.jar:${sage.libs}/commons-codec-1.3.jar:${sage.jar}:${gwt.sdk}/gwt-user.jar:${gxt.home}/gxt.jar:sagealert-common.jar:${sage.libs}/jetty-6.1.19.jar:${sage.libs}/sqlitejdbc-v056.jar:sagealert.jar:${java.home}/lib/jce.jar
+        -injars jars/sagealert-web.jar
+        -outjars war/WEB-INF/lib/sagealert-web.jar
+        -printseeds
+        -printusage sagealert.pro.${revision.max-with-flags}.dead
+        -renamesourcefileattribute SourceFile
+        -keepattributes SourceFile,LineNumberTable
+        -printmapping sagealert.pro.${revision.max-with-flags}.map
+        -keep public class * implements javax.servlet.ServletContextListener
+        -keep public class * implements com.google.gwt.user.server.rpc.RemoteServiceServlet
+	-keepclassmembernames public class * implements com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable {
+		public void unserialize(java.lang.String, java.lang.String);
+	}
+	-keep public class * implements javax.servlet.http.HttpServlet
+	-printconfiguration sagealert.pro
+    </proguard>
+    <zip destfile="sagealert-proguard-dbg-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="sagealert.pro.*" />
+
   </target>
 	
   <target name="app_plugin" depends="common_plugin">
@@ -239,12 +257,16 @@ Test targets suppressed because -junit argument was not specified when running w
 	
   <target name="clean" depends="rmgensrc" description="Cleans this project">
     <delete dir="war/WEB-INF/classes" failonerror="false" />
+    <delete failonerror="false">
+	<fileset dir="war/WEB-INF/lib" includes="sagealert-web.jar" />
+    </delete>
+    <delete dir="jars" failonerror="false" />
     <delete dir="war/sagealert" failonerror="false" />
   	<delete dir="${bld.dir}" failonerror="false" />
   	<delete dir="common_plugin" failonerror="false" />
   	<delete dir="app_plugin" failonerror="false" />
   	<delete failonerror="false">
-  	  <fileset dir="." includes="sagealert-*.zip,SageAlert.war,sagealert.jar,sagealert-common.jar" />
+  	  <fileset dir="." includes="sagealert-*.zip,SageAlert.war,sagealert.jar,sagealert-common.jar,sagealert.pro*" />
     </delete>
   </target>
 
