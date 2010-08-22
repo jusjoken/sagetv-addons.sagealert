@@ -22,7 +22,12 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsServiceAsync;
+import com.google.code.sagetvaddons.sagealert.shared.UserSettings;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -32,6 +37,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 final class SageAlertToolBar extends ToolBar {
 
 	private Button donate;
+	private Button register;
 	
 	SageAlertToolBar() {
 		donate = new Button("Donate");
@@ -58,6 +64,41 @@ final class SageAlertToolBar extends ToolBar {
 			}
 			
 		});
+		
+		register = new Button("Register");
+		register.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				MessageBox.prompt("Email", "Ensure your license file has been installed and then enter the email address for the license below:", new Listener<MessageBoxEvent>() {
+
+					public void handleEvent(MessageBoxEvent be) {
+						if(be.getButtonClicked().getText().toUpperCase().equals("OK")) {
+							String email = be.getMessageBox().getTextBox().getValue();
+							if(email == null || email.length() == 0)
+								MessageBox.alert("ERROR", "Registered email cannot be blank!", null);
+							else {
+								SettingsServiceAsync rpc = GWT.create(SettingsService.class);
+								rpc.setSetting(UserSettings.LIC_EMAIL, email, new AsyncCallback<Void>() {
+
+									public void onFailure(Throwable caught) {
+										MessageBox.alert("ERROR", caught.getLocalizedMessage(), null);
+									}
+
+									public void onSuccess(Void result) {
+										MessageBox.alert("Restart SageAlert", "You must restart SageAlert for the license settings to take effect.", null);
+									}
+									
+								});
+							}
+						}
+					}
+					
+				});
+			}
+			
+		});
 		add(donate);
+		add(register);
 	}
 }

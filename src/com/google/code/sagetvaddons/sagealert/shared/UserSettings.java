@@ -86,5 +86,11 @@ public interface UserSettings {
 	 * Amount of time, in ms, between each run of the viewing client monitor
 	 */
 	public final String VIEWING_CLNT_MONITOR_SLEEP = "ViewingClntMonSleep";
-	public final String VIEWING_CLNT_MONITOR_SLEEP_DEFAULT = "120000"; 
+	public final String VIEWING_CLNT_MONITOR_SLEEP_DEFAULT = "120000";
+	
+	/**
+	 * Registered email address for licensing
+	 */
+	public final String LIC_EMAIL = "LicensedEmail";
+	public final String LIC_EMAIL_DEFAULT = "";
 }

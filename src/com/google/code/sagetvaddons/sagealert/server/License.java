@@ -17,30 +17,55 @@ package com.google.code.sagetvaddons.sagealert.server;
 
 import gkusnick.sagetv.api.API;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.StringReader;
+import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Properties;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import javax.crypto.Cipher;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+
+import com.google.code.sagetvaddons.sagealert.shared.UserSettings;
 
 
 /**
  * Keep the honest people honest and the people who really want to crack this software, well go nuts!
- * (Should take most who want to crack this less than 30 seconds)
+ * This version should take more than 30 seconds to crack. :)  Basically, you've got three choices if
+ * you don't want to donate:
+ * 
+ *  1) Grab the source, strip the licensing code from it, rebuild, and deploy
+ *  2) Attempt to crack by reverse engineering the class files and removing/modifying the license code
+ *  3) Attempt to crack the encryption and generate a valid license file on your own
+ *
+ *  If any of those options are more appealing to you than donating the $7.50 for a license then go nuts! :)
+ *  
+ *  I've done you the favour of listing the options from easiest/less time consuming to the most difficult/most time consuming.
+ *  
  * @author dbattams
  *
  */
 final class License {
 	static private final Logger LOG = Logger.getLogger(License.class);
 
-	static private final File LIC_FILE = new File(Plugin.RES_DIR, "license.txt");
-	static private final String LIC_KEY = "SageAlert_OK";
+	static private final File LIC_FILE = new File("plugins/sagetv-addons.lic");
+	static private final InputStream KEY_FILE = License.class.getResourceAsStream("/com/google/code/sagetvaddons/sagealert/server/resources/sagetv-addons.pub");
 
 	static private final License INSTANCE = new License();
 	static final License get() { return INSTANCE; }
 
 	private boolean isLicensed;
+	private PublicKey key;
 
 	private License() {
 		if(!LIC_FILE.exists())
@@ -48,11 +73,18 @@ final class License {
 		else {
 			try {
 				String data = FileUtils.readFileToString(LIC_FILE, "UTF-8");
-				if(DigestUtils.md5Hex(LIC_KEY).equals(data))
+				initKey();
+				Cipher cipher = Cipher.getInstance("RSA");
+				cipher.init(Cipher.DECRYPT_MODE, key);
+				Charset utf8 = Charset.forName("UTF-8");
+				String propsData = new String(cipher.doFinal(Base64.decodeBase64(data.getBytes(utf8))), utf8);
+				Properties props = new Properties();
+				props.load(new StringReader(propsData));
+				if(props.getProperty("email").equals(DataStore.getInstance().getSetting(UserSettings.LIC_EMAIL)))
 					isLicensed = true;
 				else
 					isLicensed = false;
-			} catch(IOException e) {
+			} catch(Exception e) {
 				LOG.error("LicenseReadError", e);
 				isLicensed = false;
 			}
@@ -69,4 +101,25 @@ final class License {
 	}
 
 	public boolean isLicensed() { return isLicensed; }
+
+	private void initKey() {
+		if(KEY_FILE != null) {
+			ObjectInputStream oin = null;
+			BigInteger mod, exp;
+			try {
+				oin = new ObjectInputStream(new BufferedInputStream(KEY_FILE));
+				mod = (BigInteger) oin.readObject();
+				exp = (BigInteger) oin.readObject();
+				RSAPublicKeySpec keySpec = new RSAPublicKeySpec(mod, exp);
+				KeyFactory fact = KeyFactory.getInstance("RSA");
+				key = fact.generatePublic(keySpec);
+			} catch (Exception e) {
+				throw new RuntimeException("Serialization error!", e);
+			} finally {
+				if(oin != null)
+					try { oin.close(); } catch(IOException e) { LOG.error("IOError", e); }
+			}
+		} else
+			throw new RuntimeException("Unable to find public key file!");
+	}
 }

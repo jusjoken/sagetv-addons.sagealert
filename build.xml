@@ -176,6 +176,7 @@ Test targets suppressed because -junit argument was not specified when running w
   	<copy todir="war/resources">
   		<fileset dir="${gxt.home}/resources" />	
   	</copy>
+  	<copy todir="war/WEB-INF/classes/com/google/code/sagetvaddons/sagealert/server/resources" file="src/com/google/code/sagetvaddons/sagealert/server/resources/sagetv-addons.pub" failonerror="true" />
   	<copy todir="war/WEB-INF/lib" file="sagealert-common.jar" failonerror="true" />
     <zip destfile="SageAlert.war" basedir="war"/>
   </target>
