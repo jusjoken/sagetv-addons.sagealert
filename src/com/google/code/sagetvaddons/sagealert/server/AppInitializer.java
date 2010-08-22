@@ -66,7 +66,8 @@ public final class AppInitializer implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
 		LOG.info("Checking license...");
-		License.get();
+		if(!License.get().isLicensed() && LOG.isDebugEnabled())
+			LOG.debug("License validation failed!");
 		LOG.info("Loading registered handlers...");
 		registerCurrentHandlers();
 		LOG.info("Registering event listeners with SageTV core...");
