@@ -95,7 +95,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        </Dependency>
 	<Dependency>
 		<Plugin>gxt</Plugin>
-		<MinVersion>2.1.1</MinVersion>
+		<MinVersion>2.1.1.1</MinVersion>
 	</Dependency>
        <Package>
                <PackageType>JAR</PackageType>
