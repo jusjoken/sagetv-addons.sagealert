@@ -91,7 +91,12 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <Dependency>
         <Plugin>sagealert-common</Plugin>
         <MinVersion>@@VER_NUM@@.@@BLD_NUM@@</MinVersion>
+	<MaxVersion>@@VER_NUM@@.@@BLD_NUM@@</MaxVersion>
        </Dependency>
+	<Dependency>
+		<Plugin>gxt</Plugin>
+		<MinVersion>2.1.1</MinVersion>
+	</Dependency>
        <Package>
                <PackageType>JAR</PackageType>
                <Location>http://sagetv-addons.googlecode.com/files/sagealert-jar-@@VER_NUM@@.@@BLD_NUM@@.zip</Location>
