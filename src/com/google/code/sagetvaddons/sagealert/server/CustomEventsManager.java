@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import sage.SageTVEventListener;
 import sage.SageTVPluginRegistry;
 
-import com.google.code.sagetvaddons.sagealert.client.SageAlert;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
@@ -65,7 +64,7 @@ final class CustomEventsManager implements SageTVEventListener {
 			LOG.error("Custom event registration requires a valid event id!  Registration ignored!");
 		else {
 			String[] args = new String[] {eventId, pluginId, clsName, name, desc};
-			StringBuilder msg = new StringBuilder("Attempting registration of custom event: " + Arrays.toString(args));
+			StringBuilder msg = new StringBuilder("Attempting registration of custom event: " + Arrays.toString(args) + " ");
 			try {
 				Class<?> cls = Class.forName(clsName);
 				if(SageAlertEvent.class.isAssignableFrom(cls)) {
@@ -78,7 +77,7 @@ final class CustomEventsManager implements SageTVEventListener {
 					} else
 						msg.append("SKIPPED (event already registered)");
 				} else
-					msg.append("FAILED (class does not implement " + SageAlert.class.getCanonicalName() + ")");
+					msg.append("FAILED (class does not implement " + SageAlertEvent.class.getCanonicalName() + ")");
 				LOG.info(msg.toString());
 			} catch (ClassNotFoundException e) {
 				msg.append("FAILED (class not found)");
