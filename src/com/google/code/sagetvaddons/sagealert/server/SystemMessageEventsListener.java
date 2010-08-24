@@ -45,7 +45,9 @@ final class SystemMessageEventsListener implements SageTVEventListener {
 		LOG.info("Event received: " + arg0);
 		if(CoreEventsManager.SYSMSG_POSTED.equals(arg0)) {
 			SystemMessageAPI.SystemMessage msg = API.apiNullUI.systemMessageAPI.Wrap(arg1.get("SystemMessage"));
-			if(msg.GetSystemMessageLevel() == 1)
+			if(msg.GetSystemMessageRepeatCount() > 1)
+				LOG.warn("Not firing event for system message '" + msg.GetSystemMessageTypeName() + "' because it is a repeated message!");
+			else if(msg.GetSystemMessageLevel() == 1)
 				SageEventHandlerManager.get().fire(new SystemMessageInfoEvent(msg));
 			else if(msg.GetSystemMessageLevel() == 2)
 				SageEventHandlerManager.get().fire(new SystemMessageWarningEvent(msg));

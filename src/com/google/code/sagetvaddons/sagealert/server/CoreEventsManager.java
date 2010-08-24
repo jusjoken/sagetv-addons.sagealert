@@ -15,9 +15,10 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import gkusnick.sagetv.api.API;
+
 import org.apache.log4j.Logger;
 
-import gkusnick.sagetv.api.API;
 import sage.SageTVPluginRegistry;
 
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
@@ -27,10 +28,10 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
  * @author dbattams
  *
  */
-final public class CoreEventsManager {
+public final class CoreEventsManager {
 	static private final Logger LOG = Logger.getLogger(CoreEventsManager.class);
 	static private final CoreEventsManager INSTANCE = new CoreEventsManager();
-	static final public CoreEventsManager get() { return INSTANCE; }
+	static public final CoreEventsManager get() { return INSTANCE; }
 	
 	static final public String REC_STARTED = "RecordingStarted"; //
 	static final public String REC_COMPLETED = "RecordingCompleted"; //
@@ -52,8 +53,10 @@ final public class CoreEventsManager {
 	static final public String MEDIA_DELETED_VERIFY_FAILED = "VerifyFailed"; //
 	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED = "PartialOrUnwanted"; //
 	static final public String MEDIA_DELETED_IMPORT_LOST = "ImportLost"; //
+	static final public String PLUGIN_STARTED = "PluginStarted";
 		
 	private final SageTVPluginRegistry PLUGIN_REG = (SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry();
+	private final CustomEventLoader CUSTOM_LOADER = new CustomEventLoader();
 	
 	private CoreEventsManager() {}
 	
@@ -62,6 +65,9 @@ final public class CoreEventsManager {
 
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), PLUGINS_LOADED);
 		LOG.info("Subscribed to " + PLUGINS_LOADED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(CUSTOM_LOADER, PLUGIN_STARTED);
+		LOG.info("Subscribed to " + PLUGIN_STARTED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), AppStartedEvent.EVENT_ID);
 		mgr.putMetadata(new SageAlertEventMetadata(AppStartedEvent.EVENT_ID, "SageAlert App Started", "Event fired when SageAlert has successfully started."));
@@ -116,6 +122,9 @@ final public class CoreEventsManager {
 	public void destroy() {
 		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), PLUGINS_LOADED);
 		LOG.info("Unsubscribed from " + PLUGINS_LOADED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(CUSTOM_LOADER, PLUGIN_STARTED);
+		LOG.info("Unsubscribed from " + CUSTOM_LOADER + " event!");
 		
 		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), AppStartedEvent.EVENT_ID);
 		LOG.info("Unsubscrbied from " + AppStartedEvent.EVENT_ID + " event!");

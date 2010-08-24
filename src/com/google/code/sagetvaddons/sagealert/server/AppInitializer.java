@@ -48,8 +48,6 @@ public final class AppInitializer implements ServletContextListener {
 	 */
 	static public String REGISTERED_HANDLER_CLASSES = null;
 
-	
-	
 	/* (non-Javadoc)
 	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
 	 */
@@ -72,8 +70,11 @@ public final class AppInitializer implements ServletContextListener {
 		registerCurrentHandlers();
 		LOG.info("Registering event listeners with SageTV core...");
 		CoreEventsManager.get().init();
+		Thread customEventLoader = new Thread(new CustomEventLoader());
+		customEventLoader.setDaemon(true);
+		customEventLoader.start();
 		LOG.info("Firing app started event...");
-		((SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry()).postEvent(AppStartedEvent.EVENT_ID, Collections.singletonMap(SageAlertEvent.LISTENER_KEY, new AppStartedEvent()));		
+		((SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry()).postEvent(AppStartedEvent.EVENT_ID, Collections.singletonMap(SageAlertEvent.LISTENER_KEY, new AppStartedEvent()));
 	}
 	
 	private void registerCurrentHandlers() {

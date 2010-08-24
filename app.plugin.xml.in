@@ -42,7 +42,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        </Dependency>
        <Dependency>
        	<Core/>
-       	<MinVersion>7.0.9</MinVersion>
+       	<MinVersion>7.0.12</MinVersion>
        </Dependency>
        <Dependency>
        	<Plugin>jetty</Plugin>
@@ -110,7 +110,8 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Fix issue 141: Add ability to test SMTP server settings
-* Initial implementation of RSA encryption for licensing; current donators will be receiving a new license file, which is required for this new version
+* Build fixes/improvements
+* Initial implementation of custom event handling
+* Do not fire system message events if the system message is a repeat (as determined by the core); a future release of SageAlert will allow disabling of this feature
        </ReleaseNotes>
 </SageTVPlugin>
