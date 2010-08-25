@@ -36,7 +36,8 @@ public final class Plugin implements SageTVPlugin {
 	static private Logger LOG = null;
 	static public final File RES_DIR = new File("plugins/sagealert");
 	
-	static public final String OPT_IGNORE_REPEAT_SYS_MSGS = "IgnoreRepeatSysMsgs";
+	static public final String OPT_PREFIX = "sagealert/";
+	static public final String OPT_IGNORE_REPEAT_SYS_MSGS = OPT_PREFIX + "IgnoreRepeatSysMsgs";
 	static public final String OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT = "true";
 	
 	/**
