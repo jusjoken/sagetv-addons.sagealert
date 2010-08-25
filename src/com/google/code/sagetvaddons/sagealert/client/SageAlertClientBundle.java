@@ -31,5 +31,8 @@ public interface SageAlertClientBundle extends ClientBundle {
 	
 	@Source("com/google/code/sagetvaddons/sagealert/client/resources/lock_open.png")
 	public ImageResource getRegisterImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/help.png")
+	public ImageResource getHelpImg();
 
 }

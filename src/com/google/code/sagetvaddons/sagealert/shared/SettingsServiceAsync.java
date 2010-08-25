@@ -59,4 +59,10 @@ public interface SettingsServiceAsync {
 	 * @param cb The async callback
 	 */
 	public void testSmtpSettings(String addr, SmtpSettings settings, AsyncCallback<Void> cb);
+	
+	/**
+	 * Check the license for this installation
+	 * @param cb The async callback
+	 */
+	public void isLicensed(AsyncCallback<Boolean> cb);
 }

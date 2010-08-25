@@ -56,4 +56,8 @@ public final class SettingsServiceImpl extends RemoteServiceServlet implements S
 		EmailServer srv = new EmailServer(msgSettings, smtpSettings);
 		srv.onEvent(new SmtpTestEvent());
 	}
+
+	public boolean isLicensed() {
+		return License.get().isLicensed();
+	}
 }

@@ -57,4 +57,10 @@ public interface SettingsService extends RemoteService {
 	 * @param settings The settings to test
 	 */
 	public void testSmtpSettings(String addr, SmtpSettings settings);
+	
+	/**
+	 * Check to see if this version of SageAlert is licensed
+	 * @return True if it is licensed or else false
+	 */
+	public boolean isLicensed();
 }

@@ -38,6 +38,7 @@ final class SageAlertToolBar extends ToolBar {
 
 	private Button donate;
 	private Button register;
+	private Button help;
 	
 	SageAlertToolBar() {
 		donate = new Button("Donate");
@@ -99,7 +100,19 @@ final class SageAlertToolBar extends ToolBar {
 			}
 			
 		});
+		
+		help = new Button("Help");
+		help.setIcon(AbstractImagePrototype.create(SageAlertClientBundle.INSTANCE.getHelpImg()));
+		help.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				new AboutWindow().show();
+			}
+		});
+
 		add(donate);
 		add(register);
+		add(help);
 	}
 }

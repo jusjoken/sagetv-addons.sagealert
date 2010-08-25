@@ -23,6 +23,10 @@ import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.CenterLayout;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsServiceAsync;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -56,7 +60,7 @@ final class SageAlertViewport extends Viewport {
 		
 		mainWindow = new Window();
 		mainWindow.setDraggable(false);
-		mainWindow.setHeading("SageAlert v2.x");
+		mainWindow.setHeading("SageAlert v" + Version.getFullVersion());
 		mainWindow.setClosable(false);
 		mainWindow.setResizable(false);
 		mainWindow.setSize(600, 450);
@@ -64,6 +68,23 @@ final class SageAlertViewport extends Viewport {
 		mainWindow.add(westPanel, westData);
 		mainWindow.add(centerPanel, centerData);
 		add(mainWindow);
+		SettingsServiceAsync rpc = GWT.create(SettingsService.class);
+		rpc.isLicensed(new AsyncCallback<Boolean>() {
+
+			public void onFailure(Throwable caught) {
+				GWT.log("ERROR", caught);
+			}
+
+			public void onSuccess(Boolean result) {
+				String newHeading = mainWindow.getHeading();
+				if(!result)
+					newHeading = newHeading.concat(" (Unlicensed)");
+				else
+					newHeading = newHeading.concat(" (Licensed)");
+				mainWindow.setHeading(newHeading);
+			}
+			
+		});
 	}
 
 	/* (non-Javadoc)

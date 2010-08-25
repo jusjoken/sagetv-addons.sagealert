@@ -121,5 +121,6 @@ Changes in @@VER_NUM@@.@@BLD_NUM@@
  
 * Fix issue 152: Add support for RecordingStopped events
 * Validate the args map contents of received events more thoroughly
+* Various UI fixes
        </ReleaseNotes>
 </SageTVPlugin>
