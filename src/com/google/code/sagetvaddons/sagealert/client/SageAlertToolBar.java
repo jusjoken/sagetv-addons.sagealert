@@ -66,6 +66,7 @@ final class SageAlertToolBar extends ToolBar {
 		});
 		
 		register = new Button("Register");
+		register.setIcon(AbstractImagePrototype.create(SageAlertClientBundle.INSTANCE.getRegisterImg()));
 		register.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
