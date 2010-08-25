@@ -15,6 +15,8 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import gkusnick.sagetv.api.API;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -112,7 +114,7 @@ public final class Plugin implements SageTVPlugin {
 		String defaultVal = null;
 		if(OPT_IGNORE_REPEAT_SYS_MSGS.equals(arg0))
 			defaultVal = OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT;
-		return DataStore.getInstance().getSetting(arg0, defaultVal);
+		return API.apiNullUI.configuration.GetServerProperty(arg0, defaultVal);
 	}
 
 	/* (non-Javadoc)
@@ -134,7 +136,7 @@ public final class Plugin implements SageTVPlugin {
 	 * @see sage.SageTVPlugin#setConfigValue(java.lang.String, java.lang.String)
 	 */
 	public void setConfigValue(String arg0, String arg1) {
-		DataStore.getInstance().setSetting(arg0, arg1);
+		API.apiNullUI.configuration.SetServerProperty(arg0, arg1);
 	}
 
 	/* (non-Javadoc)
