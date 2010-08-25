@@ -34,34 +34,33 @@ final class ClientEventsListener implements SageTVEventListener {
 	static private final ClientEventsListener INSTANCE = new ClientEventsListener();
 	static final ClientEventsListener get() { return INSTANCE; }
 	
+	static private final String IP_KEY = "IPAddress";
+	static private final String MAC_KEY = "MACAddress";
+	
 	/* (non-Javadoc)
 	 * @see sage.SageTVEventListener#sageEvent(java.lang.String, java.util.Map)
 	 */
 	@SuppressWarnings("unchecked")
 	public void sageEvent(String arg0, Map arg1) {
-		LOG.info("Event received: " + arg0);
-		if(CoreEventsManager.CLIENT_CONNECTED.equals(arg0)) {
-			String ipAddr = (String)arg1.get("IPAddress");
-			String macAddr = (String)arg1.get("MACAddress");
+		LOG.info("Event received: " + arg0 + " :: " + arg1.toString());
+		String ipAddr = (String)arg1.get(IP_KEY);
+		String macAddr = (String)arg1.get(MAC_KEY);
+		if(Utils.containsNonEmptyString(new Object[] {ipAddr, macAddr})) {
 			DataStore ds = DataStore.getInstance();
 			Client clnt;
 			if(macAddr == null)
 				clnt = ds.getClient(ipAddr);
 			else
 				clnt = ds.getClient(macAddr);
-			SageEventHandlerManager.get().fire(new ClientConnectedEvent(clnt));
-			ds.registerClient(clnt.getId());
-		} else if(CoreEventsManager.CLIENT_DISCONNECTED.equals(arg0)) {
-			String ipAddr = (String)arg1.get("IPAddress");
-			String macAddr = (String)arg1.get("MACAddress");
-			Client clnt;
-			if(macAddr == null)
-				clnt = DataStore.getInstance().getClient(ipAddr);
+			if(CoreEventsManager.CLIENT_CONNECTED.equals(arg0)) {
+				SageAlertEventHandlerManager.get().fire(new ClientConnectedEvent(clnt));
+				ds.registerClient(clnt.getId());
+			} else if(CoreEventsManager.CLIENT_DISCONNECTED.equals(arg0))
+				SageAlertEventHandlerManager.get().fire(new ClientDisconnectedEvent(clnt));			
 			else
-				clnt = DataStore.getInstance().getClient(macAddr);
-			SageEventHandlerManager.get().fire(new ClientDisconnectedEvent(clnt));			
+				LOG.error("Unhandled event: " + arg0);
 		} else
-			LOG.error("Unhandled event: " + arg0);
+			LOG.error("Args map contains invalid contents!  Event ignored.");
 	}
 	
 	private ClientEventsListener() {}

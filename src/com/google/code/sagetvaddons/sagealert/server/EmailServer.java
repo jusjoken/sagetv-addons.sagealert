@@ -36,7 +36,7 @@ import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
  * @author dbattams
  * @version $Id$
  */
-final class EmailServer implements SageEventHandler {
+final class EmailServer implements SageAlertEventHandler {
 
 	static private final Logger LOG = Logger.getLogger(EmailServer.class);
 
@@ -68,14 +68,14 @@ final class EmailServer implements SageEventHandler {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#getSettings()
+	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#getSettings()
 	 */
 	public EmailSettings getSettings() {
 		return emailSettings;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.server.SageEvent)
+	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.server.SageEvent)
 	 */
 	public void onEvent(final SageAlertEvent e) {
 		if(License.get().isLicensed()) {

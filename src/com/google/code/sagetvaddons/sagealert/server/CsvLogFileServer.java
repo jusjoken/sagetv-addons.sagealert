@@ -63,14 +63,14 @@ class CsvLogFileServer extends LogFileServer {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#getSettings()
+	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#getSettings()
 	 */
 	public NotificationServerSettings getSettings() {
 		return settings;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.server.SageEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent)
+	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent)
 	 */
 	synchronized public void onEvent(SageAlertEvent e) {
 		msg.setLength(0);

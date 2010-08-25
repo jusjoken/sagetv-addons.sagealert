@@ -35,7 +35,7 @@ import com.google.code.sagetvaddons.sagealert.shared.TwitterSettings;
  * @author dbattams
  * @version $Id$
  */
-final class TwitterServer implements SageEventHandler {
+final class TwitterServer implements SageAlertEventHandler {
 	static private final Map<TwitterSettings, TwitterServer> SERVERS = new HashMap<TwitterSettings, TwitterServer>();
 	static private final Logger LOG = Logger.getLogger(TwitterServer.class);
 	static private final String TWEET_HASH = " #SageAlert";

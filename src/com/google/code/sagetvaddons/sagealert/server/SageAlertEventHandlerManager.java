@@ -34,28 +34,28 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
  * @author dbattams
  * @version $Id$
  */
-final class SageEventHandlerManager implements HasHandlers {
+final class SageAlertEventHandlerManager implements HasHandlers {
 
-	static private final Logger LOG = Logger.getLogger(SageEventHandlerManager.class);
+	static private final Logger LOG = Logger.getLogger(SageAlertEventHandlerManager.class);
 
-	static private final SageEventHandlerManager INSTANCE = new SageEventHandlerManager();
+	static private final SageAlertEventHandlerManager INSTANCE = new SageAlertEventHandlerManager();
 	/**
 	 * Single accessor
 	 * @return The single instance of the manager
 	 */
-	static final SageEventHandlerManager get() { return INSTANCE; }
+	static final SageAlertEventHandlerManager get() { return INSTANCE; }
 
 
-	private Map<String, Set<SageEventHandler>> handlers;
+	private Map<String, Set<SageAlertEventHandler>> handlers;
 	
-	private SageEventHandlerManager() {
-		handlers = new HashMap<String, Set<SageEventHandler>>();
+	private SageAlertEventHandlerManager() {
+		handlers = new HashMap<String, Set<SageAlertEventHandler>>();
 	}
 
-	synchronized public void addHandler(SageEventHandler h, String eventId) {
-		Set<SageEventHandler> s = handlers.get(eventId);
+	synchronized public void addHandler(SageAlertEventHandler h, String eventId) {
+		Set<SageAlertEventHandler> s = handlers.get(eventId);
 		if(s == null) {
-			s = new HashSet<SageEventHandler>();
+			s = new HashSet<SageAlertEventHandler>();
 			handlers.put(eventId, s);
 		}
 		s.add(h);
@@ -65,10 +65,10 @@ final class SageEventHandlerManager implements HasHandlers {
 	}
 		
 	synchronized public void fire(SageAlertEvent e) {
-		Set<SageEventHandler> s = handlers.get(e.getSource());
+		Set<SageAlertEventHandler> s = handlers.get(e.getSource());
 		if(s != null && s.size() > 0) {
 			boolean eventFired = false;
-			for(SageEventHandler h : s) {
+			for(SageAlertEventHandler h : s) {
 				if(eventFired && !License.get().isLicensed()) {
 					LOG.warn("Only notifying one listener for event '" + e.getSubject() + "' because this copy of SageAlert is not licensed!");
 					break;
@@ -81,8 +81,8 @@ final class SageEventHandlerManager implements HasHandlers {
 			LOG.info("No SageAlert handlers registered for fired event: " + e.getSource());
 	}
  		
-	synchronized public void removeHandler(SageEventHandler h, String eventId) {
-		Set<SageEventHandler> s = null;
+	synchronized public void removeHandler(SageAlertEventHandler h, String eventId) {
+		Set<SageAlertEventHandler> s = null;
 		s = handlers.get(eventId);
 		if(s != null)
 			s.remove(h);				
@@ -91,7 +91,7 @@ final class SageEventHandlerManager implements HasHandlers {
 		DataStore.getInstance().removeHandlers(eventId, list);
 	}
 
-	synchronized public void removeHandlerFromAllEvents(SageEventHandler h) {
+	synchronized public void removeHandlerFromAllEvents(SageAlertEventHandler h) {
 		for(String key : handlers.keySet())
 			handlers.get(key).remove(h);
 		List<NotificationServerSettings> list = new ArrayList<NotificationServerSettings>();
@@ -99,17 +99,17 @@ final class SageEventHandlerManager implements HasHandlers {
 		DataStore.getInstance().removeHandlers(list);
 	}
 
-	synchronized public void removeHandlers(Collection<SageEventHandler> list, String eventId) {
-		for(SageEventHandler h : list)
+	synchronized public void removeHandlers(Collection<SageAlertEventHandler> list, String eventId) {
+		for(SageAlertEventHandler h : list)
 			removeHandler(h, eventId);
 	}
 
-	public Set<SageEventHandler> getHandlers(String eventId) {
+	public Set<SageAlertEventHandler> getHandlers(String eventId) {
 		return handlers.get(eventId);
 	}
 	
 	synchronized public void removeAllHandlers(String eventId) {
-		Set<SageEventHandler> set = null;
+		Set<SageAlertEventHandler> set = null;
 		set = handlers.get(eventId);
 		if(set != null)
 			set.clear();
@@ -120,15 +120,15 @@ final class SageEventHandlerManager implements HasHandlers {
 		StringWriter w = new StringWriter();
 		for(String c : handlers.keySet()) {
 			w.write(c + "\n");
-			for(SageEventHandler h : handlers.get(c))
+			for(SageAlertEventHandler h : handlers.get(c))
 				w.write("\t" + h + "\n");
 			w.write("\n");
 		}
 		return w.toString();
 	}
 
-	public void addHandlers(Collection<SageEventHandler> h, String e) {
-		for(SageEventHandler s : h)
+	public void addHandlers(Collection<SageAlertEventHandler> h, String e) {
+		for(SageAlertEventHandler s : h)
 			addHandler(s, e);
 	}
 }

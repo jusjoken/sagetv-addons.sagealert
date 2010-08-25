@@ -39,8 +39,8 @@ public final class ReporterServiceImpl extends RemoteServiceServlet implements
 
 	public void delete(List<NotificationServerSettings> settings) {
 		for(NotificationServerSettings s : settings) {
-			SageEventHandler h = NotificationServerFactory.getInstance(s);
-			SageEventHandlerManager.get().removeHandlerFromAllEvents(h);
+			SageAlertEventHandler h = NotificationServerFactory.getInstance(s);
+			SageAlertEventHandlerManager.get().removeHandlerFromAllEvents(h);
 			DataStore.getInstance().deleteReporter(s.getClass().getCanonicalName(), s.getDataStoreKey());
 			h.destroy();
 		}

@@ -37,21 +37,28 @@ final class PlaybackEventsListener implements SageTVEventListener {
 	static private final PlaybackEventsListener INSTANCE = new PlaybackEventsListener();
 	static final PlaybackEventsListener get() { return INSTANCE; }
 	
+	static private final String MF_KEY = "MediaFile";
+	static private final String UI_KEY = "UIContext";
+	
 	/* (non-Javadoc)
 	 * @see sage.SageTVEventListener#sageEvent(java.lang.String, java.util.Map)
 	 */
 	@SuppressWarnings("unchecked")
 	public void sageEvent(String arg0, Map arg1) {
-		LOG.info("Event received: " + arg0);
-		MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(arg1.get("MediaFile"));
-		Client clnt = DataStore.getInstance().getClient((String)arg1.get("UIContext"));
-		
-		if(CoreEventsManager.PLAYBACK_STARTED.equals(arg0)) {
-			SageEventHandlerManager.get().fire(new PlaybackStartedEvent(mf, clnt, Client.EventType.STARTS + "_" + clnt.getId()));
-		} else if(CoreEventsManager.PLAYBACK_STOPPED.equals(arg0))
-			SageEventHandlerManager.get().fire(new PlaybackStoppedEvent(mf, clnt, Client.EventType.STOPS + "_" + clnt.getId()));
-		else
-			LOG.error("Unhandled event: " + arg0);
+		LOG.info("Event received: " + arg0 + " :: " + arg1.toString());
+		Object obj = arg1.get(MF_KEY);
+		if(Utils.canWrapAsMediaFile(obj)) {
+			MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(obj);
+			Client clnt = DataStore.getInstance().getClient((String)arg1.get(UI_KEY));
+			
+			if(CoreEventsManager.PLAYBACK_STARTED.equals(arg0)) {
+				SageAlertEventHandlerManager.get().fire(new PlaybackStartedEvent(mf, clnt, Client.EventType.STARTS + "_" + clnt.getId()));
+			} else if(CoreEventsManager.PLAYBACK_STOPPED.equals(arg0))
+				SageAlertEventHandlerManager.get().fire(new PlaybackStoppedEvent(mf, clnt, Client.EventType.STOPS + "_" + clnt.getId()));
+			else
+				LOG.error("Unhandled event: " + arg0);
+		} else
+			LOG.error("Contents of args map is invalid!  Event ignored.");
 	}
 	
 	private PlaybackEventsListener() {}

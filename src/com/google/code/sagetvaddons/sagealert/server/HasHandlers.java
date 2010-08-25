@@ -30,27 +30,27 @@ interface HasHandlers {
 	 * @param h The handler to be added
 	 * @param e The event the handler will be added to
 	 */
-	void addHandler(SageEventHandler h, String e);
+	void addHandler(SageAlertEventHandler h, String e);
 	
 	/**
 	 * Add all the given handlers to the given event
 	 * @param h A list of handlers to be added to the event
 	 * @param e The event the handlers will be attached to
 	 */
-	void addHandlers(Collection<SageEventHandler> h, String e);
+	void addHandlers(Collection<SageAlertEventHandler> h, String e);
 		
 	/**
 	 * Remove a handler from the given event
 	 * @param h The handler being removed
 	 * @param e The event being detached from
 	 */
-	void removeHandler(SageEventHandler h, String e);
+	void removeHandler(SageAlertEventHandler h, String e);
 
 	/**
 	 * Remove a handler from all events it was listening to
 	 * @param h The handler to be removed
 	 */
-	void removeHandlerFromAllEvents(SageEventHandler h);
+	void removeHandlerFromAllEvents(SageAlertEventHandler h);
 	
 	/**
 	 * Remove all handlers from an event
@@ -63,14 +63,14 @@ interface HasHandlers {
 	 * @param h The list of handlers to be removed 
 	 * @param e The event from which the handlers will be dropped
 	 */
-	void removeHandlers(Collection<SageEventHandler> h, String e);
+	void removeHandlers(Collection<SageAlertEventHandler> h, String e);
 	
 	/**
 	 * Get a list of all handlers attached to an event
 	 * @param e The event to get all handlers for
 	 * @return The list of handlers attached to the event; the list may be empty, but not null
 	 */
-	Collection<SageEventHandler> getHandlers(String e);
+	Collection<SageAlertEventHandler> getHandlers(String e);
 	
 	/**
 	 * Fire an event to all attached handlers

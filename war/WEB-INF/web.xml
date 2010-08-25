@@ -28,7 +28,7 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>EventHandlerMgrViewer</servlet-name>
-    <servlet-class>com.google.code.sagetvaddons.sagealert.server.SageEventHandlerManagerViewer</servlet-class>
+    <servlet-class>com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandlerManagerViewer</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>EventHandlerMgrViewer</servlet-name>

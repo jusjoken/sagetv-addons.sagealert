@@ -35,6 +35,7 @@ public final class CoreEventsManager {
 	
 	static final public String REC_STARTED = "RecordingStarted"; //
 	static final public String REC_COMPLETED = "RecordingCompleted"; //
+	static final public String REC_STOPPED = "RecordingStopped"; //
 	static final public String PLUGINS_LOADED = "AllPluginsLoaded"; //
 	static final public String CONFLICTS = "ConflictStatusChanged"; //
 	static final public String SYSMSG_POSTED = "SystemMessagePosted"; //
@@ -76,6 +77,10 @@ public final class CoreEventsManager {
 		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_STARTED);
 		mgr.putMetadata(new SageAlertEventMetadata(REC_STARTED, "Recording Started", "Event fired when the SageTV system starts a recording."));
 		LOG.info("Subscribed to " + REC_STARTED + " event!");
+
+		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_STOPPED);
+		mgr.putMetadata(new SageAlertEventMetadata(REC_STOPPED, "Recording Stopped", "Event fired when the SageTV system stops a recording for any other reason besides it being fully completed."));
+		LOG.info("Subscribed to " + REC_STOPPED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_COMPLETED);
 		mgr.putMetadata(new SageAlertEventMetadata(REC_COMPLETED, "Recording Completed", "Event fired when the SageTV system completes a recording."));

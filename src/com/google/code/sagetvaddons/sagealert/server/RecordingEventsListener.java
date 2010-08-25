@@ -26,6 +26,8 @@ import sage.SageTVEventListener;
 
 import com.google.code.sagetvaddons.sagealert.server.events.RecordingCompletedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecordingStartedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.RecordingStoppedEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
 
 /**
@@ -38,24 +40,32 @@ final class RecordingEventsListener implements SageTVEventListener {
 	static private final RecordingEventsListener INSTANCE = new RecordingEventsListener();
 	static final RecordingEventsListener get() { return INSTANCE; }
 
+	static private final String MF_KEY = "MediaFile";
+	
 	private RecordingEventsListener() {}
 
 	@SuppressWarnings("unchecked")
 	public void sageEvent(String arg0, Map arg1) {
-		LOG.info("Received event: " + arg0);
-		if(CoreEventsManager.REC_STARTED.equals(arg0)) {
-			final MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(arg1.get("MediaFile"));
-			if(mf != null)
-				SageEventHandlerManager.get().fire(new RecordingStartedEvent(mf));
-			else
-				LOG.error("Received event did not included expected MediaFile argument!");
-		} else if(CoreEventsManager.REC_COMPLETED.equals(arg0)) {
-			final MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(arg1.get("MediaFile"));
-			if(mf != null)
-				SageEventHandlerManager.get().fire(new RecordingCompletedEvent(mf));
-			else
-				LOG.error("Received event did not included expected MediaFile argument!");
+		LOG.info("Received event: " + arg0 + " :: " + arg1.toString());
+		MediaFileAPI.MediaFile mf = null;
+		Object obj = arg1.get(MF_KEY);
+		if(Utils.canWrapAsMediaFile(obj)) {
+			mf = API.apiNullUI.mediaFileAPI.Wrap(obj);
+			if(mf != null) {
+				SageAlertEvent e = null;
+				if(CoreEventsManager.REC_STARTED.equals(arg0))
+					e = new RecordingStartedEvent(mf);
+				else if(CoreEventsManager.REC_COMPLETED.equals(arg0))
+					e = new RecordingCompletedEvent(mf);
+				else if(CoreEventsManager.REC_STOPPED.equals(arg0))
+					e = new RecordingStoppedEvent(mf);
+				if(e != null)
+					SageAlertEventHandlerManager.get().fire(e);
+				else
+					LOG.error("Unhandled event: " + arg0);
+			} else
+				LOG.error("MediaFile is unexpectedly null!  Event ignored.");
 		} else
-			LOG.error("Unhandled event: " + arg0);
+			LOG.error("MediaFile argument is invalid!  Event ignored.");
 	}		
 }

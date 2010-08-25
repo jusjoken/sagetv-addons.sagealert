@@ -34,7 +34,7 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
  * @author dbattams
  * @version $Id$
  */
-final class GrowlServer implements SageEventHandler {
+final class GrowlServer implements SageAlertEventHandler {
 	static private final Map<GrowlServerSettings, GrowlServer> SERVERS = new HashMap<GrowlServerSettings, GrowlServer>();
 	static private final Logger LOG = Logger.getLogger(GrowlServer.class);
 	

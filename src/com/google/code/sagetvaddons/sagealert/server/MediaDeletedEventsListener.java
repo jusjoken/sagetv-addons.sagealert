@@ -41,34 +41,42 @@ final class MediaDeletedEventsListener implements SageTVEventListener {
 	static private final MediaDeletedEventsListener INSTANCE = new MediaDeletedEventsListener();
 	static final MediaDeletedEventsListener get() { return INSTANCE; }
 	
+	static private final String MF_KEY = "MediaFile";
+	static private final String REASON_KEY = "Reason";
+	static private final String UI_KEY = "UIContext";
+	
 	/* (non-Javadoc)
 	 * @see sage.SageTVEventListener#sageEvent(java.lang.String, java.util.Map)
 	 */
 	@SuppressWarnings("unchecked")
 	public void sageEvent(String arg0, Map arg1) {
-		LOG.info("Event received: " + arg0);
-		MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(arg1.get("MediaFile"));
-		String reason = (String)arg1.get("Reason");
-		String deletedBy = (String)arg1.get("UIContext");
-		if(reason == null || reason.length() == 0) {
-			LOG.warn("Handling of this event requires SageTV 7.0.10 or newer; event ignored.");
-			return;
-		}
-
-		if(reason.equals(CoreEventsManager.MEDIA_DELETED_KEEP_AT_MOST))
-			SageEventHandlerManager.get().fire(new MediaFileDeletedKeepAtMostEvent(mf));
-		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_LOW_SPACE))
-			SageEventHandlerManager.get().fire(new MediaFileDeletedLowSpaceEvent(mf));
-		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_PARTIAL_OR_UNWANTED))
-			SageEventHandlerManager.get().fire(new MediaFileDeletedPartialOrUnwantedEvent(mf));
-		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_USER))
-			SageEventHandlerManager.get().fire(new MediaFileDeletedUserEvent(mf, deletedBy));
-		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_VERIFY_FAILED))
-			SageEventHandlerManager.get().fire(new MediaFileDeletedVerifyFailedEvent(mf));
-		else if(reason.equals(CoreEventsManager.MEDIA_DELETED_IMPORT_LOST))
-			SageEventHandlerManager.get().fire(new MediaFileDeletedImportLost(mf));
-		else
-			LOG.error("Unknown reason received, event ignored! [" + reason + "]");
+		LOG.info("Event received: " + arg0 + " :: " + arg1.toString());
+		MediaFileAPI.MediaFile mf = null;
+		Object obj = arg1.get(MF_KEY);
+		if(Utils.canWrapAsMediaFile(obj)) {
+			mf = API.apiNullUI.mediaFileAPI.Wrap(obj);
+			String reason = (String)arg1.get(REASON_KEY);
+			String deletedBy = (String)arg1.get(UI_KEY);
+			if(reason == null || reason.length() == 0) {
+				LOG.warn("Handling of this event requires SageTV 7.0.10 or newer; event ignored.");
+				return;
+			}
+			if(reason.equals(CoreEventsManager.MEDIA_DELETED_KEEP_AT_MOST))
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedKeepAtMostEvent(mf));
+			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_LOW_SPACE))
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedLowSpaceEvent(mf));
+			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_PARTIAL_OR_UNWANTED))
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedPartialOrUnwantedEvent(mf));
+			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_USER))
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedUserEvent(mf, deletedBy));
+			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_VERIFY_FAILED))
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedVerifyFailedEvent(mf));
+			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_IMPORT_LOST))
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedImportLost(mf));
+			else
+				LOG.error("Unknown reason received, event ignored! [" + reason + "]");
+		} else
+			LOG.error("Invalid contents in args map!  Event ignored.");
 	}
 
 	private MediaDeletedEventsListener() {}

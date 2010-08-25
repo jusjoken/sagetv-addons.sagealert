@@ -37,23 +37,29 @@ final class SystemMessageEventsListener implements SageTVEventListener {
 	static private final SystemMessageEventsListener INSTANCE = new SystemMessageEventsListener();
 	static final SystemMessageEventsListener get() { return INSTANCE; }
 	
+	static private final String SYSMSG_KEY = "SystemMessage";
+	
 	/* (non-Javadoc)
 	 * @see sage.SageTVEventListener#sageEvent(java.lang.String, java.util.Map)
 	 */
 	@SuppressWarnings("unchecked")
 	public void sageEvent(String arg0, Map arg1) {
-		LOG.info("Event received: " + arg0);
-		if(CoreEventsManager.SYSMSG_POSTED.equals(arg0)) {
-			SystemMessageAPI.SystemMessage msg = API.apiNullUI.systemMessageAPI.Wrap(arg1.get("SystemMessage"));
-			if(msg.GetSystemMessageRepeatCount() > 1 && Boolean.parseBoolean(API.apiNullUI.configuration.GetServerProperty(Plugin.OPT_IGNORE_REPEAT_SYS_MSGS, Plugin.OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT)))
-				LOG.warn("Not firing event for system message '" + msg.GetSystemMessageTypeName() + "' because it is a repeated message!");
-			else if(msg.GetSystemMessageLevel() == 1)
-				SageEventHandlerManager.get().fire(new SystemMessageInfoEvent(msg));
-			else if(msg.GetSystemMessageLevel() == 2)
-				SageEventHandlerManager.get().fire(new SystemMessageWarningEvent(msg));
-			else if(msg.GetSystemMessageLevel() == 3)
-				SageEventHandlerManager.get().fire(new SystemMessageErrorEvent(msg));
+		LOG.info("Event received: " + arg0 + " :: " + arg1.toString());
+		Object obj = arg1.get(SYSMSG_KEY);
+		if(API.apiNullUI.systemMessageAPI.IsSystemMessageObject(obj)) {
+			if(CoreEventsManager.SYSMSG_POSTED.equals(arg0)) {
+				SystemMessageAPI.SystemMessage msg = API.apiNullUI.systemMessageAPI.Wrap(obj);
+				if(msg.GetSystemMessageRepeatCount() > 1 && Boolean.parseBoolean(API.apiNullUI.configuration.GetServerProperty(Plugin.OPT_IGNORE_REPEAT_SYS_MSGS, Plugin.OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT)))
+					LOG.warn("Not firing event for system message '" + msg.GetSystemMessageTypeName() + "' because it is a repeated message!");
+				else if(msg.GetSystemMessageLevel() == 1)
+					SageAlertEventHandlerManager.get().fire(new SystemMessageInfoEvent(msg));
+				else if(msg.GetSystemMessageLevel() == 2)
+					SageAlertEventHandlerManager.get().fire(new SystemMessageWarningEvent(msg));
+				else if(msg.GetSystemMessageLevel() == 3)
+					SageAlertEventHandlerManager.get().fire(new SystemMessageErrorEvent(msg));
+			} else
+				LOG.error("Unhandled event: " + arg0);			
 		} else
-			LOG.error("Unhandled event: " + arg0);
+			LOG.error("Invalid contents in args map!  Event ignored.");
 	}
 }

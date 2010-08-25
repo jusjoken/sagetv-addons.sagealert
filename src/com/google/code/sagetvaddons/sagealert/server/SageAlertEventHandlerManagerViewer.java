@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author dbattams
  * @version $Id$
  */
-public final class SageEventHandlerManagerViewer extends HttpServlet {
+public final class SageAlertEventHandlerManagerViewer extends HttpServlet {
 
 	/**
 	 * 
@@ -47,7 +47,7 @@ public final class SageEventHandlerManagerViewer extends HttpServlet {
 		resp.setHeader("Cache-Control", "no-cache, must-revalidate");
 		PrintWriter w = resp.getWriter();
 		w.write("Event Handler Manager state as of " + new Date() + "\n\n");
-		w.write(SageEventHandlerManager.get().dumpState());
+		w.write(SageAlertEventHandlerManager.get().dumpState());
 		w.close();
 	}
 }

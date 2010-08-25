@@ -96,7 +96,7 @@ final class CustomEventsManager implements SageTVEventListener {
 		Class<SageAlertEvent> cls = events.get(eventId);
 		if(cls != null) {
 			try {
-				SageEventHandlerManager.get().fire(cls.getConstructor(Map.class).newInstance(args));
+				SageAlertEventHandlerManager.get().fire(cls.getConstructor(Map.class).newInstance(args));
 			} catch (SecurityException e) {
 				LOG.error("SecurityException", e);
 			} catch (NoSuchMethodException e) {

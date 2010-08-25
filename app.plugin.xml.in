@@ -119,7 +119,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Increase minimum version of GKusnick's tools lib to 1.2; fix dependency bug
-* Allow configuration of (some) plugin settings via plugin configuration in STV; these config options will be ported to web eventually as well
+* Fix issue 152: Add support for RecordingStopped events
+* Validate the args map contents of received events more thoroughly
        </ReleaseNotes>
 </SageTVPlugin>

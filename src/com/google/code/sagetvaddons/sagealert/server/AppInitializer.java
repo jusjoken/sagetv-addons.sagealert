@@ -54,7 +54,7 @@ public final class AppInitializer implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {
 		CoreEventsManager.get().destroy();
 		for(NotificationServerSettings s : DataStore.getInstance().getAllReporters()) {
-			SageEventHandler h = NotificationServerFactory.getInstance(s);
+			SageAlertEventHandler h = NotificationServerFactory.getInstance(s);
 			h.destroy();
 		}
 	}
@@ -82,7 +82,7 @@ public final class AppInitializer implements ServletContextListener {
 		DataStore ds = DataStore.getInstance();
 		for(String eventId : ds.getRegisteredEvents()) {
 			for(NotificationServerSettings s : ds.getHandlers(eventId)) {
-				SageEventHandlerManager.get().addHandler(NotificationServerFactory.getInstance(s), eventId);
+				SageAlertEventHandlerManager.get().addHandler(NotificationServerFactory.getInstance(s), eventId);
 				++count;
 			}
 		}				

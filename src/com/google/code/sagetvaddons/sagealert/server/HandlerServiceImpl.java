@@ -48,7 +48,7 @@ public final class HandlerServiceImpl extends RemoteServiceServlet implements	Ha
 	 * @see com.google.code.sagetvaddons.sagealert.client.HandlerService#setHandlers(com.google.code.sagetvaddons.sagealert.client.SupportedEvent, java.util.List)
 	 */
 	public void setHandlers(String e, List<NotificationServerSettings> handlers) {
-		SageEventHandlerManager mgr = SageEventHandlerManager.get();
+		SageAlertEventHandlerManager mgr = SageAlertEventHandlerManager.get();
 		mgr.removeAllHandlers(e);
 		for(NotificationServerSettings s : handlers) {
 			mgr.addHandler(NotificationServerFactory.getInstance(s), e);
@@ -56,7 +56,7 @@ public final class HandlerServiceImpl extends RemoteServiceServlet implements	Ha
 	}
 	
 	public void testServer(NotificationServerSettings settings) {
-		SageEventHandlerManager mgr = SageEventHandlerManager.get();
+		SageAlertEventHandlerManager mgr = SageAlertEventHandlerManager.get();
 		SageAlertEvent e = new SageAlertEvent() {
 
 			public String getLongDescription() {
@@ -80,7 +80,7 @@ public final class HandlerServiceImpl extends RemoteServiceServlet implements	Ha
 			}
 			
 		};
-		SageEventHandler h = NotificationServerFactory.getInstance(settings);
+		SageAlertEventHandler h = NotificationServerFactory.getInstance(settings);
 		mgr.addHandler(h, "SageAlert_TestEvent");
 		mgr.fire(e);
 		mgr.removeHandler(h, "SageAlert_TestEvent");

@@ -40,7 +40,7 @@ final class NotificationServerFactory {
 	 * @param settings
 	 * @return
 	 */
-	static SageEventHandler getInstance(NotificationServerSettings settings) {
+	static SageAlertEventHandler getInstance(NotificationServerSettings settings) {
 		if(settings instanceof GrowlServerSettings)
 			return GrowlServer.getServer((GrowlServerSettings)settings);
 		if(settings instanceof TwitterSettings)

@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  * @author dbattams
  *
  */
-abstract class LogFileServer implements SageEventHandler {
+abstract class LogFileServer implements SageAlertEventHandler {
 	static private final Logger LOG = Logger.getLogger(LogFileServer.class);
 	
 	File target;

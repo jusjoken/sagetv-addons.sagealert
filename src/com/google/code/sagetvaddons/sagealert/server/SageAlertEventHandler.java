@@ -23,7 +23,7 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
  * @author dbattams
  * @version $Id$
  */
-public interface SageEventHandler {
+public interface SageAlertEventHandler {
 	/**
 	 * Called when an event is fired to a handler
 	 * @param e The event being fired
