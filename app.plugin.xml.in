@@ -27,7 +27,7 @@ Typical uses of SageAlert include:
  
 At this time, all configuration of SageAlert is done via the web GUI, which is installed at the /sagealert/ context in your Jetty plugin.  A future version of SageAlert may introduce some configuration options into the STV.
  
-Other plugins can also register and fire events to SageAlert, which can then be configured for notification.  (NOTE: This feature is currently not implemented.)
+Other plugins can also register and fire events to SageAlert, which can then be configured for notification.
        </Description>
        <Author>Slugger</Author>
        <CreationDate>2010.05.29</CreationDate>
@@ -58,7 +58,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        </Dependency>
        <Dependency>
        	<Plugin>GKusnickToolsLib</Plugin>
-       	<MinVersion>0.8.2</MinVersion>
+       	<MinVersion>1.2</MinVersion>
        </Dependency>
        <Dependency>
        	<Plugin>javamail</Plugin>
@@ -119,9 +119,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Build fixes/improvements
-* Initial implementation of custom event handling
-* Stop packaging sagealert-common.jar in WEB-INF/lib
-* Do not fire system message events if the system message is a repeat (as determined by the core); a future release of SageAlert will allow disabling of this feature
+* Increase minimum version of GKusnick's tools lib to 1.2; fix dependency bug
+* Allow configuration of (some) plugin settings via plugin configuration in STV; these config options will be ported to web eventually as well
        </ReleaseNotes>
 </SageTVPlugin>

@@ -34,6 +34,9 @@ public final class Plugin implements SageTVPlugin {
 	static private Logger LOG = null;
 	static public final File RES_DIR = new File("plugins/sagealert");
 	
+	static public final String OPT_IGNORE_REPEAT_SYS_MSGS = "IgnoreRepeatSysMsgs";
+	static public final String OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT = "true";
+	
 	/**
 	 * 
 	 */
@@ -58,16 +61,24 @@ public final class Plugin implements SageTVPlugin {
 	 * @see sage.SageTVPlugin#getConfigHelpText(java.lang.String)
 	 */
 	public String getConfigHelpText(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		String helpTxt;
+		if(OPT_IGNORE_REPEAT_SYS_MSGS.equals(arg0))
+			helpTxt = "If true, repeated system messages, as determined by the core, will be ignored and not processed by SageAlert.";
+		else
+			helpTxt = "No help available.";
+		return helpTxt;
 	}
 
 	/* (non-Javadoc)
 	 * @see sage.SageTVPlugin#getConfigLabel(java.lang.String)
 	 */
 	public String getConfigLabel(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		String lbl;
+		if(OPT_IGNORE_REPEAT_SYS_MSGS.equals(arg0))
+			lbl = "Ignore Repeated System Messages";
+		else
+			lbl = "No label available";
+		return lbl;
 	}
 
 	/* (non-Javadoc)
@@ -82,24 +93,26 @@ public final class Plugin implements SageTVPlugin {
 	 * @see sage.SageTVPlugin#getConfigSettings()
 	 */
 	public String[] getConfigSettings() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] {OPT_IGNORE_REPEAT_SYS_MSGS};
 	}
 
 	/* (non-Javadoc)
 	 * @see sage.SageTVPlugin#getConfigType(java.lang.String)
 	 */
 	public int getConfigType(String arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(OPT_IGNORE_REPEAT_SYS_MSGS.equals(arg0))
+			return SageTVPlugin.CONFIG_BOOL;
+		throw new RuntimeException("Unknown option! [" + arg0 + "]");
 	}
 
 	/* (non-Javadoc)
 	 * @see sage.SageTVPlugin#getConfigValue(java.lang.String)
 	 */
 	public String getConfigValue(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		String defaultVal = null;
+		if(OPT_IGNORE_REPEAT_SYS_MSGS.equals(arg0))
+			defaultVal = OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT;
+		return DataStore.getInstance().getSetting(arg0, defaultVal);
 	}
 
 	/* (non-Javadoc)
@@ -114,16 +127,14 @@ public final class Plugin implements SageTVPlugin {
 	 * @see sage.SageTVPlugin#resetConfig()
 	 */
 	public void resetConfig() {
-		// TODO Auto-generated method stub
-
+		setConfigValue(OPT_IGNORE_REPEAT_SYS_MSGS, OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT);
 	}
 
 	/* (non-Javadoc)
 	 * @see sage.SageTVPlugin#setConfigValue(java.lang.String, java.lang.String)
 	 */
 	public void setConfigValue(String arg0, String arg1) {
-		// TODO Auto-generated method stub
-
+		DataStore.getInstance().setSetting(arg0, arg1);
 	}
 
 	/* (non-Javadoc)
