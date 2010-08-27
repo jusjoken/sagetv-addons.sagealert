@@ -80,7 +80,7 @@ final class License {
 				String propsData = new String(cipher.doFinal(Base64.decodeBase64(data.getBytes(utf8))), utf8);
 				Properties props = new Properties();
 				props.load(new StringReader(propsData));
-				if(props.getProperty("email").equals(DataStore.getInstance().getSetting(UserSettings.LIC_EMAIL)))
+				if(props.getProperty("email").toLowerCase().equals(DataStore.getInstance().getSetting(UserSettings.LIC_EMAIL).toLowerCase()))
 					isLicensed = true;
 				else
 					isLicensed = false;
