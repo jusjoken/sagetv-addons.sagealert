@@ -39,13 +39,12 @@ public final class SmtpSettings implements IsSerializable {
 	 * @param senderAddress
 	 * @param useSsl
 	 */
-	public SmtpSettings(String host, int port, String user, String pwd,
-			String senderAddress, boolean useSsl) {
-		this.host = host;
+	public SmtpSettings(String host, int port, String user, String pwd, String senderAddress, boolean useSsl) {
+		this.host = host != null ? host : "";
 		this.port = port;
-		this.user = user;
-		this.pwd = pwd;
-		this.senderAddress = senderAddress;
+		this.user = user != null ? user : "";
+		this.pwd = pwd != null ? pwd : "";
+		this.senderAddress = senderAddress != null ? senderAddress : "";
 		this.useSsl = useSsl;
 	}
 	
