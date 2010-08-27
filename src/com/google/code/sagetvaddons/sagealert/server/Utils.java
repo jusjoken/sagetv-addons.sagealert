@@ -24,9 +24,13 @@ import java.io.File;
  *
  */
 final class Utils {
+	static private final String MEDIA_FILE_SIG = "MediaFile[";
 	
 	static boolean canWrapAsMediaFile(Object obj) {
-		return obj != null && (API.apiNullUI.mediaFileAPI.IsMediaFileObject(obj) || (obj instanceof File && API.apiNullUI.mediaFileAPI.GetMediaFileForFilePath((File)obj) != null) || (API.apiNullUI.airingAPI.IsAiringObject(obj) && API.apiNullUI.airingAPI.Wrap(obj).GetMediaFileForAiring() != null));
+		return obj != null && (API.apiNullUI.mediaFileAPI.IsMediaFileObject(obj) ||
+								(!(obj instanceof String) && obj.toString().startsWith(MEDIA_FILE_SIG)) ||
+								(obj instanceof File && API.apiNullUI.mediaFileAPI.GetMediaFileForFilePath((File)obj) != null) ||
+								(API.apiNullUI.airingAPI.IsAiringObject(obj) && API.apiNullUI.airingAPI.Wrap(obj).GetMediaFileForAiring() != null));
 	}
 	
 	static boolean containsNonEmptyString(Object[] objs) {
