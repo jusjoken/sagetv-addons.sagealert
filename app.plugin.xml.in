@@ -118,7 +118,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <ReleaseNotes>
 Changes in @@VER_NUM@@.@@BLD_NUM@@
  
-* Fix issue 153: Handle NPE errors when attempting to test SMTP settings with no specified user or password
+* Fix issue 153: Fix NPE errors when attempting to test SMTP settings with no specified user or password
 * Fix issue with license validation for some users
 * Don't rely on exact version of sagealert-common plugin; fix issue where plugin upgrade would not work forcing an uninstall/reinstall to upgrade (you will have to do an uninstall/reinstall for this upgrade but the upgrade feature will work again after this version is applied).
        </ReleaseNotes>
