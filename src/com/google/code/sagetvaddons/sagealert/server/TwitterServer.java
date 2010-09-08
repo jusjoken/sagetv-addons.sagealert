@@ -107,6 +107,7 @@ final class TwitterServer implements SageAlertEventHandler {
 				public void run() {
 					try {
 						twitter.updateStatus(msg.toString());
+						lastTweet = msg.toString();
 						LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
 					} catch(TwitterException x) {
 						LOG.error("Twitter exception", x);
