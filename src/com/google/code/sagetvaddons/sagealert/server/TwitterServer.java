@@ -101,21 +101,25 @@ final class TwitterServer implements SageAlertEventHandler {
 			msg.append("..." + TWEET_HASH);
 		}
 
-		if(!msg.toString().equals(lastTweet)) {
-			new Thread() {
-				@Override
-				public void run() {
-					try {
-						twitter.updateStatus(msg.toString());
-						lastTweet = msg.toString();
-						LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
-					} catch(TwitterException x) {
-						LOG.error("Twitter exception", x);
-					}		
-				}
-			}.start();
-		} else
-			LOG.info("Not sending event '" + e.getSubject() + "' to @" + getSettings().getId() + " because the generated tweet is exactly the same as the last tweet posted!");
+		synchronized(lastTweet) {
+			if(!msg.toString().equals(lastTweet)) {
+				new Thread() {
+					@Override
+					public void run() {
+						try {
+							twitter.updateStatus(msg.toString());
+							synchronized(lastTweet) {
+								lastTweet = msg.toString();
+							}
+							LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
+						} catch(TwitterException x) {
+							LOG.error("Twitter exception", x);
+						}		
+					}
+				}.start();
+			} else
+				LOG.info("Not sending event '" + e.getSubject() + "' to @" + getSettings().getId() + " because the generated tweet is exactly the same as the last tweet posted!");
+		}
 	}
 
 	public void destroy() {
