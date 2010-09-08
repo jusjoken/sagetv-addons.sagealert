@@ -8,10 +8,10 @@
 
   <!-- Configure path to GWT SDK -->
   <property name="gwt.sdk" location="C:/gwt-2.0.3" />
-  <property name="gxt.home" location="C:/Users/dbattams/sagelibs/gxt-2.1.1" />
-	
-  <property name="app.ver" value="2.0.0" />
   <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
+  <property name="gxt.home" location="${sage.libs}/gxt-2.1.1" />
+  <property name="app.ver" value="2.0.0" />
+  <property name="app.stable" value="971" />
   <property name="sage.jar" value="C:/Program Files/SageTV/SageTV/Sage.jar" />
   <property name="src.token" value="@@" />
   <property name="bld.dir" value="bld" />
@@ -34,6 +34,10 @@
 	    <svn javahl="true">
 	            <wcVersion path="." />
 	    </svn>
+	    <exec executable="svn" failonerror="true" outputproperty="changelog.out">
+	       <arg value="log"/>
+	       <arg value="-r${app.stable}:HEAD"/>
+	    </exec>
 	  </target>
 	  	
 	  <target name="rmgensrc" description="Delete generated src files">
@@ -53,6 +57,8 @@
 	  	    <filter token="VER_NUM" value="${app.ver}"/>
 	  	    <filter token="BLD_NUM" value="${revision.max-with-flags}"/>
 	  	  	<filter token="MOD_DATE" value="${app.bld.date}"/>
+	  	  	<filter token="CHG_LOG" value="${changelog.out}"/>
+	  	  	<filter token="BLD_STABLE" value="${app.stable}"/>
 	  	  </filterset>
 	    </copy> 
 	  </target>

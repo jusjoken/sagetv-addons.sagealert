@@ -116,8 +116,8 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        </Package>
        <ImplementationClass>com.google.code.sagetvaddons.sagealert.server.Plugin</ImplementationClass>
        <ReleaseNotes>
-Changes in @@VER_NUM@@.@@BLD_NUM@@
+Changes since @@VER_NUM@@.@@BLD_STABLE@@
  
-* Handle undocumented behaviour of core IsMediaFileObject() API call (handle case where method returns false even when the arg is a MediaFile obj); core API docs updated for 7.0.16 to reflect this behaviour
+@@CHG_LOG@@
        </ReleaseNotes>
 </SageTVPlugin>

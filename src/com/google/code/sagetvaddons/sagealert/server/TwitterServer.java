@@ -43,13 +43,13 @@ final class TwitterServer implements SageAlertEventHandler {
 	static final String C_KEY = "kZn7jCpged0emxGqWdg";
 	static final String C_HUSH = "unmEgRvFyO3LYqMTxVSaMada8k6QWkI7wqEuE6GOqE";
 	static private final Configuration TWIT_CONF = new ConfigurationBuilder()
-		.setHttpReadTimeout(5000)
-		.setHttpRetryCount(3)
-		.setOAuthConsumerKey(C_KEY)
-		.setOAuthConsumerSecret(C_HUSH)
-		.build();
+	.setHttpReadTimeout(5000)
+	.setHttpRetryCount(3)
+	.setOAuthConsumerKey(C_KEY)
+	.setOAuthConsumerSecret(C_HUSH)
+	.build();
 	static private final TwitterFactory TWIT_FACTORY = new TwitterFactory(TWIT_CONF);
-	
+
 	/**
 	 * Get the Twitter server for the given Twitter settings
 	 * @param settings The settings (id/pwd) for a Twitter instance
@@ -65,12 +65,14 @@ final class TwitterServer implements SageAlertEventHandler {
 			srv.updateSettings(settings); // In case the pwd was updated
 		return srv;
 	}
-			
+
 	private TwitterSettings settings;
 	private Twitter twitter;
-	
-	protected TwitterServer(TwitterSettings settings) {
+	private String lastTweet;
+
+	private TwitterServer(TwitterSettings settings) {
 		this.settings = settings;
+		lastTweet = null;
 		twitter = TWIT_FACTORY.getOAuthAuthorizedInstance(new AccessToken(settings.getToken(), settings.getSecret()));
 		try {
 			settings.setAlias(twitter.getScreenName());
@@ -82,11 +84,11 @@ final class TwitterServer implements SageAlertEventHandler {
 	public TwitterSettings getSettings() {
 		return settings;
 	}
-	
+
 	public void updateSettings(TwitterSettings settings) {
 		this.settings = settings;
 	}
-	
+
 	@Override
 	public String toString() { return settings.toString(); }
 
@@ -98,21 +100,24 @@ final class TwitterServer implements SageAlertEventHandler {
 			msg.append(e.getMediumDescription().substring(0, MAX_MSG_LENGTH - 3));
 			msg.append("..." + TWEET_HASH);
 		}
-		
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					twitter.updateStatus(msg.toString());
-					LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
-				} catch(TwitterException x) {
-					LOG.error("Twitter exception", x);
-				}		
-			}
-		}.start();
+
+		if(!msg.toString().equals(lastTweet)) {
+			new Thread() {
+				@Override
+				public void run() {
+					try {
+						twitter.updateStatus(msg.toString());
+						LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
+					} catch(TwitterException x) {
+						LOG.error("Twitter exception", x);
+					}		
+				}
+			}.start();
+		} else
+			LOG.info("Not sending event '" + e.getSubject() + "' to @" + getSettings().getId() + " because the generated tweet is exactly the same as the last tweet posted!");
 	}
 
 	public void destroy() {
-		
+
 	}
 }
