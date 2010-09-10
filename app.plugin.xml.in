@@ -12,6 +12,7 @@ Currently, SageAlert supports sending notifications to the following server type
 * Twitter
 * Growl
 * CSV file
+* Process executor
  
 Simply load the web GUI for SageAlert and configure the various events by telling SageAlert which notifications to send for each supported event type.  Then when those events are received by SageAlert, you will receive the notification(s) as configured.
  
@@ -24,6 +25,8 @@ Typical uses of SageAlert include:
 * Receive an email any time a system message is posted by SageTV.  This is an excellent way to receive instant alerts of possible problems with your SageTV server.
  
 * If your cell phone provider has an email to SMS gateway (most do these days) then you can receive text messages about system messages, connected users, etc.
+
+* Start up a process in response to an alert; the contents of the alert (subject, message, source event) are provided as environment variables in the process' eexecution environment.
  
 At this time, all configuration of SageAlert is done via the web GUI, which is installed at the /sagealert/ context in your Jetty plugin.  A future version of SageAlert may introduce some configuration options into the STV.
  
