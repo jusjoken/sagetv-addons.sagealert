@@ -101,14 +101,14 @@ final class TwitterServer implements SageAlertEventHandler {
 			msg.append("..." + TWEET_HASH);
 		}
 
-		synchronized(lastTweet) {
+		synchronized(this) {
 			if(!msg.toString().equals(lastTweet)) {
 				new Thread() {
 					@Override
 					public void run() {
 						try {
 							twitter.updateStatus(msg.toString());
-							synchronized(lastTweet) {
+							synchronized(TwitterServer.this) {
 								lastTweet = msg.toString();
 							}
 							LOG.info("'" + e.getSubject() + "' notification sent successfully to '" + settings + "'");
