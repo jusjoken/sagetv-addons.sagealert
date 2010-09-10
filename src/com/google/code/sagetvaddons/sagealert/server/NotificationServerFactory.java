@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import com.google.code.sagetvaddons.sagealert.shared.CsvLogFileSettings;
 import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
+import com.google.code.sagetvaddons.sagealert.shared.ExeServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.GrowlServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.TwitterSettings;
@@ -49,6 +50,8 @@ final class NotificationServerFactory {
 			return new EmailServer((EmailSettings)settings);
 		if(settings instanceof CsvLogFileSettings)
 			return CsvLogFileServer.get((CsvLogFileSettings)settings);
+		if(settings instanceof ExeServerSettings)
+			return new ExeServer((ExeServerSettings)settings);
 		String msg = "Unsupported server settings type: " + settings.getClass().getCanonicalName();
 		RuntimeException e = new RuntimeException(msg);
 		LOG.error(msg, e);

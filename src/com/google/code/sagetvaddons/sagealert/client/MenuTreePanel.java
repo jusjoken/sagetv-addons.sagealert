@@ -64,14 +64,16 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 				public void componentSelected(MenuEvent ce) {
 					ModelData d = MenuTreePanel.this.getSelectionModel().getSelectedItem();
 					String srvType = (String)d.get("id");
-					if(srvType.equals("Twitter")) {
+					if(srvType.equals("Twitter"))
 						SageAlertViewport.get().setCenterContent(new TwitterSettingsPanel());
-					} else if(srvType.equals("Email")) {
+					else if(srvType.equals("Email"))
 						SageAlertViewport.get().setCenterContent(new EmailSettingsPanel());
-					} else if(srvType.equals("Growl"))
+					else if(srvType.equals("Growl"))
 						SageAlertViewport.get().setCenterContent(new GrowlSettingsPanel());
 					else if(srvType.equals("CSV File"))
 						SageAlertViewport.get().setCenterContent(new CsvLogFileSettingsPanel());
+					else if(srvType.equals("Process Executor"))
+						SageAlertViewport.get().setCenterContent(new ExeSettingsPanel());
 				}			
 			});
 			this.add(create);

@@ -197,6 +197,7 @@ Test targets suppressed because -junit argument was not specified when running w
 		-libraryjars "${sage.libs}/twitter4j-core-2.1.2.jar"
 		-libraryjars "${sage.libs}/commons-io-1.4.jar"
 		-libraryjars "${sage.libs}/commons-codec-1.3.jar"
+  		-libraryjars "${sage.libs}/commons-exec-1.0.1.jar"
 		-libraryjars "${sage.jar}"
 		-libraryjars "${gwt.sdk}/gwt-user.jar"
 		-libraryjars "${gxt.home}/gxt.jar"

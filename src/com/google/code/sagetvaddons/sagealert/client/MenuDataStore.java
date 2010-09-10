@@ -28,6 +28,7 @@ import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.google.code.sagetvaddons.sagealert.shared.CsvLogFileSettings;
 import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
+import com.google.code.sagetvaddons.sagealert.shared.ExeServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.GrowlServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.HandlerService;
 import com.google.code.sagetvaddons.sagealert.shared.HandlerServiceAsync;
@@ -107,6 +108,26 @@ final class MenuDataStore extends TreeStore<ModelData> {
 							BeanModelFactory bmf = BeanModelLookup.get().getFactory(s.getClass());
 							add(srv, bmf.createModel(s), false);
 						}												
+					}
+					
+				});
+				
+				reporters.getReporters(ExeServerSettings.class.getName(), new AsyncCallback<List<NotificationServerSettings>>() {
+
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					public void onSuccess(List<NotificationServerSettings> result) {
+						BaseModelData srv = new BaseModelData();
+						srv.set("id", "Process Executor");
+						srvTypes.add(srv);
+						add(servers, srv, false);
+						for(NotificationServerSettings s : result) {
+							BeanModelFactory bmf = BeanModelLookup.get().getFactory(s.getClass());
+							add(srv, bmf.createModel(s), false);
+						}
 					}
 					
 				});
