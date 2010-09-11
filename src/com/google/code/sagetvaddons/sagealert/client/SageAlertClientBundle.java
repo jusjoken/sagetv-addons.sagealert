@@ -34,5 +34,28 @@ public interface SageAlertClientBundle extends ClientBundle {
 	
 	@Source("com/google/code/sagetvaddons/sagealert/client/resources/help.png")
 	public ImageResource getHelpImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/server_edit.png")
+	public ImageResource getSettingsImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/email_edit.png")
+	public ImageResource getEmailImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/cog_edit.png")
+	public ImageResource getPrefsImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/font.png")
+	public ImageResource getAboutImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/book_go.png")
+	public ImageResource getDocsImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/group.png")
+	public ImageResource getSupportImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/page_add.png")
+	public ImageResource getTixImg();
 
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/house_go.png")
+	public ImageResource getHomeImg();
 }

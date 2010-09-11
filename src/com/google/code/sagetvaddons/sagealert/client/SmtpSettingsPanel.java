@@ -41,6 +41,8 @@ final class SmtpSettingsPanel extends FormPanel {
 	static final SmtpSettingsPanel get() { return INSTANCE; }
 	
 	private SmtpSettingsPanel() {
+		setHeading("SMTP Settings");
+		
 		final TextField<String> host = new TextField<String>();
 		host.setFieldLabel("Hostname");
 		

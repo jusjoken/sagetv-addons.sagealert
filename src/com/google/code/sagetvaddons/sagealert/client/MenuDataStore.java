@@ -68,9 +68,6 @@ final class MenuDataStore extends TreeStore<ModelData> {
 				final BaseModelData servers = new BaseModelData();
 				servers.set("id", "Servers");
 				add(servers, false);
-				final BaseModelData smtp = new BaseModelData();
-				smtp.set("id", "SMTP Settings");
-				add(smtp, false);
 				final BaseModelData clients = new BaseModelData();
 				clients.set("id", "Clients");
 				add(clients, false);

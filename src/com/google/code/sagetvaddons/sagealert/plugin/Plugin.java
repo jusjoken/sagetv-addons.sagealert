@@ -13,7 +13,7 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.google.code.sagetvaddons.sagealert.server;
+package com.google.code.sagetvaddons.sagealert.plugin;
 
 import gkusnick.sagetv.api.API;
 
@@ -40,6 +40,8 @@ public final class Plugin implements SageTVPlugin {
 	static public final String OPT_IGNORE_REPEAT_SYS_MSGS = OPT_PREFIX + "IgnoreRepeatSysMsgs";
 	static public final String OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT = "true";
 	
+	static public Plugin INSTANCE = null;
+	
 	/**
 	 * 
 	 */
@@ -49,6 +51,7 @@ public final class Plugin implements SageTVPlugin {
 				PropertyConfigurator.configure(new File(RES_DIR, "sagealert.log4j.properties").getAbsolutePath());
 				LOG = Logger.getLogger(Plugin.class);
 			}
+			INSTANCE = this;
 		}
 	}
 

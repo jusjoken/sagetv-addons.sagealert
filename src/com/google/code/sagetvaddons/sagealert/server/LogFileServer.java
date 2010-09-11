@@ -22,6 +22,8 @@ import java.io.Writer;
 
 import org.apache.log4j.Logger;
 
+import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
+
 
 
 /**

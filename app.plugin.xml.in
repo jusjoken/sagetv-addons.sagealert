@@ -26,7 +26,7 @@ Typical uses of SageAlert include:
  
 * If your cell phone provider has an email to SMS gateway (most do these days) then you can receive text messages about system messages, connected users, etc.
 
-* Start up a process in response to an alert; the contents of the alert (subject, message, source event) are provided as environment variables in the process' eexecution environment.
+* Start up a process in response to an alert; the contents of the alert (subject, message, source event) are provided as environment variables in the process' execution environment.
  
 At this time, all configuration of SageAlert is done via the web GUI, which is installed at the /sagealert/ context in your Jetty plugin.  A future version of SageAlert may introduce some configuration options into the STV.
  
@@ -121,7 +121,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
                <MD5>@@CONF_MD5@@</MD5>
                <Overwrite>false</Overwrite> <!-- Defaults to true -->
        </Package>
-       <ImplementationClass>com.google.code.sagetvaddons.sagealert.server.Plugin</ImplementationClass>
+       <ImplementationClass>com.google.code.sagetvaddons.sagealert.plugin.Plugin</ImplementationClass>
        <ReleaseNotes>
 Changes since @@VER_NUM@@.@@BLD_STABLE@@
  

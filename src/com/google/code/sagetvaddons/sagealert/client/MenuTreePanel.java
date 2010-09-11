@@ -140,9 +140,7 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 			public void handleEvent(TreePanelEvent<ModelData> be) {
 				if(be.getItem() instanceof SageAlertEventMetadata) {
 					SageAlertViewport.get().setCenterContent(new ListenerSubscriptionForm((SageAlertEventMetadata)be.getItem()));
-				} else if(store.getParent(be.getItem()) == null && be.getItem().get("id").equals("SMTP Settings"))
-					SageAlertViewport.get().setCenterContent(SmtpSettingsPanel.get());
-				else if(store.getParent(be.getItem()) == null && be.getItem().get("id").equals("Clients"))
+				} else if(store.getParent(be.getItem()) == null && be.getItem().get("id").equals("Clients"))
 					SageAlertViewport.get().setCenterContent(ClientSettingsPanel.getInstance());
 			}
 

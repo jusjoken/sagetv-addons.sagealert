@@ -179,14 +179,13 @@ Test targets suppressed because -junit argument was not specified when running w
   	<copy todir="war/resources">
   		<fileset dir="${gxt.home}/resources" />	
   	</copy>
-  	<copy todir="war/WEB-INF/classes/com/google/code/sagetvaddons/sagealert/server/resources" file="src/com/google/code/sagetvaddons/sagealert/server/resources/sagetv-addons.pub" failonerror="true" />
     <zip destfile="SageAlert.war" basedir="war"/>
   </target>
 
   <target name="jars" depends="build">
 	<jar destfile="sagealert-common.jar" basedir="${bld.dir}" includes="**/shared/*" filesonly="true" />
-  	<jar destfile="sagealert.jar" basedir="${bld.dir}" includes="**/Plugin.class" filesonly="true" />
-	<jar destfile="jars/sagealert-web.jar" basedir="${bld.dir}" excludes="**/shared/*,**/*.java,**/Plugin.*" />
+  	<copy todir="${bld.dir}/com/google/code/sagetvaddons/sagealert/server/resources" file="src/com/google/code/sagetvaddons/sagealert/server/resources/sagetv-addons.pub" failonerror="true" />
+  	<jar destfile="jars/sagealert-plain.jar" basedir="${bld.dir}" excludes="**/shared/*,**/*.java" filesonly="true" />
   	<proguard>
 		-libraryjars "${java.home}/lib/rt.jar"
 		-libraryjars "${sage.libs}/log4j-1.2.15.jar"
@@ -204,10 +203,10 @@ Test targets suppressed because -junit argument was not specified when running w
 		-libraryjars "sagealert-common.jar"
 		-libraryjars "${sage.libs}/jetty-6.1.19.jar"
 		-libraryjars "${sage.libs}/sqlitejdbc-v056.jar"
-		-libraryjars "sagealert.jar"
 		-libraryjars "${java.home}/lib/jce.jar"
-        -injars jars/sagealert-web.jar
-        -outjars war/WEB-INF/lib/sagealert-web.jar
+        -injars jars/sagealert-plain.jar
+        -outjars sagealert.jar
+  		-dontusemixedcaseclassnames
         -printseeds
         -printusage sagealert.pro.${revision.max-with-flags}.dead
         -renamesourcefileattribute SourceFile
@@ -215,6 +214,10 @@ Test targets suppressed because -junit argument was not specified when running w
         -printmapping sagealert.pro.${revision.max-with-flags}.map
         -keep public class * implements javax.servlet.ServletContextListener
         -keep public class * implements com.google.gwt.user.server.rpc.RemoteServiceServlet
+  		-keep public class * implements sage.SageTVPlugin {
+			public &lt;init&gt;(sage.SageTVPluginRegistry);
+			public &lt;init&gt;(sage.SageTVPluginRegistry, boolean);
+  		}
 		-keepclassmembernames public class * implements com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable {
 			public void unserialize(java.lang.String, java.lang.String);
 		}

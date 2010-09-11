@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import sage.SageTVEventListener;
 
+import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.server.events.SystemMessageErrorEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.SystemMessageInfoEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.SystemMessageWarningEvent;

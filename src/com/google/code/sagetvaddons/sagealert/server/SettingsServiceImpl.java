@@ -15,6 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.server.events.SmtpTestEvent;
 import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
@@ -33,14 +34,20 @@ public final class SettingsServiceImpl extends RemoteServiceServlet implements S
 	 * @see com.google.code.sagetvaddons.sagealert.client.SettingsService#getSetting(java.lang.String, java.lang.String)
 	 */
 	public String getSetting(String var, String defaultVal) {
-		return DataStore.getInstance().getSetting(var, defaultVal);
+		if(!var.equals(Plugin.OPT_IGNORE_REPEAT_SYS_MSGS))
+			return DataStore.getInstance().getSetting(var, defaultVal);
+		else
+			return Plugin.INSTANCE.getConfigValue(Plugin.OPT_IGNORE_REPEAT_SYS_MSGS);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.client.SettingsService#setSetting(java.lang.String, java.lang.String)
 	 */
 	public void setSetting(String var, String val) {
-		DataStore.getInstance().setSetting(var, val);
+		if(!var.equals(Plugin.OPT_IGNORE_REPEAT_SYS_MSGS))
+			DataStore.getInstance().setSetting(var, val);
+		else
+			Plugin.INSTANCE.setConfigValue(var, val);
 	}
 
 	public SmtpSettings getSmtpSettings() {
