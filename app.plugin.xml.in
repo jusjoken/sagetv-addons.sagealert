@@ -122,9 +122,9 @@ Other plugins can also register and fire events to SageAlert, which can then be 
                <Overwrite>false</Overwrite> <!-- Defaults to true -->
        </Package>
        <ImplementationClass>com.google.code.sagetvaddons.sagealert.plugin.Plugin</ImplementationClass>
-       <ReleaseNotes>
+       <ReleaseNotes><![CDATA[
 Changes since @@VER_NUM@@.@@BLD_STABLE@@
  
 @@CHG_LOG@@
-       </ReleaseNotes>
+       ]]></ReleaseNotes>
 </SageTVPlugin>
