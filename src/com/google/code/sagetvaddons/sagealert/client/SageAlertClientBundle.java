@@ -58,4 +58,7 @@ public interface SageAlertClientBundle extends ClientBundle {
 
 	@Source("com/google/code/sagetvaddons/sagealert/client/resources/house_go.png")
 	public ImageResource getHomeImg();
+	
+	@Source("com/google/code/sagetvaddons/sagealert/client/resources/information.png")
+	public ImageResource getFaqImg();
 }

@@ -79,6 +79,7 @@ final class SageAlertToolBar extends ToolBar {
 	static private final class RegisterMenu extends Menu {
 		private MenuItem donate;
 		private MenuItem reg;
+		private MenuItem faq;
 		
 		private RegisterMenu() {
 			donate = new MenuItem("Donate (Obtain License)");
@@ -102,6 +103,17 @@ final class SageAlertToolBar extends ToolBar {
 						}
 						
 					});
+				}
+				
+			});
+			
+			faq = new MenuItem("Donations FAQ");
+			faq.setIcon(AbstractImagePrototype.create(SageAlertClientBundle.INSTANCE.getFaqImg()));
+			faq.addSelectionListener(new SelectionListener<MenuEvent>() {
+
+				@Override
+				public void componentSelected(MenuEvent ce) {
+					UrlLauncher.launch("http://code.google.com/p/sagetv-addons/wiki/DonationsFaq");					
 				}
 				
 			});
@@ -143,6 +155,7 @@ final class SageAlertToolBar extends ToolBar {
 			
 			add(donate);
 			add(reg);
+			add(faq);
 		}
 	}
 	

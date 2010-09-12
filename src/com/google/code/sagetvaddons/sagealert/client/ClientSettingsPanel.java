@@ -73,6 +73,7 @@ final class ClientSettingsPanel extends ContentPanel {
 	 * Constructor
 	 */
 	private ClientSettingsPanel() {
+		setHeading("Client Configuration");
 		setLayout(new FitLayout());
 		
 		btnRenderer = new GridCellRenderer<BeanModel>() {
@@ -117,11 +118,11 @@ final class ClientSettingsPanel extends ContentPanel {
 		cfg.setEditor(new CellEditor(new TextField<String>()));
 		cols.add(cfg);
 	
-		cfg = new CheckColumnConfig("notifyOnStart", "Start", 50);
+		cfg = new CheckColumnConfig("notifyOnStart", "Starts Playback", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 		
-		cfg = new CheckColumnConfig("notifyOnStop", "Stop", 50);
+		cfg = new CheckColumnConfig("notifyOnStop", "Stops Playback", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 				
