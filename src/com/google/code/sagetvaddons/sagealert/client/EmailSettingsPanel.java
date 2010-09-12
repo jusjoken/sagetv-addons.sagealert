@@ -41,23 +41,40 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 final class EmailSettingsPanel extends FormPanel {
 	
 	
-	EmailSettingsPanel() {
-		setHeading("Add New Email Address");
+	EmailSettingsPanel(final EmailSettings settings) {
+		String heading;
+		if(settings == null)
+			heading = "Add New Email Address";
+		else
+			heading = "Edit Email Address";
+		setHeading(heading);
 		setWidth(480);
 		
 		final TextField<String> addr = new TextField<String>();
 		addr.setAllowBlank(false);
 		addr.setFieldLabel("Email");
+		if(settings != null) {
+			addr.setValue(settings.getAddress());
+			addr.setEnabled(false);
+		}
 		add(addr);
 		
 		final SimpleComboBox<String> type = new SimpleComboBox<String>();
+		type.setAllowBlank(false);
+		type.setForceSelection(true);
+		type.setTypeAhead(false);
 		type.add("Short");
 		type.add("Medium");
 		type.add("Long");
 		type.setFieldLabel("Message Type");
 		add(type);
 		
-		Button save = new Button("Create");
+		String btnLbl;
+		if(settings == null)
+			btnLbl = "Create";
+		else
+			btnLbl = "Update";
+		Button save = new Button(btnLbl);
 		save.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
 			@Override
@@ -76,8 +93,9 @@ final class EmailSettingsPanel extends FormPanel {
 					}
 
 					public void onSuccess(Void result) {
-						MessageBox.alert("Result", "Email address added!", null);
-						MenuDataStore.get().addReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s), "Email");
+						MessageBox.alert("Result", "Email address saved!", null);
+						if(settings == null)
+							MenuDataStore.CURRENT.addReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s), "Email");
 					}
 					
 				});

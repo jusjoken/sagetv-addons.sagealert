@@ -27,6 +27,7 @@ import net.sf.libgrowl.NotificationType;
 import org.apache.log4j.Logger;
 
 import com.google.code.sagetvaddons.sagealert.shared.GrowlServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
 /**
@@ -155,5 +156,9 @@ final class GrowlServer implements SageAlertEventHandler {
 	public void destroy() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setSettings(NotificationServerSettings settings) {
+		throw new UnsupportedOperationException("Growl server settings cannot be modified!");
 	}
 }

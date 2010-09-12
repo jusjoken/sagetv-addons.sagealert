@@ -815,5 +815,14 @@ final public class DataStore {
 		} catch(JSONException e) {
 			LOG.error("JSON error", e);
 		}
+	}
+
+	public NotificationServerSettings reloadSettings(NotificationServerSettings settings) {
+		if(settings == null) return settings;
+
+		for(NotificationServerSettings s : getReporters(settings.getClass().getCanonicalName()))
+			if(s.getDataStoreKey().equals(settings.getDataStoreKey()))
+				return s;
+		return null;
 	}	
 }

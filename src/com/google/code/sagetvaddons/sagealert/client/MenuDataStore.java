@@ -46,12 +46,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 final class MenuDataStore extends TreeStore<ModelData> {
-	static private final MenuDataStore INSTANCE = new MenuDataStore();
-	static final MenuDataStore get() { return INSTANCE; }
+	static MenuDataStore CURRENT = null;
 	
 	Collection<BaseModelData> srvTypes;
 	
-	private MenuDataStore() {
+	MenuDataStore() {
 		srvTypes = new ArrayList<BaseModelData>();
 		HandlerServiceAsync rpc = GWT.create(HandlerService.class);
 		rpc.getAllMetadata(new AsyncCallback<Collection<SageAlertEventMetadata>>() {
@@ -172,6 +171,7 @@ final class MenuDataStore extends TreeStore<ModelData> {
 			}
 			
 		});
+		CURRENT = this;
 	}
 	
 	public void addReporter(BeanModel s, String type) {

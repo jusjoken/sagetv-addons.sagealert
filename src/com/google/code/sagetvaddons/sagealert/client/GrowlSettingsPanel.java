@@ -73,7 +73,7 @@ final class GrowlSettingsPanel extends FormPanel {
 
 					public void onSuccess(Void result) {
 						MessageBox.alert("Result", "Growl server added!", null);
-						MenuDataStore.get().addReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s), "Growl");
+						MenuDataStore.CURRENT.addReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s), "Growl");
 					}
 					
 				});

@@ -67,6 +67,7 @@ class ExeServer implements SageAlertEventHandler {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent)
 	 */
 	public void onEvent(SageAlertEvent e) {
+		setSettings(DataStore.getInstance().reloadSettings(getSettings()));
 		final Map<String, String> env = new HashMap<String, String>();
 		env.put("SA_SUBJ", e.getSubject());
 		env.put("SA_SOURCE", e.getSource());
@@ -152,5 +153,9 @@ class ExeServer implements SageAlertEventHandler {
 	@Override
 	public String toString() {
 		return settings.toString();
+	}
+
+	public void setSettings(NotificationServerSettings settings) {
+		this.settings = (ExeServerSettings)settings;
 	}
 }

@@ -70,7 +70,7 @@ final class CsvLogFileSettingsPanel extends FormPanel {
 
 					public void onSuccess(Void result) {
 						MessageBox.alert("Result", "CSV log file created!", null);
-						MenuDataStore.get().addReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s), "CSV File");
+						MenuDataStore.CURRENT.addReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s), "CSV File");
 					}
 					
 				});

@@ -28,6 +28,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.log4j.Logger;
 
 import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 
@@ -40,7 +41,7 @@ final class EmailServer implements SageAlertEventHandler {
 
 	static private final Logger LOG = Logger.getLogger(EmailServer.class);
 
-	private final EmailSettings emailSettings;
+	private EmailSettings emailSettings;
 	private final SmtpSettings smtpSettings;
 	private Session session;
 	private SageAlertEvent event;
@@ -79,6 +80,7 @@ final class EmailServer implements SageAlertEventHandler {
 	 */
 	public void onEvent(final SageAlertEvent e) {
 		if(License.get().isLicensed()) {
+			setSettings(DataStore.getInstance().reloadSettings(getSettings()));
 			new Thread() {
 				@Override
 				public void run() {
@@ -191,5 +193,9 @@ final class EmailServer implements SageAlertEventHandler {
 	public void destroy() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setSettings(NotificationServerSettings settings) {
+		emailSettings = (EmailSettings)settings;
 	}
 }

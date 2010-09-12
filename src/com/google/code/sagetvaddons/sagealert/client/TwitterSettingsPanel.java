@@ -89,7 +89,7 @@ final class TwitterSettingsPanel extends FormPanel {
 					}
 
 					public void onSuccess(TwitterSettings result) {
-						MenuDataStore.get().addReporter(BeanModelLookup.get().getFactory(result.getClass()).createModel(result), "Twitter");
+						MenuDataStore.CURRENT.addReporter(BeanModelLookup.get().getFactory(result.getClass()).createModel(result), "Twitter");
 						Window.alert(result.getAlias() + " registered with SageAlert!");
 						SageAlertViewport.get().setCenterContent(null);
 					}

@@ -27,6 +27,7 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.http.AccessToken;
 
+import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 import com.google.code.sagetvaddons.sagealert.shared.TwitterSettings;
 
@@ -124,5 +125,9 @@ final class TwitterServer implements SageAlertEventHandler {
 
 	public void destroy() {
 
+	}
+
+	public void setSettings(NotificationServerSettings settings) {
+		throw new UnsupportedOperationException("Twitter settings cannot be modified!");
 	}
 }

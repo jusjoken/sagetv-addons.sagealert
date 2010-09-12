@@ -127,4 +127,8 @@ class CsvLogFileServer extends LogFileServer {
 		}
 		return true;
 	}
+
+	public void setSettings(NotificationServerSettings settings) {
+		throw new UnsupportedOperationException("CSV log file settings cannot be modified!");
+	}
 }

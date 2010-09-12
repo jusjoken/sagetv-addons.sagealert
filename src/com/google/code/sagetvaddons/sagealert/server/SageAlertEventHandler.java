@@ -37,6 +37,12 @@ public interface SageAlertEventHandler {
 	public NotificationServerSettings getSettings();
 	
 	/**
+	 * Update the settings for the event handler
+	 * @param settings
+	 */
+	public void setSettings(NotificationServerSettings settings);
+	
+	/**
 	 * Cleanup any resources associated with the handler
 	 */
 	public void destroy();

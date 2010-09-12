@@ -32,6 +32,8 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
+import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
+import com.google.code.sagetvaddons.sagealert.shared.ExeServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.ReporterService;
 import com.google.code.sagetvaddons.sagealert.shared.ReporterServiceAsync;
@@ -44,15 +46,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 final class MenuTreePanel extends TreePanel<ModelData> {
-	private static MenuTreePanel INSTANCE = null;
-	static final MenuTreePanel get() { return INSTANCE; }
-	static final MenuTreePanel get(TreeStore<ModelData> store) {
-		INSTANCE = new MenuTreePanel(store);
-		return INSTANCE;
-	}
 	
 	private class ReporterContextMenu extends Menu {
 		MenuItem create;
+		MenuItem edit;
 		MenuItem delete;
 
 		ReporterContextMenu() {
@@ -67,16 +64,34 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 					if(srvType.equals("Twitter"))
 						SageAlertViewport.get().setCenterContent(new TwitterSettingsPanel());
 					else if(srvType.equals("Email"))
-						SageAlertViewport.get().setCenterContent(new EmailSettingsPanel());
+						SageAlertViewport.get().setCenterContent(new EmailSettingsPanel(null));
 					else if(srvType.equals("Growl"))
 						SageAlertViewport.get().setCenterContent(new GrowlSettingsPanel());
 					else if(srvType.equals("CSV File"))
 						SageAlertViewport.get().setCenterContent(new CsvLogFileSettingsPanel());
 					else if(srvType.equals("Process Executor"))
-						SageAlertViewport.get().setCenterContent(new ExeSettingsPanel());
+						SageAlertViewport.get().setCenterContent(new ExeSettingsPanel(null));
 				}			
 			});
 			this.add(create);
+
+			edit = new MenuItem();
+			edit.setText("Edit");
+			edit.addSelectionListener(new SelectionListener<MenuEvent>() {
+
+				@Override
+				public void componentSelected(MenuEvent ce) {
+					final NotificationServerSettings s = ((BeanModel)MenuTreePanel.this.getSelectionModel().getSelectedItem()).getBean();
+					if(s instanceof ExeServerSettings)
+						SageAlertViewport.get().setCenterContent(new ExeSettingsPanel((ExeServerSettings)s));
+					else if(s instanceof EmailSettings)
+						SageAlertViewport.get().setCenterContent(new EmailSettingsPanel((EmailSettings)s));
+					else
+						MessageBox.alert("Edit Not Available", "The selected object cannot be edited!", null);
+				}
+
+			});
+			this.add(edit);
 
 			delete = new MenuItem();
 			delete.setText("Delete");
@@ -100,7 +115,7 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 									}
 
 									public void onSuccess(Void result) {
-										MenuDataStore.get().rmReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s));
+										MenuDataStore.CURRENT.rmReporter(BeanModelLookup.get().getFactory(s.getClass()).createModel(s));
 										MessageBox.alert("Success", "The reporter was deleted successfully!", null);
 									}
 									
@@ -111,15 +126,17 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 				}
 
 			});
-			this.add(delete);
+			this.add(delete);			
 		}
 
 		@Override
 		public void onShow() {
 			super.onShow();
 			ModelData d = getSelectionModel().getSelectedItem();
-			if(!(d instanceof BeanModel))
+			if(!(d instanceof BeanModel)) {
 				delete.disable();
+				edit.disable();
+			}
 			if(store.getParent(d) == null || (isLeaf(d) && !store.getParent(d).get("id").equals("Servers")))
 				create.disable();
 		}
@@ -129,18 +146,19 @@ final class MenuTreePanel extends TreePanel<ModelData> {
 			super.onHide();
 			delete.enable();
 			create.enable();
+			edit.enable();
 		}
 	}
 
-	private MenuTreePanel(final TreeStore<ModelData> store) {
+	MenuTreePanel(final TreeStore<ModelData> store) {
 		super(store);
 		setDisplayProperty("id");
 		this.addListener(Events.OnClick, new Listener<TreePanelEvent<ModelData>>() {
 
 			public void handleEvent(TreePanelEvent<ModelData> be) {
-				if(be.getItem() instanceof SageAlertEventMetadata) {
+				if(be.getItem() instanceof SageAlertEventMetadata)
 					SageAlertViewport.get().setCenterContent(new ListenerSubscriptionForm((SageAlertEventMetadata)be.getItem()));
-				} else if(store.getParent(be.getItem()) == null && be.getItem().get("id").equals("Clients"))
+				else if(store.getParent(be.getItem()) == null && be.getItem().get("id").equals("Clients"))
 					SageAlertViewport.get().setCenterContent(ClientSettingsPanel.getInstance());
 			}
 
