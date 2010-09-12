@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.log4j.Logger;
@@ -78,14 +79,19 @@ class ExeServer implements SageAlertEventHandler {
 			Thread t = new Thread() {
 				@Override
 				public void run() {
-					StringBuilder msg = new StringBuilder("Running '" + exe.getAbsolutePath() + "'");
 					ByteArrayOutputStream output = new ByteArrayOutputStream();
 					CommandLine cmd = new CommandLine(exe);
+					cmd.addArguments(settings.getArgs());
+					StringBuilder msg = new StringBuilder("Running '" + cmd.toString() + "'");
 					Executor executor = new DefaultExecutor();
 					executor.setStreamHandler(new PumpStreamHandler(output));
 					int rc;
 					try {
 						rc = executor.execute(cmd, env);
+					} catch(ExecuteException e) { 
+						rc = e.getExitValue();
+						if(e.getCause() != null)
+							LOG.error("ExecuteException", e.getCause());
 					} catch (IOException e) {
 						rc = -1;
 						LOG.error("IOException running exe", e);

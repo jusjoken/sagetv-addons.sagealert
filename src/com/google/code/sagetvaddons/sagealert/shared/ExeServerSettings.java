@@ -22,6 +22,7 @@ package com.google.code.sagetvaddons.sagealert.shared;
 public class ExeServerSettings implements NotificationServerSettings {
 
 	private String exeName;
+	private String args;
 	
 	/**
 	 * For GWT RPC only; do NOT use!
@@ -31,8 +32,12 @@ public class ExeServerSettings implements NotificationServerSettings {
 	/**
 	 * 
 	 */
-	public ExeServerSettings(String exeName) {
+	public ExeServerSettings(String exeName, String args) {
 		this.exeName = exeName;
+		if(args != null)
+			this.args = args;
+		else
+			this.args = "";
 	}
 
 	/* (non-Javadoc)
@@ -69,7 +74,7 @@ public class ExeServerSettings implements NotificationServerSettings {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable#getDataStoreData()
 	 */
 	public String getDataStoreData() {
-		return "";
+		return args;
 	}
 
 	/* (non-Javadoc)
@@ -84,12 +89,17 @@ public class ExeServerSettings implements NotificationServerSettings {
 	 */
 	public void unserialize(String key, String data) {
 		exeName = key;
+		args = data;
 	}
 	
 	public String getExeName() {
 		return exeName;
 	}
 
+	public String getArgs() {
+		return args;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

@@ -49,6 +49,11 @@ final class ExeSettingsPanel extends FormPanel {
 		fName.setFieldLabel("Process Name (full, absolute path)");
 		add(fName);
 		
+		final TextField<String> args = new TextField<String>();
+		args.setAllowBlank(true);
+		args.setFieldLabel("Process Arguments");
+		add(args);
+		
 		Button save = new Button("Create");
 		save.addSelectionListener(new SelectionListener<ButtonEvent>() {
 
@@ -58,7 +63,7 @@ final class ExeSettingsPanel extends FormPanel {
 					return;
 				ReporterServiceAsync rpc = GWT.create(ReporterService.class);
 				List<NotificationServerSettings> list = new ArrayList<NotificationServerSettings>();
-				final ExeServerSettings s = new ExeServerSettings(fName.getValue());
+				final ExeServerSettings s = new ExeServerSettings(fName.getValue(), args.getValue() == null ? "" : args.getValue());
 				list.add(s);
 				rpc.save(list, new AsyncCallback<Void>() {
 
