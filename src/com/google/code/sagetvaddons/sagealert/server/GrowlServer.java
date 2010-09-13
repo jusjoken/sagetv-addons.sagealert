@@ -54,6 +54,11 @@ final class GrowlServer implements SageAlertEventHandler {
 			srv.updateSettings(settings); // In case the pwd was updated
 		return srv;
 	}
+	
+	synchronized static final void deleteServer(GrowlServerSettings settings) {
+		if(SERVERS.remove(settings) != null)
+			LOG.info("Removed '" + settings.toString() + "' from cache!");
+	}
 
 	static private final Application GROWL_APP = new Application("SageTV");
 	static private final NotificationType[] NOTIFICATION_TYPES = {
@@ -154,8 +159,7 @@ final class GrowlServer implements SageAlertEventHandler {
 	}
 
 	public void destroy() {
-		// TODO Auto-generated method stub
-		
+		deleteServer(settings);
 	}
 
 	public void setSettings(NotificationServerSettings settings) {

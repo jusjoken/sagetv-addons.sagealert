@@ -48,6 +48,11 @@ class CsvLogFileServer extends LogFileServer {
 		return srv;
 	}
 	
+	synchronized static final void delete(CsvLogFileSettings settings) {
+		if(SERVERS.remove(settings) != null)
+			LOG.info("Removed '" + settings.getDisplayValue() + "' from cache!");
+	}
+	
 	static private final SimpleDateFormat FMT = new SimpleDateFormat("dd MMM yyyy HH:mm:ss Z");
 	
 	private CsvLogFileSettings settings;
@@ -130,5 +135,11 @@ class CsvLogFileServer extends LogFileServer {
 
 	public void setSettings(NotificationServerSettings settings) {
 		throw new UnsupportedOperationException("CSV log file settings cannot be modified!");
+	}
+	
+	@Override
+	public void destroy() {
+		delete(settings);
+		super.destroy();
 	}
 }

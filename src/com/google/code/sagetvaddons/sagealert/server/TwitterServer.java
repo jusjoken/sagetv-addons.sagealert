@@ -66,6 +66,11 @@ final class TwitterServer implements SageAlertEventHandler {
 			srv.updateSettings(settings); // In case the pwd was updated
 		return srv;
 	}
+	
+	synchronized static final void deleteServer(TwitterSettings settings) {
+		if(SERVERS.remove(settings) != null)
+			LOG.info("Removed '@" + settings.getId() + "' from cache!");
+	}
 
 	private TwitterSettings settings;
 	private Twitter twitter;
@@ -124,7 +129,7 @@ final class TwitterServer implements SageAlertEventHandler {
 	}
 
 	public void destroy() {
-
+		deleteServer(settings);
 	}
 
 	public void setSettings(NotificationServerSettings settings) {
