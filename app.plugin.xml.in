@@ -1,7 +1,7 @@
 <SageTVPlugin>
        <Name>SageAlert</Name>
        <Identifier>sagealert</Identifier>
-       <Description>
+       <Description><![CDATA[
 SageAlert listens for important/interesting SageTV events and will send notifications of those events to various notification platforms.
  
 WARNING: Starting with v2.0.0.920, SageAlert requires a license file to unlock all features!
@@ -31,7 +31,7 @@ Typical uses of SageAlert include:
 At this time, all configuration of SageAlert is done via the web GUI, which is installed at the /sagealert/ context in your Jetty plugin.  A future version of SageAlert may introduce some configuration options into the STV.
  
 Other plugins can also register and fire events to SageAlert, which can then be configured for notification.
-       </Description>
+       ]]></Description>
        <Author>Slugger</Author>
        <CreationDate>2010.05.29</CreationDate>
        <ModificationDate>@@MOD_DATE@@</ModificationDate>

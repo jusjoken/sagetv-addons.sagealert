@@ -26,6 +26,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.environment.EnvironmentUtils;
 import org.apache.log4j.Logger;
 
 import com.google.code.sagetvaddons.sagealert.shared.ExeServerSettings;
@@ -69,6 +70,13 @@ class ExeServer implements SageAlertEventHandler {
 	public void onEvent(SageAlertEvent e) {
 		setSettings(DataStore.getInstance().reloadSettings(getSettings()));
 		final Map<String, String> env = new HashMap<String, String>();
+		try {
+			Map<?, ?> parentEnv = EnvironmentUtils.getProcEnvironment();
+			for(Object var : parentEnv.keySet())
+				env.put(var.toString(), parentEnv.get(var).toString());
+		} catch (IOException e1) {
+			LOG.warn("IOError grabbing parent env; using empty env instead!", e1);
+		}
 		env.put("SA_SUBJ", e.getSubject());
 		env.put("SA_SOURCE", e.getSource());
 		env.put("SA_SHORT", e.getShortDescription());
