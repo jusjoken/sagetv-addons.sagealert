@@ -68,6 +68,11 @@ class ExeServer implements SageAlertEventHandler {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent)
 	 */
 	public void onEvent(SageAlertEvent e) {
+		if(!License.get().isLicensed()) {
+			LOG.warn("You can't send alerts to process executors because this version of SageAlert is not licensed!");
+			return;
+		}
+
 		setSettings(DataStore.getInstance().reloadSettings(getSettings()));
 		final Map<String, String> env = new HashMap<String, String>();
 		try {
