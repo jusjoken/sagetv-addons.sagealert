@@ -50,6 +50,12 @@ public interface HandlerService extends RemoteService {
 	public SageAlertEventMetadata getMetadata(String eventId);
 	
 	/**
+	 * Save the given metadata to the data store
+	 * @param data The data to be saved
+	 */
+	public void saveMetadata(SageAlertEventMetadata data);
+	
+	/**
 	 * Return a collection of all registered metadata objects
 	 * @return The collection of all metadata objects
 	 */

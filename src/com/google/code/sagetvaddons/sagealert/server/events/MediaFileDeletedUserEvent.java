@@ -15,61 +15,58 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
+import gkusnick.sagetv.api.MediaFileAPI.MediaFile;
+
+import org.apache.commons.lang.ArrayUtils;
+
+import com.google.code.sagetvaddons.sagealert.server.ApiInterpreter;
 import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
 import com.google.code.sagetvaddons.sagealert.server.DataStore;
-
-import gkusnick.sagetv.api.MediaFileAPI.MediaFile;
+import com.google.code.sagetvaddons.sagealert.shared.Client;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
 public final class MediaFileDeletedUserEvent extends MediaFileDeletedEvent {
+	static public final String[] ARG_TYPES = (String[])ArrayUtils.addAll(MediaFileDeletedEvent.ARG_TYPES, new String[] {Client.class.getName()});
 
-	private String alias;
+	private Client clnt;
+	private Object[] eventArgs;
+	private SageAlertEventMetadata metadata;
 	
 	/**
 	 * @param mf
 	 */
-	public MediaFileDeletedUserEvent(MediaFile mf, String deletedBy) {
-		super(mf);
-		if(deletedBy != null && deletedBy.length() > 0)
-			alias = DataStore.getInstance().getClient(deletedBy).getAlias();
-		else
-			alias = null;
+	public MediaFileDeletedUserEvent(MediaFile mf, String deletedBy, SageAlertEventMetadata data) {
+		super(mf, data);
+		if(deletedBy == null || deletedBy.length() == 0)
+			deletedBy = "<unknown>";
+		clnt = DataStore.getInstance().getClient(deletedBy);
+		eventArgs = ArrayUtils.addAll(super.getArgs(), new Object[] {clnt});
+		metadata = data;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
 	 */
 	public String getLongDescription() {
-		StringBuilder msg = new StringBuilder("The following media file was deleted by ");
-		if(alias != null)
-			msg.append("'" + alias + "'");
-		else
-			msg.append("the user");
-		msg.append(": " + getTitle());
-		return msg.toString();
+		return new ApiInterpreter(eventArgs, metadata.getLongMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
 	 */
 	public String getMediumDescription() {
-		StringBuilder msg = new StringBuilder("File deleted by ");
-		if(alias != null)
-			msg.append("'" + alias + "'");
-		else
-			msg.append("user");
-		msg.append(": " + getTitle());
-		return msg.toString();
+		return new ApiInterpreter(eventArgs, metadata.getMedMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
 	 */
 	public String getShortDescription() {
-		return getMediumDescription();
+		return new ApiInterpreter(eventArgs, metadata.getShortMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
@@ -83,9 +80,6 @@ public final class MediaFileDeletedUserEvent extends MediaFileDeletedEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
 	 */
 	public String getSubject() {
-		StringBuilder msg = new StringBuilder("Media file deleted by user");
-		if(alias != null)
-			msg.append(" '" + alias + "'");
-		return msg.toString();
+		return new ApiInterpreter(eventArgs, metadata.getSubject()).interpret();
 	}
 }

@@ -71,7 +71,7 @@ final class CustomEventsManager implements SageTVEventListener {
 					Class<SageAlertEvent> oldVal = events.put(eventId, (Class<SageAlertEvent>)cls);
 					if(oldVal == null) {
 						SageAlertEventMetadataManager mdMgr = SageAlertEventMetadataManager.get();
-						mdMgr.putMetadata(new SageAlertEventMetadata(eventId, name, desc));
+						mdMgr.putMetadata(new SageAlertEventMetadata(eventId, name, desc, null, null, null, null, null));
 						REGISTRY.eventSubscribe(this, eventId);
 						msg.append("SUCCESS");
 					} else

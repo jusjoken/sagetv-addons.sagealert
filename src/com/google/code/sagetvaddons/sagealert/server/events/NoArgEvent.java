@@ -15,77 +15,54 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import org.apache.log4j.Logger;
-
-import gkusnick.sagetv.api.AiringAPI;
-import gkusnick.sagetv.api.MediaFileAPI;
-import gkusnick.sagetv.api.ShowAPI;
-
-import com.google.code.sagetvaddons.sagealert.shared.Client;
+import com.google.code.sagetvaddons.sagealert.server.ApiInterpreter;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
-public final class PlaybackStoppedEvent implements SageAlertEvent {
-	static private final Logger LOG = Logger.getLogger(PlaybackStoppedEvent.class);
+public abstract class NoArgEvent implements SageAlertEvent {
+
+	static private final Object[] EVENT_ARGS = new Object[0];
 	
-	private MediaFileAPI.MediaFile mf;
-	private Client clnt;
-	private String eventId;
+	private SageAlertEventMetadata metadata;
 	
-	public PlaybackStoppedEvent(MediaFileAPI.MediaFile mf, Client clnt, String eventId) {
-		this.mf = mf;
-		this.clnt = clnt;
-		this.eventId = eventId;
+	public NoArgEvent(SageAlertEventMetadata data) {
+		metadata = data;
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
 	 */
 	public String getLongDescription() {
-		StringBuilder msg = new StringBuilder("Client '" + clnt.getAlias() + "' stopped watching '" + mf.GetMediaTitle());
-		AiringAPI.Airing a = mf.GetMediaFileAiring();
-		if(a != null) {
-			ShowAPI.Show s = a.GetShow();
-			if(s != null) {
-				String subtitle = s.GetShowEpisode();
-				if(subtitle != null && subtitle.length() > 0)
-					msg.append(": " + subtitle);
-			} else
-				LOG.warn("Airing show is unexpectedly null for Airing ID: " + a.GetAiringID());
-		} else
-			LOG.warn("MediaFile airing is unexpectedly null for MF ID: " + mf.GetMediaFileID());
-		msg.append("'");
-		return msg.toString();
+		return new ApiInterpreter(EVENT_ARGS, metadata.getLongMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
 	 */
 	public String getMediumDescription() {
-		return getLongDescription();
+		return new ApiInterpreter(EVENT_ARGS, metadata.getMedMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
 	 */
 	public String getShortDescription() {
-		return getLongDescription();
+		return new ApiInterpreter(EVENT_ARGS, metadata.getShortMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSource()
 	 */
-	public String getSource() {
-		return eventId;
-	}
+	abstract public String getSource();
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
 	 */
 	public String getSubject() {
-		return "Client stopped playing back media";
+		return new ApiInterpreter(EVENT_ARGS, metadata.getSubject()).interpret();
 	}
 }

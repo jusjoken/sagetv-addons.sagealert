@@ -53,11 +53,11 @@ final class SystemMessageEventsListener implements SageTVEventListener {
 				if(msg.GetSystemMessageRepeatCount() > 1 && Boolean.parseBoolean(API.apiNullUI.configuration.GetServerProperty(Plugin.OPT_IGNORE_REPEAT_SYS_MSGS, Plugin.OPT_IGNORE_REPEAT_SYS_MSGS_DEFAULT)))
 					LOG.warn("Not firing event for system message '" + msg.GetSystemMessageTypeName() + "' because it is a repeated message!");
 				else if(msg.GetSystemMessageLevel() == 1)
-					SageAlertEventHandlerManager.get().fire(new SystemMessageInfoEvent(msg));
+					SageAlertEventHandlerManager.get().fire(new SystemMessageInfoEvent(msg, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.INFO_SYSMSG_POSTED)));
 				else if(msg.GetSystemMessageLevel() == 2)
-					SageAlertEventHandlerManager.get().fire(new SystemMessageWarningEvent(msg));
+					SageAlertEventHandlerManager.get().fire(new SystemMessageWarningEvent(msg, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.WARN_SYSMSG_POSTED)));
 				else if(msg.GetSystemMessageLevel() == 3)
-					SageAlertEventHandlerManager.get().fire(new SystemMessageErrorEvent(msg));
+					SageAlertEventHandlerManager.get().fire(new SystemMessageErrorEvent(msg, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.ERROR_SYSMSG_POSTED)));
 			} else
 				LOG.error("Unhandled event: " + arg0);			
 		} else

@@ -27,17 +27,22 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
  * @author dbattams
  *
  */
-abstract public class MediaFileDeletedEvent implements SageAlertEvent {
-	static public final String[] ARG_TYPES = new String[] {MediaFileAPI.MediaFile.class.getName()};
+public abstract class RecordingEvent implements SageAlertEvent {
+
+	static public final String[] EVENT_ARG_TYPES = new String[] {MediaFileAPI.MediaFile.class.getName(), AiringAPI.Airing.class.getName(), ShowAPI.Show.class.getName()};
 	
 	private MediaFileAPI.MediaFile mf;
-	private SageAlertEventMetadata metadata;
+	private AiringAPI.Airing airing;
+	private ShowAPI.Show show;
 	private Object[] eventArgs;
-
-	public MediaFileDeletedEvent(MediaFileAPI.MediaFile mf, SageAlertEventMetadata data) {
+	private SageAlertEventMetadata metadata;
+	
+	public RecordingEvent(MediaFileAPI.MediaFile mf, SageAlertEventMetadata data) {
 		this.mf = mf;
+		airing = mf.GetMediaFileAiring();
+		show = airing.GetShow();
+		eventArgs = new Object[] {this.mf, airing, show};
 		metadata = data;
-		eventArgs = new Object[] {this.mf};
 	}
 
 	/* (non-Javadoc)
@@ -73,25 +78,4 @@ abstract public class MediaFileDeletedEvent implements SageAlertEvent {
 		return new ApiInterpreter(eventArgs, metadata.getSubject()).interpret();
 	}
 
-	protected MediaFileAPI.MediaFile getMedia() { return mf; }
-
-	public String getTitle() {
-		StringBuilder title = new StringBuilder(mf.GetMediaTitle());
-		AiringAPI.Airing a = mf.GetMediaFileAiring();
-		if(a != null && mf.IsTVFile()) {
-			ShowAPI.Show s = a.GetShow();
-			if(s != null) {
-				String subtitle = s.GetShowEpisode();
-				if(subtitle != null && subtitle.length() > 0)
-					title.append(": " + subtitle);
-				title.append("/" + s.GetShowExternalID());
-			}
-		}
-		title.append("/" + mf.GetMediaFileID());
-		if(a != null)
-			title.append("/" + a.GetAiringID());
-		return title.toString();
-	}
-	
-	protected Object[] getArgs() { return eventArgs; }
 }

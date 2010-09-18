@@ -15,64 +15,59 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import org.apache.log4j.Logger;
-
 import gkusnick.sagetv.api.AiringAPI;
 import gkusnick.sagetv.api.MediaFileAPI;
 import gkusnick.sagetv.api.ShowAPI;
 
+import com.google.code.sagetvaddons.sagealert.server.ApiInterpreter;
 import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
-public final class PlaybackStartedEvent implements SageAlertEvent {
-	static private final Logger LOG = Logger.getLogger(PlaybackStartedEvent.class);
+public class PlaybackEvent implements SageAlertEvent {
+	static public final String[] ARG_TYPES = new String[] {MediaFileAPI.MediaFile.class.getName(), AiringAPI.Airing.class.getName(), ShowAPI.Show.class.getName(), Client.class.getName()};
 	
 	private MediaFileAPI.MediaFile mf;
 	private Client clnt;
 	private String eventId;
+	private AiringAPI.Airing airing;
+	private ShowAPI.Show show;
+	private Object[] eventArgs;
+	private SageAlertEventMetadata metadata;
 	
-	public PlaybackStartedEvent(MediaFileAPI.MediaFile mf, Client clnt, String eventId) {
+	public PlaybackEvent(MediaFileAPI.MediaFile mf, Client clnt, String eventId, SageAlertEventMetadata data) {
 		this.mf = mf;
 		this.clnt = clnt;
 		this.eventId = eventId;
+		airing = this.mf.GetMediaFileAiring();
+		show = airing.GetShow();
+		eventArgs = new Object[] {this.mf, airing, show, this.clnt};
+		metadata = data;
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
 	 */
 	public String getLongDescription() {
-		StringBuilder msg = new StringBuilder("Client '" + clnt.getAlias() + "' is watching '" + mf.GetMediaTitle());
-		AiringAPI.Airing a = mf.GetMediaFileAiring();
-		if(a != null) {
-			ShowAPI.Show s = a.GetShow();
-			if(s != null) {
-				String subtitle = s.GetShowEpisode();
-				if(subtitle != null && subtitle.length() > 0)
-					msg.append(": " + subtitle);
-			} else
-				LOG.warn("Airing show is unexpectedly null for Airing ID: " + a.GetAiringID());
-		} else
-			LOG.warn("MediaFile airing is unexpectedly null for MF ID: " + mf.GetMediaFileID());
-		msg.append("'");
-		return msg.toString();
+		return new ApiInterpreter(eventArgs, metadata.getLongMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
 	 */
 	public String getMediumDescription() {
-		return getLongDescription();
+		return new ApiInterpreter(eventArgs, metadata.getMedMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
 	 */
 	public String getShortDescription() {
-		return getLongDescription();
+		return new ApiInterpreter(eventArgs, metadata.getShortMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
@@ -86,6 +81,6 @@ public final class PlaybackStartedEvent implements SageAlertEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
 	 */
 	public String getSubject() {
-		return "Client is playing back media";
+		return new ApiInterpreter(eventArgs, metadata.getSubject()).interpret();
 	}
 }

@@ -17,49 +17,46 @@ package com.google.code.sagetvaddons.sagealert.server.events;
 
 import gkusnick.sagetv.api.SystemMessageAPI;
 
+import com.google.code.sagetvaddons.sagealert.server.ApiInterpreter;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
 public abstract class SystemMessageEvent implements SageAlertEvent {
-
-	private SystemMessageAPI.SystemMessage msg;
-	private String subject;
+	static public final String[] ARG_TYPES = new String[] {SystemMessageAPI.SystemMessage.class.getName()};
 	
-	public SystemMessageEvent(SystemMessageAPI.SystemMessage msg) {
+	private SystemMessageAPI.SystemMessage msg;
+	private SageAlertEventMetadata metadata;
+	private Object[] eventArgs;
+	
+	public SystemMessageEvent(SystemMessageAPI.SystemMessage msg, SageAlertEventMetadata data) {
+		metadata = data;
 		this.msg = msg;
-		StringBuilder subj = new StringBuilder("New ");
-		if(msg.GetSystemMessageLevel() == 1)
-			subj.append("INFO ");
-		else if(msg.GetSystemMessageLevel() == 2)
-			subj.append("WARNING ");
-		else if(msg.GetSystemMessageLevel() == 3)
-			subj.append("ERROR ");
-		subj.append("system message generated");
-		subject = subj.toString();
+		eventArgs = new Object[] {this.msg};
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
 	 */
 	public String getLongDescription() {
-		return msg.GetSystemMessageString();
+		return new ApiInterpreter(eventArgs, metadata.getLongMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
 	 */
 	public String getMediumDescription() {
-		return "New system message generated: " + msg.GetSystemMessageTypeName() + "; see SageTV server for details.";
+		return new ApiInterpreter(eventArgs, metadata.getMedMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
 	 */
 	public String getShortDescription() {
-		return getMediumDescription();
+		return new ApiInterpreter(eventArgs, metadata.getShortMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
@@ -71,7 +68,7 @@ public abstract class SystemMessageEvent implements SageAlertEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
 	 */
 	public String getSubject() {
-		return subject;
+		return new ApiInterpreter(eventArgs, metadata.getSubject()).interpret();
 	}
 
 }

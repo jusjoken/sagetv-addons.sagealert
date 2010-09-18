@@ -18,15 +18,16 @@ package com.google.code.sagetvaddons.sagealert.server;
 import gkusnick.sagetv.api.API;
 import gkusnick.sagetv.api.MediaFileAPI;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import sage.SageTVEventListener;
 
-import com.google.code.sagetvaddons.sagealert.server.events.PlaybackStartedEvent;
-import com.google.code.sagetvaddons.sagealert.server.events.PlaybackStoppedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.PlaybackEvent;
 import com.google.code.sagetvaddons.sagealert.shared.Client;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
@@ -48,14 +49,19 @@ final class PlaybackEventsListener implements SageTVEventListener {
 		LOG.info("Event received: " + arg0 + " :: " + arg1.toString());
 		Object obj = arg1.get(MF_KEY);
 		if(Utils.canWrapAsMediaFile(obj)) {
+			DataStore ds = DataStore.getInstance();
 			MediaFileAPI.MediaFile mf = API.apiNullUI.mediaFileAPI.Wrap(obj);
-			Client clnt = DataStore.getInstance().getClient((String)arg1.get(UI_KEY));
+			Client clnt = ds.getClient((String)arg1.get(UI_KEY));
 			
 			if(CoreEventsManager.PLAYBACK_STARTED.equals(arg0)) {
-				SageAlertEventHandlerManager.get().fire(new PlaybackStartedEvent(mf, clnt, Client.EventType.STARTS + "_" + clnt.getId()));
-			} else if(CoreEventsManager.PLAYBACK_STOPPED.equals(arg0))
-				SageAlertEventHandlerManager.get().fire(new PlaybackStoppedEvent(mf, clnt, Client.EventType.STOPS + "_" + clnt.getId()));
-			else
+				String eventId = Client.EventType.STARTS + "_" + clnt.getId();
+				SageAlertEventMetadata metadata = new SageAlertEventMetadata(eventId, "Media Playback Started: " + clnt.getAlias(), "Event fires when client '" + clnt.getAlias() + "' starts to playback media.", Arrays.asList(PlaybackEvent.ARG_TYPES), ds.getSetting(eventId + SageAlertEventMetadata.SUBJ_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_SUBJ), ds.getSetting(eventId + SageAlertEventMetadata.SHORT_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_SHORT_MSG), ds.getSetting(eventId + SageAlertEventMetadata.MED_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_MED_MSG), ds.getSetting(eventId + SageAlertEventMetadata.LONG_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_LONG_MSG));
+				SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, eventId, metadata));
+			} else if(CoreEventsManager.PLAYBACK_STOPPED.equals(arg0)) {
+				String eventId = Client.EventType.STOPS + "_" + clnt.getId();
+				SageAlertEventMetadata metadata = new SageAlertEventMetadata(eventId, "Media Playback Stopped: " + clnt.getAlias(), "Event fires when client '" + clnt.getAlias() + "' stops playing back media.", Arrays.asList(PlaybackEvent.ARG_TYPES), ds.getSetting(eventId + SageAlertEventMetadata.SUBJ_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_SUBJ), ds.getSetting(eventId + SageAlertEventMetadata.SHORT_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_SHORT_MSG), ds.getSetting(eventId + SageAlertEventMetadata.MED_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_MED_MSG), ds.getSetting(eventId + SageAlertEventMetadata.LONG_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_LONG_MSG));
+				SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, eventId, metadata));
+			} else
 				LOG.error("Unhandled event: " + arg0);
 		} else
 			LOG.error("Contents of args map is invalid!  Event ignored.");

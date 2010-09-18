@@ -15,9 +15,10 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
-
 import gkusnick.sagetv.api.MediaFileAPI.MediaFile;
+
+import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
@@ -28,30 +29,8 @@ public final class MediaFileDeletedImportLost extends MediaFileDeletedEvent {
 	/**
 	 * @param mf
 	 */
-	public MediaFileDeletedImportLost(MediaFile mf) {
-		super(mf);
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
-	 */
-	public String getLongDescription() {
-		return "The following media file was deleted because the import location was lost: " + getTitle();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
-	 */
-	public String getMediumDescription() {
-		return "File deleted (import lost): " + getTitle();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
-	 */
-	public String getShortDescription() {
-		return getMediumDescription();
+	public MediaFileDeletedImportLost(MediaFile mf, SageAlertEventMetadata data) {
+		super(mf, data);
 	}
 
 	/* (non-Javadoc)
@@ -59,12 +38,5 @@ public final class MediaFileDeletedImportLost extends MediaFileDeletedEvent {
 	 */
 	public String getSource() {
 		return CoreEventsManager.MEDIA_DELETED_IMPORT_LOST;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
-	 */
-	public String getSubject() {
-		return "Media file deleted (import lost)";
 	}
 }

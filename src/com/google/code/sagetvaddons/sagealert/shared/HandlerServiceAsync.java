@@ -60,4 +60,6 @@ public interface HandlerServiceAsync {
 	 * @param cb The async callback to be called
 	 */
 	public void getAllMetadata(AsyncCallback<Collection<SageAlertEventMetadata>> cb);
+	
+	public void saveMetadata(SageAlertEventMetadata data, AsyncCallback<Void> cb);
 }

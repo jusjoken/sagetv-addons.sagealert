@@ -28,7 +28,6 @@ import sage.SageTVPluginRegistry;
 
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
-import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
 /**
  * Initialize/kill daemon threads when the app is started
@@ -74,7 +73,7 @@ public final class AppInitializer implements ServletContextListener {
 		customEventLoader.setDaemon(true);
 		customEventLoader.start();
 		LOG.info("Firing app started event...");
-		((SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry()).postEvent(AppStartedEvent.EVENT_ID, Collections.singletonMap(SageAlertEvent.LISTENER_KEY, new AppStartedEvent()));
+		((SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry()).postEvent(AppStartedEvent.EVENT_ID, Collections.EMPTY_MAP);
 	}
 	
 	private void registerCurrentHandlers() {

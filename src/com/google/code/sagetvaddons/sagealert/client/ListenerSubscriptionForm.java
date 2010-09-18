@@ -20,12 +20,14 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.google.code.sagetvaddons.sagealert.shared.HandlerService;
 import com.google.code.sagetvaddons.sagealert.shared.HandlerServiceAsync;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
@@ -34,6 +36,7 @@ import com.google.code.sagetvaddons.sagealert.shared.ReporterServiceAsync;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 
 /**
  * @author dbattams
@@ -41,11 +44,41 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 class ListenerSubscriptionForm extends FormPanel {
 
+	TextField<String> subj, shortMsg, medMsg, longMsg;
 	List<CheckBox> selections;
 	List<NotificationServerSettings> settings;
 	Button submit;
+	SageAlertEventMetadata metadata;
 	
 	ListenerSubscriptionForm(final SageAlertEventMetadata data) {
+		metadata = data;
+		setWidth(640);
+		setAutoHeight(true);
+		setLabelWidth(380);
+		setFieldWidth(240);
+		setLabelAlign(LabelAlign.RIGHT);
+		setHeading("Configure Listeners: " + data.getEventName());
+
+		subj = new TextField<String>();
+		subj.setFieldLabel("Alert Subject");
+		if(data.getSubject() != null)
+			subj.setValue(data.getSubject());
+		
+		shortMsg = new TextField<String>();
+		shortMsg.setFieldLabel("Short Message");
+		if(data.getShortMsg() != null)
+			shortMsg.setValue(data.getShortMsg());
+		
+		medMsg = new TextField<String>();
+		medMsg.setFieldLabel("Medium Message");
+		if(data.getMedMsg() != null)
+			medMsg.setValue(data.getMedMsg());
+		
+		longMsg = new TextField<String>();
+		longMsg.setFieldLabel("Long Message");
+		if(data.getLongMsg() != null)
+			longMsg.setValue(data.getLongMsg());
+		
 		selections = new ArrayList<CheckBox>();
 		settings = new ArrayList<NotificationServerSettings>();
 		submit = new Button("Save");
@@ -70,17 +103,34 @@ class ListenerSubscriptionForm extends FormPanel {
 					}
 					
 				});
+				
+				metadata.setSubject(subj.getValue());
+				metadata.setShortMsg(shortMsg.getValue());
+				metadata.setMedMsg(medMsg.getValue());
+				metadata.setLongMsg(longMsg.getValue());
+				rpc.saveMetadata(metadata, new AsyncCallback<Void>() {
+
+					public void onFailure(Throwable caught) {
+						GWT.log("ERROR", caught);
+						MessageBox.alert("ERROR", "Failed to save alert settings!", null);
+					}
+
+					public void onSuccess(Void result) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
 			}
 			
 		});
-		setWidth(480);
-		this.setLabelWidth(340);
-		this.setFieldWidth(20);
-		this.setLabelAlign(LabelAlign.RIGHT);
-		setHeading("Configure Listeners: " + data.getEventName());
-		LabelField lbl = new LabelField("");
+		LabelField lbl = new LabelField();
 		lbl.setFieldLabel(data.getDesc());
 		add(lbl);
+		add(subj);
+		add(shortMsg);
+		add(medMsg);
+		add(longMsg);
 		final ReporterServiceAsync rSvc = GWT.create(ReporterService.class);
 		final HandlerServiceAsync hSvc = GWT.create(HandlerService.class);
 		GWT.log("ID: " + data.getEventId());
@@ -112,6 +162,30 @@ class ListenerSubscriptionForm extends FormPanel {
 							add(cb);
 						}
 						add(submit);
+						Button argList = new Button("View Arguments");
+						argList.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+							@Override
+							public void componentSelected(ButtonEvent ce) {
+								Dialog w = new Dialog();
+								w.setHeading("Event Arguments: " + data.getEventName());
+								w.setAutoHide(false);
+								w.setAutoHeight(true);
+								w.setAutoWidth(true);
+								w.setCollapsible(true);
+								w.setHideOnButtonClick(true);
+								List<String> types = data.getObjTypes();
+								
+								if(types.size() > 0)
+									for(int i = 0; i < types.size(); ++i)
+										w.add(new HTML("<p style=\"margin: 6px;\"><b>$" + i + "</b>: " + types.get(i) + "</p>"));
+								else
+									w.add(new HTML("<p style=\"margin: 6px;\"><b>No objects provided by this event.</b></p>"));
+								w.show();
+							}
+							
+						});
+						add(argList);
 						layout();
 						GWT.log(ListenerSubscriptionForm.this.getParent().toString());
 						((LayoutContainer)ListenerSubscriptionForm.this.getParent()).layout(true);
@@ -121,5 +195,21 @@ class ListenerSubscriptionForm extends FormPanel {
 			}
 			
 		});
+	}
+	
+	protected void setSubject(String subj) {
+		this.subj.setValue(subj);
+	}
+	
+	protected void setShortMsg(String msg) {
+		this.shortMsg.setValue(msg);
+	}
+	
+	protected void setMedMsg(String msg) {
+		this.medMsg.setValue(msg);
+	}
+	
+	protected void setLongMsg(String msg) {
+		this.longMsg.setValue(msg);
 	}
 }

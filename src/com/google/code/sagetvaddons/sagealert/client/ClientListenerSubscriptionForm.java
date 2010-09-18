@@ -15,16 +15,77 @@
  */
 package com.google.code.sagetvaddons.sagealert.client;
 
+import java.util.Arrays;
+
 import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
+import com.google.code.sagetvaddons.sagealert.shared.SettingsServiceAsync;
 import com.google.code.sagetvaddons.sagealert.shared.Client.EventType;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * @author dbattams
  *
  */
 class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
+	
+	static private final String ERR_VALUE = "";
+	static private final String[] ARG_TYPES = new String[] {"gkusnick.sage.api.MediaFileAPI$MediaFile", "gkusnick.sage.api.AiringAPI$Airing", "gkusnick.sage.api.ShowAPI$Show", "com.google.code.sagetvaddons.sagealert.shared.Client"};
+	
 	ClientListenerSubscriptionForm(Client clnt, EventType type) {
-		super(new SageAlertEventMetadata(type.toString() + "_" + clnt.getId(), "Client Media Event (" + type.toString() + ")", "Fires when client '" + clnt.getAlias() + "' " + type.toString().toLowerCase() + " playing back media."));
+		super(new SageAlertEventMetadata(type.toString() + "_" + clnt.getId(), "Client Media Event (" + type.toString() + ")", "Fires when client '" + clnt.getAlias() + "' " + type.toString().toLowerCase() + " playing back media.", Arrays.asList(ARG_TYPES), "", "", "", ""));
+
+		String eventId = type.toString() + "_" + clnt.getId();
+		SettingsServiceAsync rpc = GWT.create(SettingsService.class);
+		
+		rpc.getSetting(eventId + SageAlertEventMetadata.SUBJ_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+
+			public void onFailure(Throwable caught) {
+				setSubject(ERR_VALUE);
+			}
+
+			public void onSuccess(String result) {
+				setSubject(result);
+			}
+			
+		});
+		
+		rpc.getSetting(eventId + SageAlertEventMetadata.SHORT_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+
+			public void onFailure(Throwable caught) {
+				setShortMsg(ERR_VALUE);
+			}
+
+			public void onSuccess(String result) {
+				setShortMsg(result);
+			}
+			
+		});
+
+		rpc.getSetting(eventId + SageAlertEventMetadata.MED_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+
+			public void onFailure(Throwable caught) {
+				setMedMsg(ERR_VALUE);
+			}
+
+			public void onSuccess(String result) {
+				setMedMsg(result);
+			}
+			
+		});
+
+		rpc.getSetting(eventId + SageAlertEventMetadata.LONG_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+
+			public void onFailure(Throwable caught) {
+				setLongMsg(ERR_VALUE);
+			}
+
+			public void onSuccess(String result) {
+				setLongMsg(result);
+			}
+			
+		});
 	}
 }

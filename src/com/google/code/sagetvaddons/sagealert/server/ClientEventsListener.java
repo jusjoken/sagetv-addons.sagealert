@@ -53,10 +53,10 @@ final class ClientEventsListener implements SageTVEventListener {
 			else
 				clnt = ds.getClient(macAddr);
 			if(CoreEventsManager.CLIENT_CONNECTED.equals(arg0)) {
-				SageAlertEventHandlerManager.get().fire(new ClientConnectedEvent(clnt));
+				SageAlertEventHandlerManager.get().fire(new ClientConnectedEvent(clnt, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.CLIENT_CONNECTED)));
 				ds.registerClient(clnt.getId());
 			} else if(CoreEventsManager.CLIENT_DISCONNECTED.equals(arg0))
-				SageAlertEventHandlerManager.get().fire(new ClientDisconnectedEvent(clnt));			
+				SageAlertEventHandlerManager.get().fire(new ClientDisconnectedEvent(clnt, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.CLIENT_DISCONNECTED)));			
 			else
 				LOG.error("Unhandled event: " + arg0);
 		} else

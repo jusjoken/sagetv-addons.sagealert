@@ -16,46 +16,22 @@
 package com.google.code.sagetvaddons.sagealert.server.events;
 
 import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
-import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
-public final class EpgUpdatedEvent implements SageAlertEvent {
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
-	 */
-	public String getLongDescription() {
-		return "An EPG update has completed successfully.";
+public final class EpgUpdatedEvent extends NoArgEvent {
+	
+	public EpgUpdatedEvent(SageAlertEventMetadata data) {
+		super(data);
 	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
-	 */
-	public String getMediumDescription() {
-		return getLongDescription();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
-	 */
-	public String getShortDescription() {
-		return getLongDescription();
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSource()
 	 */
 	public String getSource() {
 		return CoreEventsManager.EPG_UPDATED;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
-	 */
-	public String getSubject() {
-		return "An EPG update has completed";
 	}
 }

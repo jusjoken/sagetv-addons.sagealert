@@ -27,7 +27,8 @@ final class ClientReporterConfigWindow extends Window {
 
 	ClientReporterConfigWindow(Client clnt, EventType type) {
 		setModal(true);
-		setSize(420, 315);
+		setWidth(645);
+		setAutoHeight(true);
 		add(new ClientListenerSubscriptionForm(clnt, type));
 	}
 }

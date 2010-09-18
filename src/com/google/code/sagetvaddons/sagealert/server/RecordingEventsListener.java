@@ -54,11 +54,11 @@ final class RecordingEventsListener implements SageTVEventListener {
 			if(mf != null) {
 				SageAlertEvent e = null;
 				if(CoreEventsManager.REC_STARTED.equals(arg0))
-					e = new RecordingStartedEvent(mf);
+					e = new RecordingStartedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_STARTED));
 				else if(CoreEventsManager.REC_COMPLETED.equals(arg0))
-					e = new RecordingCompletedEvent(mf);
+					e = new RecordingCompletedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_COMPLETED));
 				else if(CoreEventsManager.REC_STOPPED.equals(arg0))
-					e = new RecordingStoppedEvent(mf);
+					e = new RecordingStoppedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_STOPPED));
 				if(e != null)
 					SageAlertEventHandlerManager.get().fire(e);
 				else

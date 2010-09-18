@@ -15,11 +15,11 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import gkusnick.sagetv.api.AiringAPI;
-import gkusnick.sagetv.api.MediaFileAPI;
-import gkusnick.sagetv.api.ShowAPI;
+import java.util.Arrays;
+import java.util.List;
 
 import com.google.code.sagetvaddons.sagealert.server.ApiInterpreter;
+import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
@@ -27,38 +27,37 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
  * @author dbattams
  *
  */
-abstract public class MediaFileDeletedEvent implements SageAlertEvent {
-	static public final String[] ARG_TYPES = new String[] {MediaFileAPI.MediaFile.class.getName()};
-	
-	private MediaFileAPI.MediaFile mf;
+public abstract class ClientConnectionEvent implements SageAlertEvent {
+
+	static public final List<String> EVENT_ARG_TYPES = Arrays.asList(new String[] {Client.class.getName()});
+
+	private Client clnt;
 	private SageAlertEventMetadata metadata;
-	private Object[] eventArgs;
 
-	public MediaFileDeletedEvent(MediaFileAPI.MediaFile mf, SageAlertEventMetadata data) {
-		this.mf = mf;
+	public ClientConnectionEvent(Client c, SageAlertEventMetadata data) {
+		clnt = c;
 		metadata = data;
-		eventArgs = new Object[] {this.mf};
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
 	 */
 	public String getLongDescription() {
-		return new ApiInterpreter(eventArgs, metadata.getLongMsg()).interpret();
+		return new ApiInterpreter(new Object[] {clnt}, metadata.getLongMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
 	 */
 	public String getMediumDescription() {
-		return new ApiInterpreter(eventArgs, metadata.getMedMsg()).interpret();
+		return new ApiInterpreter(new Object[] {clnt}, metadata.getMedMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
 	 */
 	public String getShortDescription() {
-		return new ApiInterpreter(eventArgs, metadata.getShortMsg()).interpret();
+		return new ApiInterpreter(new Object[] {clnt}, metadata.getShortMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
@@ -70,28 +69,6 @@ abstract public class MediaFileDeletedEvent implements SageAlertEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
 	 */
 	public String getSubject() {
-		return new ApiInterpreter(eventArgs, metadata.getSubject()).interpret();
+		return new ApiInterpreter(new Object[] {clnt}, metadata.getSubject()).interpret();
 	}
-
-	protected MediaFileAPI.MediaFile getMedia() { return mf; }
-
-	public String getTitle() {
-		StringBuilder title = new StringBuilder(mf.GetMediaTitle());
-		AiringAPI.Airing a = mf.GetMediaFileAiring();
-		if(a != null && mf.IsTVFile()) {
-			ShowAPI.Show s = a.GetShow();
-			if(s != null) {
-				String subtitle = s.GetShowEpisode();
-				if(subtitle != null && subtitle.length() > 0)
-					title.append(": " + subtitle);
-				title.append("/" + s.GetShowExternalID());
-			}
-		}
-		title.append("/" + mf.GetMediaFileID());
-		if(a != null)
-			title.append("/" + a.GetAiringID());
-		return title.toString();
-	}
-	
-	protected Object[] getArgs() { return eventArgs; }
 }

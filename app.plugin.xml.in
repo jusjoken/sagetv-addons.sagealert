@@ -4,7 +4,14 @@
        <Description><![CDATA[
 SageAlert listens for important/interesting SageTV events and will send notifications of those events to various notification platforms.
  
-WARNING: Starting with v2.0.0.920, SageAlert requires a license file to unlock all features!
+WARNING: Starting with v2.0.0.920, SageAlert requires a license file to unlock all features!  In this version,
+the following features are DISABLED without a license:
+
+* SMTP server support
+* Sending more than one notification per event
+* Process executor server support
+
+See the donations wiki page for more details.
  
 Currently, SageAlert supports sending notifications to the following server types:
  
@@ -38,7 +45,9 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <Version beta="true">@@VER_NUM@@.@@BLD_NUM@@</Version>
        <ResourcePath>plugins/sagealert</ResourcePath>
        <Webpage>http://sagetv-addons.googlecode.com</Webpage>
+       <Webpage>http://code.google.com/p/sagetv-addons/wiki/DonationsFaq</Webpage>
        <PluginType>Standard</PluginType>
+       <ServerOnly/>
        <Dependency>
        	<JVM/>
        	<MinVersion>1.5.0</MinVersion>
@@ -102,6 +111,10 @@ Other plugins can also register and fire events to SageAlert, which can then be 
 	   <Dependency>
 	    <Plugin>commons-exec</Plugin>
 	    <MinVersion>1.0.1</MinVersion>
+	   </Dependency>
+	   <Dependency>
+	    <Plugin>commons-lang</Plugin>
+	    <MinVersion>2.4</MinVersion>
 	   </Dependency>
        <Package>
                <PackageType>JAR</PackageType>

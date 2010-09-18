@@ -15,77 +15,26 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import org.apache.log4j.Logger;
-
-import gkusnick.sagetv.api.AiringAPI;
 import gkusnick.sagetv.api.MediaFileAPI;
-import gkusnick.sagetv.api.ShowAPI;
 
 import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
-import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
-public class RecordingStoppedEvent implements SageAlertEvent {
-	static private final Logger LOG = Logger.getLogger(RecordingStoppedEvent.class);
+public class RecordingStoppedEvent extends RecordingEvent {
 
-	private MediaFileAPI.MediaFile mf;
-	
-	/**
-	 * 
-	 */
-	public RecordingStoppedEvent(MediaFileAPI.MediaFile mf) {
-		this.mf = mf;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
-	 */
-	public String getLongDescription() {
-		StringBuilder msg = new StringBuilder("A recording has stopped: '" + mf.GetMediaTitle());
-		AiringAPI.Airing a = mf.GetMediaFileAiring();
-		if(a != null) {
-			ShowAPI.Show s = a.GetShow();
-			if(s != null) {
-				String subtitle = s.GetShowEpisode();
-				if(subtitle != null && subtitle.length() > 0)
-					msg.append(": " + subtitle);
-			} else
-				LOG.warn("Airing show is unexpectedly null for Airing ID: " + a.GetAiringID());
-		} else
-			LOG.warn("MediaFile airing is unexpectedly null for MF ID: " + mf.GetMediaFileID());
-		msg.append("'");
-		return msg.toString();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
-	 */
-	public String getMediumDescription() {
-		return "A recording has stopped: '" + mf.GetMediaTitle() + "'";
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
-	 */
-	public String getShortDescription() {
-		return getMediumDescription();
+	public RecordingStoppedEvent(MediaFileAPI.MediaFile mf, SageAlertEventMetadata data) {
+		super(mf, data);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSource()
 	 */
+	@Override
 	public String getSource() {
 		return CoreEventsManager.REC_STOPPED;
 	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
-	 */
-	public String getSubject() {
-		return "A recording has stopped";
-	}
-
 }

@@ -13,24 +13,30 @@
  *       See the License for the specific language governing permissions and
  *       limitations under the License.
  */
-package com.google.code.sagetvaddons.sagealert.server.events;
+package com.google.code.sagetvaddons.sagealert.server;
 
-import gkusnick.sagetv.api.MediaFileAPI;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
-import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
+import com.google.code.sagetvaddons.sagealert.server.globals.Date;
 
 /**
  * @author dbattams
  *
  */
-public final class RecordingCompletedEvent extends RecordingEvent {
-
-	public RecordingCompletedEvent(MediaFileAPI.MediaFile mf, SageAlertEventMetadata data) {
-		super(mf, data);
+final class Globals {
+	static private final Globals INSTANCE = new Globals();
+	static final Globals get() { return INSTANCE; }
+	
+	private Map<String, Object> map;
+	
+	private Globals() {
+		map = new HashMap<String, Object>();
 	}
-
-	public String getSource() {
-		return CoreEventsManager.REC_COMPLETED;
+	
+	public Object get(String key) {
+		if(key.equals("date"))
+			return new Date();
+		return map.get(key);
 	}
 }

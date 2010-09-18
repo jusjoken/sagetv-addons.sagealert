@@ -17,25 +17,48 @@ package com.google.code.sagetvaddons.sagealert.shared;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public final class SageAlertEventMetadata implements IsSerializable, ModelData {
+	static public final String SUBJ_SUFFIX = "_SUBJ";
+	static public final String SHORT_SUFFIX = "_SHORT";
+	static public final String MED_SUFFIX = "_MED";
+	static public final String LONG_SUFFIX = "_LONG";
+	
 	private String eventId;
 	private String eventName;
 	private String desc;
+	private String subject;
+	private String shortMsg;
+	private String medMsg;
+	private String longMsg;
+	private List<String> objTypes;
 	
 	@SuppressWarnings("unused")
 	private SageAlertEventMetadata() {}
-	
-	public SageAlertEventMetadata(String id, String name, String desc) {
+		
+	public SageAlertEventMetadata(String id, String name, String desc, List<String> objTypes, String subj, String shortMsg, String medMsg, String longMsg) {
 		eventId = id;
 		eventName = name;
 		this.desc = desc;
+		this.shortMsg = shortMsg;
+		this.medMsg = medMsg;
+		this.longMsg = longMsg;
+		this.objTypes = objTypes;
+		this.subject = subj;
 	}
 
+	/**
+	 * @return the objType
+	 */
+	public List<String> getObjTypes() {
+		return objTypes;
+	}
+	
 	/**
 	 * @return the eventId
 	 */
@@ -56,7 +79,27 @@ public final class SageAlertEventMetadata implements IsSerializable, ModelData {
 	public String getDesc() {
 		return desc;
 	}
+	
+	/**
+	 * @return the subject
+	 */
+	public String getSubject() {
+		return subject;
+	}
 
+	public String getShortMsg() {
+		return shortMsg;
+	}
+	
+	public String getMedMsg() {
+		return medMsg;
+	}
+	
+	public String getLongMsg() {
+		return longMsg;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public <X> X get(String property) {
 		return (X)eventName;
 	}
@@ -75,5 +118,37 @@ public final class SageAlertEventMetadata implements IsSerializable, ModelData {
 
 	public <X> X set(String property, X value) {
 		throw new UnsupportedOperationException("Cannot add properties to model!");
+	}
+
+
+	/**
+	 * @param subject the subject to set
+	 */
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+
+	/**
+	 * @param shortMsg the shortMsg to set
+	 */
+	public void setShortMsg(String shortMsg) {
+		this.shortMsg = shortMsg;
+	}
+
+
+	/**
+	 * @param medMsg the medMsg to set
+	 */
+	public void setMedMsg(String medMsg) {
+		this.medMsg = medMsg;
+	}
+
+
+	/**
+	 * @param longMsg the longMsg to set
+	 */
+	public void setLongMsg(String longMsg) {
+		this.longMsg = longMsg;
 	}
 }

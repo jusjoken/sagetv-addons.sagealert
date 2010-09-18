@@ -15,9 +15,10 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
-
 import gkusnick.sagetv.api.MediaFileAPI.MediaFile;
+
+import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
@@ -28,30 +29,8 @@ public final class MediaFileDeletedVerifyFailedEvent extends MediaFileDeletedEve
 	/**
 	 * @param mf
 	 */
-	public MediaFileDeletedVerifyFailedEvent(MediaFile mf) {
-		super(mf);
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
-	 */
-	public String getLongDescription() {
-		return "The following media file was deleted because verification failed: " + getTitle();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
-	 */
-	public String getMediumDescription() {
-		return "File deleted (verify failed): " + getTitle();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
-	 */
-	public String getShortDescription() {
-		return getMediumDescription();
+	public MediaFileDeletedVerifyFailedEvent(MediaFile mf, SageAlertEventMetadata data) {
+		super(mf, data);
 	}
 
 	/* (non-Javadoc)
@@ -59,12 +38,5 @@ public final class MediaFileDeletedVerifyFailedEvent extends MediaFileDeletedEve
 	 */
 	public String getSource() {
 		return CoreEventsManager.MEDIA_DELETED_VERIFY_FAILED;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
-	 */
-	public String getSubject() {
-		return "Media file deleted (verify failed)";
 	}
 }

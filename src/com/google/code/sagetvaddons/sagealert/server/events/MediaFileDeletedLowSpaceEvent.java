@@ -15,9 +15,10 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
-
 import gkusnick.sagetv.api.MediaFileAPI.MediaFile;
+
+import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
@@ -28,30 +29,8 @@ public final class MediaFileDeletedLowSpaceEvent extends MediaFileDeletedEvent {
 	/**
 	 * @param mf
 	 */
-	public MediaFileDeletedLowSpaceEvent(MediaFile mf) {
-		super(mf);
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
-	 */
-	public String getLongDescription() {
-		return "The following media file was deleted because the minimum space setting was violated: " + getTitle();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
-	 */
-	public String getMediumDescription() {
-		return "File deleted (min space): " + getTitle();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
-	 */
-	public String getShortDescription() {
-		return getMediumDescription();
+	public MediaFileDeletedLowSpaceEvent(MediaFile mf, SageAlertEventMetadata data) {
+		super(mf, data);
 	}
 
 	/* (non-Javadoc)
@@ -60,12 +39,4 @@ public final class MediaFileDeletedLowSpaceEvent extends MediaFileDeletedEvent {
 	public String getSource() {
 		return CoreEventsManager.MEDIA_DELETED_LOW_SPACE;
 	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
-	 */
-	public String getSubject() {
-		return "Media file deleted (min space)";
-	}
-
 }

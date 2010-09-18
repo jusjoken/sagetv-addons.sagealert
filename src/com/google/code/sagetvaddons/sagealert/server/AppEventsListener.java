@@ -43,11 +43,11 @@ final class AppEventsListener implements SageTVEventListener {
 	public void sageEvent(String arg0, Map arg1) {
 		LOG.info("Event received: " + arg0 + " :: " + arg1.toString());
 		if(AppStartedEvent.EVENT_ID.equals(arg0))
-			SageAlertEventHandlerManager.get().fire(new AppStartedEvent());
+			SageAlertEventHandlerManager.get().fire(new AppStartedEvent(SageAlertEventMetadataManager.get().getMetadata(AppStartedEvent.EVENT_ID)));
 		else if(CoreEventsManager.EPG_UPDATED.equals(arg0))
-			SageAlertEventHandlerManager.get().fire(new EpgUpdatedEvent());
+			SageAlertEventHandlerManager.get().fire(new EpgUpdatedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.EPG_UPDATED)));
 		else if(CoreEventsManager.CONFLICTS.equals(arg0))
-			SageAlertEventHandlerManager.get().fire(new ConflictStatusEvent());
+			SageAlertEventHandlerManager.get().fire(new ConflictStatusEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.CONFLICTS)));
 		else
 			LOG.error("Unhandled event: " + arg0);
 	}

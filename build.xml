@@ -204,6 +204,7 @@ Test targets suppressed because -junit argument was not specified when running w
 		-libraryjars "${sage.libs}/jetty-6.1.19.jar"
 		-libraryjars "${sage.libs}/sqlitejdbc-v056.jar"
 		-libraryjars "${java.home}/lib/jce.jar"
+  		-libraryjars "${sage.libs}/commons-lang-2.4.jar"
         -injars jars/sagealert-plain.jar
         -outjars sagealert.jar
   		-dontusemixedcaseclassnames
@@ -225,6 +226,10 @@ Test targets suppressed because -junit argument was not specified when running w
   		-keep public class ***.server.events.*TestEvent {
   			public &lt;init&gt;(java.util.Map);
   		}
+  		-keep public class com.google.code.sagetvaddons.sagealert.server.globals.** {
+  			public *;
+  		}
+  		
 		-printconfiguration sagealert.pro
     </proguard>
     <zip destfile="sagealert-proguard-dbg-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="sagealert.pro.*" />

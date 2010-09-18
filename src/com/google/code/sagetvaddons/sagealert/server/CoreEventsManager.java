@@ -17,11 +17,20 @@ package com.google.code.sagetvaddons.sagealert.server;
 
 import gkusnick.sagetv.api.API;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.apache.log4j.Logger;
 
 import sage.SageTVPluginRegistry;
 
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.ClientConnectionEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.ConflictStatusEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedUserEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.RecordingEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.SystemMessageEvent;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
@@ -55,13 +64,94 @@ public final class CoreEventsManager {
 	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED = "PartialOrUnwanted"; //
 	static final public String MEDIA_DELETED_IMPORT_LOST = "ImportLost"; //
 	static final public String PLUGIN_STARTED = "PluginStarted";
-		
+	
+	static final public String CLIENT_CONNECTED_SUBJ = "New client connected to SageTV server";
+	static final public String CLIENT_CONNECTED_SHORT_MSG = "Client '$0.getAlias()' has connected to the SageTV server.";
+	static final public String CLIENT_CONNECTED_MED_MSG = CLIENT_CONNECTED_SHORT_MSG;
+	static final public String CLIENT_CONNECTED_LONG_MSG = CLIENT_CONNECTED_SHORT_MSG;
+	
+	static final public String CLIENT_DISCONNECTED_SUBJ = "Client disconnected from SageTV server";
+	static final public String CLIENT_DISCONNECTED_SHORT_MSG = "Client '$0.getAlias()' has disconnected from the SageTV server.";
+	static final public String CLIENT_DISCONNECTED_MED_MSG = CLIENT_DISCONNECTED_SHORT_MSG;
+	static final public String CLIENT_DISCONNECTED_LONG_MSG = CLIENT_DISCONNECTED_SHORT_MSG;
+
+	static final public String REC_STARTED_SUBJ = "A new recording has started";
+	static final public String REC_STARTED_SHORT_MSG = "A new recording has started: $0.GetMediaTitle()";
+	static final public String REC_STARTED_MED_MSG = "A new recording has started: $0.GetMediaTitle(): $2.GetShowEpisode()";
+	static final public String REC_STARTED_LONG_MSG = REC_STARTED_MED_MSG;
+
+	static final public String REC_STOPPED_SUBJ = "A recording has stopped";
+	static final public String REC_STOPPED_SHORT_MSG = "A recording has stopped: $0.GetMediaTitle()";
+	static final public String REC_STOPPED_MED_MSG = "A recording has stopped: $0.GetMediaTitle(): $2.GetShowEpisode()";
+	static final public String REC_STOPPED_LONG_MSG = REC_STOPPED_MED_MSG;
+
+	static final public String REC_COMPLETED_SUBJ = "A recording has completed";
+	static final public String REC_COMPLETED_SHORT_MSG = "A recording has completed: $0.GetMediaTitle()";
+	static final public String REC_COMPLETED_MED_MSG = "A recording has completed: $0.GetMediaTitle(): $2.GetShowEpisode()";
+	static final public String REC_COMPLETED_LONG_MSG = REC_COMPLETED_MED_MSG;
+
+	static final public String EPG_UPDATED_SUBJ = "An EPG update has completed";
+	static final public String EPG_UPDATED_SHORT_MSG = "An EPG update has completed.";
+	static final public String EPG_UPDATED_MED_MSG = "An EPG update has completed successfully.";
+	static final public String EPG_UPDATED_LONG_MSG = EPG_UPDATED_MED_MSG;
+
+	static final public String CONFLICTS_SUBJ = "Conflict status changed in recording schedule";
+	static final public String CONFLICTS_LONG_MSG = "The conflict status of your SageTV recording schedule has changed.  There are now $0.toString() conflict(s); $1.toString() are unresolved.";
+	static final public String CONFLICTS_MED_MSG = "Conflict status change: $0.toString() total conflicts; $1.toString() unresolved.";
+	static final public String CONFLICTS_SHORT_MSG = EPG_UPDATED_MED_MSG;
+
+	static final public String SYSMSG_POSTED_SUBJ = "New $0.GetSystemMessageLevel() system message generated";
+	static final public String SYSMSG_POSTED_LONG_MSG = "$0.GetSystemMessageString()";
+	static final public String SYSMSG_POSTED_MED_MSG = "A new system message generated: $0.GetSystemMessageTypeName(); see SageTV server for details.";
+	static final public String SYSMSG_POSTED_SHORT_MSG = SYSMSG_POSTED_MED_MSG;
+
+	static final public String MEDIA_DELETED_LOW_SPACE_SUBJ = "Media file deleted (min space)";
+	static final public String MEDIA_DELETED_LOW_SPACE_LONG_MSG = "The following media file was deleted because the minimum space setting was violated: $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_LOW_SPACE_MED_MSG = "File deleted (min space): $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_LOW_SPACE_SHORT_MSG = MEDIA_DELETED_LOW_SPACE_MED_MSG;
+
+	static final public String MEDIA_DELETED_KEEP_AT_MOST_SUBJ = "Media file deleted (keep at most)";
+	static final public String MEDIA_DELETED_KEEP_AT_MOST_LONG_MSG = "The following media file was deleted because the keep at most setting was exceeded: $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_KEEP_AT_MOST_MED_MSG = "File deleted (keep at most): $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_KEEP_AT_MOST_SHORT_MSG = MEDIA_DELETED_KEEP_AT_MOST_MED_MSG;
+
+	static final public String MEDIA_DELETED_USER_SUBJ = "Media file deleted by user '$1.getAlias()'";
+	static final public String MEDIA_DELETED_USER_LONG_MSG = "The following media file was deleted by '$1.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_USER_MED_MSG = "File deleted by '$1.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_USER_SHORT_MSG = MEDIA_DELETED_USER_MED_MSG;
+	
+	static final public String MEDIA_DELETED_VERIFY_FAILED_SUBJ = "Media file deleted (verify failed)";
+	static final public String MEDIA_DELETED_VERIFY_FAILED_LONG_MSG = "The following media file was deleted because verification failed: $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_VERIFY_FAILED_MED_MSG = "File deleted (verify failed): $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_VERIFY_FAILED_SHORT_MSG = MEDIA_DELETED_VERIFY_FAILED_MED_MSG;
+
+	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_SUBJ = "Media file deleted (partial/unwanted)";
+	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_LONG_MSG = "The following media file was deleted because it is partial or unwanted: $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_MED_MSG = "File deleted (partial/unwanted): $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_SHORT_MSG = MEDIA_DELETED_PARTIAL_OR_UNWANTED_MED_MSG;
+
+	static final public String MEDIA_DELETED_IMPORT_LOST_SUBJ = "Media file deleted (import lost)";
+	static final public String MEDIA_DELETED_IMPORT_LOST_LONG_MSG = "The following media file was deleted because the import location was lost: $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_IMPORT_LOST_MED_MSG = "File deleted (import lost): $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_IMPORT_LOST_SHORT_MSG = MEDIA_DELETED_IMPORT_LOST_MED_MSG;
+
+	static final public String PLAYBACK_STARTED_SUBJ = "Media playback has started";
+	static final public String PLAYBACK_STARTED_LONG_MSG = "Media playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
+	static final public String PLAYBACK_STARTED_MED_MSG = "Media playback started ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_STARTED_SHORT_MSG = PLAYBACK_STARTED_MED_MSG;
+
+	static final public String PLAYBACK_STOPPED_SUBJ = "Media playback has stopped";
+	static final public String PLAYBACK_STOPPED_LONG_MSG = "Media playback of '$0.GetMediaTitle()' has stopped on client '$3.getAlias()'";
+	static final public String PLAYBACK_STOPPED_MED_MSG = "Media playback stopped ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_STOPPED_SHORT_MSG = PLAYBACK_STOPPED_MED_MSG;
+
 	private final SageTVPluginRegistry PLUGIN_REG = (SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry();
 	private final CustomEventLoader CUSTOM_LOADER = new CustomEventLoader();
 	
 	private CoreEventsManager() {}
 	
 	public void init() {
+		DataStore ds = DataStore.getInstance();
 		SageAlertEventMetadataManager mgr = SageAlertEventMetadataManager.get();
 
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), PLUGINS_LOADED);
@@ -71,31 +161,31 @@ public final class CoreEventsManager {
 		LOG.info("Subscribed to " + PLUGIN_STARTED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), AppStartedEvent.EVENT_ID);
-		mgr.putMetadata(new SageAlertEventMetadata(AppStartedEvent.EVENT_ID, "SageAlert App Started", "Event fired when SageAlert has successfully started."));
+		mgr.putMetadata(new SageAlertEventMetadata(AppStartedEvent.EVENT_ID, "SageAlert App Started", "Event fired when SageAlert has successfully started.", new ArrayList<String>(), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.SUBJ_SUFFIX, AppStartedEvent.SUBJ), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.SHORT_SUFFIX, AppStartedEvent.SHORT_MSG), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.MED_SUFFIX, AppStartedEvent.MED_MSG), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.LONG_SUFFIX, AppStartedEvent.LONG_MSG)));
 		LOG.info("Subscribed to " + AppStartedEvent.EVENT_ID + " event!");
 		
 		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_STARTED);
-		mgr.putMetadata(new SageAlertEventMetadata(REC_STARTED, "Recording Started", "Event fired when the SageTV system starts a recording."));
+		mgr.putMetadata(new SageAlertEventMetadata(REC_STARTED, "Recording Started", "Event fired when the SageTV system starts a recording.", Arrays.asList(RecordingEvent.EVENT_ARG_TYPES), ds.getSetting(REC_STARTED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_STARTED_SUBJ), ds.getSetting(REC_STARTED + SageAlertEventMetadata.SHORT_SUFFIX, REC_STARTED_SHORT_MSG), ds.getSetting(REC_STARTED + SageAlertEventMetadata.MED_SUFFIX, REC_STARTED_MED_MSG), ds.getSetting(REC_STARTED + SageAlertEventMetadata.LONG_SUFFIX, REC_STARTED_LONG_MSG)));
 		LOG.info("Subscribed to " + REC_STARTED + " event!");
 
 		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_STOPPED);
-		mgr.putMetadata(new SageAlertEventMetadata(REC_STOPPED, "Recording Stopped", "Event fired when the SageTV system stops a recording for any other reason besides it being fully completed."));
+		mgr.putMetadata(new SageAlertEventMetadata(REC_STOPPED, "Recording Stopped", "Event fired when the SageTV system stops a recording for any other reason besides it being fully completed.", Arrays.asList(RecordingEvent.EVENT_ARG_TYPES), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_STOPPED_SUBJ), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.SHORT_SUFFIX, REC_STOPPED_SHORT_MSG), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.MED_SUFFIX, REC_STOPPED_MED_MSG), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.LONG_SUFFIX, REC_STOPPED_LONG_MSG)));
 		LOG.info("Subscribed to " + REC_STOPPED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_COMPLETED);
-		mgr.putMetadata(new SageAlertEventMetadata(REC_COMPLETED, "Recording Completed", "Event fired when the SageTV system completes a recording."));
+		mgr.putMetadata(new SageAlertEventMetadata(REC_COMPLETED, "Recording Completed", "Event fired when the SageTV system completes a recording.", Arrays.asList(RecordingEvent.EVENT_ARG_TYPES), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_COMPLETED_SUBJ), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.SHORT_SUFFIX, REC_COMPLETED_SHORT_MSG), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.MED_SUFFIX, REC_COMPLETED_MED_MSG), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.LONG_SUFFIX, REC_COMPLETED_LONG_MSG)));
 		LOG.info("Subscribed to " + REC_COMPLETED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), EPG_UPDATED);
-		mgr.putMetadata(new SageAlertEventMetadata(EPG_UPDATED, "EPG Updated", "Event fired when the SageTV EPG data has been successfully updated."));
+		mgr.putMetadata(new SageAlertEventMetadata(EPG_UPDATED, "EPG Updated", "Event fired when the SageTV EPG data has been successfully updated.", new ArrayList<String>(), ds.getSetting(EPG_UPDATED + SageAlertEventMetadata.SUBJ_SUFFIX, EPG_UPDATED_SUBJ), ds.getSetting(EPG_UPDATED + SageAlertEventMetadata.SHORT_SUFFIX, EPG_UPDATED_SHORT_MSG), ds.getSetting(EPG_UPDATED + SageAlertEventMetadata.MED_SUFFIX, EPG_UPDATED_MED_MSG), ds.getSetting(EPG_UPDATED + SageAlertEventMetadata.LONG_SUFFIX, EPG_UPDATED_LONG_MSG)));
 		LOG.info("Subscribed to " + EPG_UPDATED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(ClientEventsListener.get(), CLIENT_CONNECTED);
-		mgr.putMetadata(new SageAlertEventMetadata(CLIENT_CONNECTED, "Client Connected", "Event fired when a client, extender, or placeshifter connects to the server."));
+		mgr.putMetadata(new SageAlertEventMetadata(CLIENT_CONNECTED, "Client Connected", "Event fired when a client, extender, or placeshifter connects to the server.", ClientConnectionEvent.EVENT_ARG_TYPES, ds.getSetting(CLIENT_CONNECTED + SageAlertEventMetadata.SUBJ_SUFFIX, CLIENT_CONNECTED_SUBJ), ds.getSetting(CLIENT_CONNECTED + SageAlertEventMetadata.SHORT_SUFFIX, CLIENT_CONNECTED_SHORT_MSG), ds.getSetting(CLIENT_CONNECTED + SageAlertEventMetadata.MED_SUFFIX, CLIENT_CONNECTED_MED_MSG), ds.getSetting(CLIENT_CONNECTED + SageAlertEventMetadata.LONG_SUFFIX, CLIENT_CONNECTED_LONG_MSG)));
 		LOG.info("Subscribed to " + CLIENT_CONNECTED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(ClientEventsListener.get(), CLIENT_DISCONNECTED);
-		mgr.putMetadata(new SageAlertEventMetadata(CLIENT_DISCONNECTED, "Client Disconnected", "Event fired when a client, extender, or placeshifter disconnects from the server."));
+		mgr.putMetadata(new SageAlertEventMetadata(CLIENT_DISCONNECTED, "Client Disconnected", "Event fired when a client, extender, or placeshifter disconnects from the server.", ClientConnectionEvent.EVENT_ARG_TYPES, ds.getSetting(CLIENT_DISCONNECTED + SageAlertEventMetadata.SUBJ_SUFFIX, CLIENT_DISCONNECTED_SUBJ), ds.getSetting(CLIENT_DISCONNECTED + SageAlertEventMetadata.SHORT_SUFFIX, CLIENT_DISCONNECTED_SHORT_MSG), ds.getSetting(CLIENT_DISCONNECTED + SageAlertEventMetadata.MED_SUFFIX, CLIENT_DISCONNECTED_MED_MSG), ds.getSetting(CLIENT_DISCONNECTED + SageAlertEventMetadata.LONG_SUFFIX, CLIENT_DISCONNECTED_LONG_MSG)));
 		LOG.info("Subscribed to " + CLIENT_DISCONNECTED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(PlaybackEventsListener.get(), PLAYBACK_STARTED);
@@ -105,22 +195,22 @@ public final class CoreEventsManager {
 		LOG.info("Subscribed to " + PLAYBACK_STOPPED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(SystemMessageEventsListener.get(), SYSMSG_POSTED);
-		mgr.putMetadata(new SageAlertEventMetadata(INFO_SYSMSG_POSTED, "System Message Posted (INFO)", "Event fired when a system message with level INFO is posted."));
-		mgr.putMetadata(new SageAlertEventMetadata(WARN_SYSMSG_POSTED, "System Message Posted (WARN)", "Event fired when a system message with level WARN is posted."));
-		mgr.putMetadata(new SageAlertEventMetadata(ERROR_SYSMSG_POSTED, "System Message Posted (ERROR)", "Event fired when a system message with level ERROR is posted."));
+		mgr.putMetadata(new SageAlertEventMetadata(INFO_SYSMSG_POSTED, "System Message Posted (INFO)", "Event fired when a system message with level INFO is posted.", Arrays.asList(SystemMessageEvent.ARG_TYPES), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.SUBJ_SUFFIX, SYSMSG_POSTED_SUBJ), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.SHORT_SUFFIX, SYSMSG_POSTED_SHORT_MSG), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.MED_SUFFIX, SYSMSG_POSTED_MED_MSG), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.LONG_SUFFIX, SYSMSG_POSTED_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(WARN_SYSMSG_POSTED, "System Message Posted (WARN)", "Event fired when a system message with level WARN is posted.", Arrays.asList(SystemMessageEvent.ARG_TYPES), ds.getSetting(WARN_SYSMSG_POSTED + SageAlertEventMetadata.SUBJ_SUFFIX, SYSMSG_POSTED_SUBJ), ds.getSetting(WARN_SYSMSG_POSTED + SageAlertEventMetadata.SHORT_SUFFIX, SYSMSG_POSTED_SHORT_MSG), ds.getSetting(WARN_SYSMSG_POSTED + SageAlertEventMetadata.MED_SUFFIX, SYSMSG_POSTED_MED_MSG), ds.getSetting(WARN_SYSMSG_POSTED + SageAlertEventMetadata.LONG_SUFFIX, SYSMSG_POSTED_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(ERROR_SYSMSG_POSTED, "System Message Posted (ERROR)", "Event fired when a system message with level ERROR is posted.", Arrays.asList(SystemMessageEvent.ARG_TYPES), ds.getSetting(ERROR_SYSMSG_POSTED + SageAlertEventMetadata.SUBJ_SUFFIX, SYSMSG_POSTED_SUBJ), ds.getSetting(ERROR_SYSMSG_POSTED + SageAlertEventMetadata.SHORT_SUFFIX, SYSMSG_POSTED_SHORT_MSG), ds.getSetting(ERROR_SYSMSG_POSTED + SageAlertEventMetadata.MED_SUFFIX, SYSMSG_POSTED_MED_MSG), ds.getSetting(ERROR_SYSMSG_POSTED + SageAlertEventMetadata.LONG_SUFFIX, SYSMSG_POSTED_LONG_MSG)));
 		LOG.info("Subscribed to " + SYSMSG_POSTED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), CONFLICTS);
-		mgr.putMetadata(new SageAlertEventMetadata(CONFLICTS, "Recording Conflicts", "Fired when the conflict status of your recording schedule changes."));
+		mgr.putMetadata(new SageAlertEventMetadata(CONFLICTS, "Recording Conflicts", "Fired when the conflict status of your recording schedule changes.", Arrays.asList(ConflictStatusEvent.ARG_TYPES), ds.getSetting(CONFLICTS + SageAlertEventMetadata.SUBJ_SUFFIX, CONFLICTS_SUBJ), ds.getSetting(CONFLICTS + SageAlertEventMetadata.SHORT_SUFFIX, CONFLICTS_SHORT_MSG), ds.getSetting(CONFLICTS + SageAlertEventMetadata.MED_SUFFIX, CONFLICTS_MED_MSG), ds.getSetting(CONFLICTS + SageAlertEventMetadata.LONG_SUFFIX, CONFLICTS_LONG_MSG)));
 		LOG.info("Subscribed to " + CONFLICTS + " event!");
 		
 		PLUGIN_REG.eventSubscribe(MediaDeletedEventsListener.get(), MEDIA_DELETED);
-		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_LOW_SPACE, "Media Deleted (Low Space)", "Event fired when a media file is deleted by the core due to low disk space."));
-		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_KEEP_AT_MOST, "Media Delete (Keep at Most)", "Event fired when a media file is deleted by the core due to a keep at most rule."));
-		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_USER, "Media Deleted (User)", "Event fired when a user deletes a media file."));
-		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_VERIFY_FAILED, "Media Deleted (Verify Failed)", "Event fired when a media file is deleted by the core due to a verification failure."));
-		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_PARTIAL_OR_UNWANTED, "Media Deleted (Partial/Unwanted)", "Event fired when a media file is deleted by the core because it is a partial file or it's unwanted."));
-		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_IMPORT_LOST, "Media Deleted (Import Lost)", "Event fired when a media file is removed from the core database because the import dir was removed."));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_LOW_SPACE, "Media Deleted (Low Space)", "Event fired when a media file is deleted by the core due to low disk space.", Arrays.asList(MediaFileDeletedEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_LOW_SPACE + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_LOW_SPACE_SUBJ), ds.getSetting(MEDIA_DELETED_LOW_SPACE + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_LOW_SPACE_SHORT_MSG), ds.getSetting(MEDIA_DELETED_LOW_SPACE + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_LOW_SPACE_MED_MSG), ds.getSetting(MEDIA_DELETED_LOW_SPACE + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_LOW_SPACE_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_KEEP_AT_MOST, "Media Delete (Keep at Most)", "Event fired when a media file is deleted by the core due to a keep at most rule.", Arrays.asList(MediaFileDeletedEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_KEEP_AT_MOST + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_KEEP_AT_MOST_SUBJ), ds.getSetting(MEDIA_DELETED_KEEP_AT_MOST + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_KEEP_AT_MOST_SHORT_MSG), ds.getSetting(MEDIA_DELETED_KEEP_AT_MOST + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_KEEP_AT_MOST_MED_MSG), ds.getSetting(MEDIA_DELETED_KEEP_AT_MOST + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_KEEP_AT_MOST_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_USER, "Media Deleted (User)", "Event fired when a user deletes a media file.", Arrays.asList(MediaFileDeletedUserEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_USER + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_USER_SUBJ), ds.getSetting(MEDIA_DELETED_USER + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_USER_SHORT_MSG), ds.getSetting(MEDIA_DELETED_USER + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_USER_MED_MSG), ds.getSetting(MEDIA_DELETED_USER + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_USER_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_VERIFY_FAILED, "Media Deleted (Verify Failed)", "Event fired when a media file is deleted by the core due to a verification failure.", Arrays.asList(MediaFileDeletedEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_VERIFY_FAILED + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_VERIFY_FAILED_SUBJ), ds.getSetting(MEDIA_DELETED_VERIFY_FAILED + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_VERIFY_FAILED_SHORT_MSG), ds.getSetting(MEDIA_DELETED_VERIFY_FAILED + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_VERIFY_FAILED_MED_MSG), ds.getSetting(MEDIA_DELETED_VERIFY_FAILED + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_VERIFY_FAILED_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_PARTIAL_OR_UNWANTED, "Media Deleted (Partial/Unwanted)", "Event fired when a media file is deleted by the core because it is a partial file or it's unwanted.", Arrays.asList(MediaFileDeletedEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_SUBJ), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_SHORT_MSG), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_MED_MSG), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_IMPORT_LOST, "Media Deleted (Import Lost)", "Event fired when a media file is removed from the core database because the import dir was removed.", Arrays.asList(MediaFileDeletedEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_IMPORT_LOST_SUBJ), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_IMPORT_LOST_SHORT_MSG), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_IMPORT_LOST_MED_MSG), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_IMPORT_LOST_LONG_MSG)));
 		LOG.info("Subscribed to " + MEDIA_DELETED + " event!");
 	}
 	

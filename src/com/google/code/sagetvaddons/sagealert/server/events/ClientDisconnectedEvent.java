@@ -17,39 +17,16 @@ package com.google.code.sagetvaddons.sagealert.server.events;
 
 import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
 import com.google.code.sagetvaddons.sagealert.shared.Client;
-import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
-public final class ClientDisconnectedEvent implements SageAlertEvent {
+public final class ClientDisconnectedEvent extends ClientConnectionEvent {
 
-	private Client clnt;
-	
-	public ClientDisconnectedEvent(Client c) {
-		clnt = c;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
-	 */
-	public String getLongDescription() {
-		return "Client '" + clnt.getAlias() + "' has disconnected from the SageTV server.";
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
-	 */
-	public String getMediumDescription() {
-		return getLongDescription();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
-	 */
-	public String getShortDescription() {
-		return getLongDescription();
+	public ClientDisconnectedEvent(Client c, SageAlertEventMetadata metadata) {
+		super(c, metadata);
 	}
 
 	/* (non-Javadoc)
@@ -57,12 +34,5 @@ public final class ClientDisconnectedEvent implements SageAlertEvent {
 	 */
 	public String getSource() {
 		return CoreEventsManager.CLIENT_DISCONNECTED;
-	}
-
-	/* (non-Javadoc)
-	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
-	 */
-	public String getSubject() {
-		return "Client disconnected from SageTV server";
 	}
 }

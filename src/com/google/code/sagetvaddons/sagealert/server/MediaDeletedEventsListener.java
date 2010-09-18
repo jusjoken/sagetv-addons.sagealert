@@ -62,17 +62,17 @@ final class MediaDeletedEventsListener implements SageTVEventListener {
 				return;
 			}
 			if(reason.equals(CoreEventsManager.MEDIA_DELETED_KEEP_AT_MOST))
-				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedKeepAtMostEvent(mf));
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedKeepAtMostEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.MEDIA_DELETED_KEEP_AT_MOST)));
 			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_LOW_SPACE))
-				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedLowSpaceEvent(mf));
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedLowSpaceEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.MEDIA_DELETED_LOW_SPACE)));
 			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_PARTIAL_OR_UNWANTED))
-				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedPartialOrUnwantedEvent(mf));
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedPartialOrUnwantedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.MEDIA_DELETED_PARTIAL_OR_UNWANTED)));
 			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_USER))
-				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedUserEvent(mf, deletedBy));
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedUserEvent(mf, deletedBy, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.MEDIA_DELETED_USER)));
 			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_VERIFY_FAILED))
-				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedVerifyFailedEvent(mf));
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedVerifyFailedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.MEDIA_DELETED_VERIFY_FAILED)));
 			else if(reason.equals(CoreEventsManager.MEDIA_DELETED_IMPORT_LOST))
-				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedImportLost(mf));
+				SageAlertEventHandlerManager.get().fire(new MediaFileDeletedImportLost(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.MEDIA_DELETED_IMPORT_LOST)));
 			else
 				LOG.error("Unknown reason received, event ignored! [" + reason + "]");
 		} else

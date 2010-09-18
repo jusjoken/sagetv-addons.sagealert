@@ -15,9 +15,10 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.events;
 
-import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
-
 import gkusnick.sagetv.api.SystemMessageAPI.SystemMessage;
+
+import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
@@ -25,9 +26,8 @@ import gkusnick.sagetv.api.SystemMessageAPI.SystemMessage;
  */
 public class SystemMessageInfoEvent extends SystemMessageEvent {
 
-	public SystemMessageInfoEvent(SystemMessage msg) {
-		super(msg);
-		// TODO Auto-generated constructor stub
+	public SystemMessageInfoEvent(SystemMessage msg, SageAlertEventMetadata data) {
+		super(msg, data);
 	}
 
 	@Override

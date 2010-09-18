@@ -17,49 +17,49 @@ package com.google.code.sagetvaddons.sagealert.server.events;
 
 import gkusnick.sagetv.api.API;
 
+import com.google.code.sagetvaddons.sagealert.server.ApiInterpreter;
 import com.google.code.sagetvaddons.sagealert.server.CoreEventsManager;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
  * @author dbattams
  *
  */
 public final class ConflictStatusEvent implements SageAlertEvent {
-
+	static public final String[] ARG_TYPES = new String[] {Integer.class.getName() + " (total conflicts)", Integer.class.getName() + " (unresolved conflicts)"};
+	
 	private int totalConflicts;
 	private int unresolvedConflicts;
+	private Object[] eventArgs;
+	private SageAlertEventMetadata metadata;
 	
-	public ConflictStatusEvent() {
+	public ConflictStatusEvent(SageAlertEventMetadata data) {
 		totalConflicts = API.apiNullUI.global.GetAiringsThatWontBeRecorded(false).size();
 		unresolvedConflicts = API.apiNullUI.global.GetAiringsThatWontBeRecorded(true).size();
+		eventArgs = new Object[] {totalConflicts, unresolvedConflicts};
+		metadata = data;
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getLongDescription()
 	 */
 	public String getLongDescription() {
-		StringBuilder msg = new StringBuilder("The conflict status of your SageTV recording schedule has changed.  There are now " + totalConflicts + " conflict(s)");
-		if(unresolvedConflicts != totalConflicts && unresolvedConflicts > 0)
-			msg.append("; " + unresolvedConflicts + " are unresolved.");
-		else if(unresolvedConflicts == totalConflicts && totalConflicts > 0)
-			msg.append("; all of them are unresolved.");
-		else
-			msg.append(".");
-		return msg.toString();
+		return new ApiInterpreter(eventArgs, metadata.getLongMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getMediumDescription()
 	 */
 	public String getMediumDescription() {
-		return "Conflict status change: " + totalConflicts + " total conflicts; " + unresolvedConflicts + " unresolved.";
+		return new ApiInterpreter(eventArgs, metadata.getMedMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getShortDescription()
 	 */
 	public String getShortDescription() {
-		return getMediumDescription();
+		return new ApiInterpreter(eventArgs, metadata.getShortMsg()).interpret();
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +73,7 @@ public final class ConflictStatusEvent implements SageAlertEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSubject()
 	 */
 	public String getSubject() {
-		return "Conflict status changed in recording schedule";
+		return new ApiInterpreter(eventArgs, metadata.getSubject()).interpret();
 	}
 
 }

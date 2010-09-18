@@ -19,8 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.google.code.sagetvaddons.sagealert.shared.HandlerService;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
@@ -33,9 +31,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * @version $Id$
  */
 @SuppressWarnings("serial")
-public final class HandlerServiceImpl extends RemoteServiceServlet implements	HandlerService {
+public final class HandlerServiceImpl extends RemoteServiceServlet implements HandlerService {
 	
-	static private final Logger LOG = Logger.getLogger(HandlerServiceImpl.class);
+	//static private final Logger LOG = Logger.getLogger(HandlerServiceImpl.class);
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.client.HandlerService#getHandlers(com.google.code.sagetvaddons.sagealert.client.SupportedEvent)
@@ -92,5 +90,15 @@ public final class HandlerServiceImpl extends RemoteServiceServlet implements	Ha
 
 	public Collection<SageAlertEventMetadata> getAllMetadata() {
 		return Arrays.asList(SageAlertEventMetadataManager.get().getAllMetadata());
+	}
+
+	public void saveMetadata(SageAlertEventMetadata data) {
+		DataStore ds = DataStore.getInstance();
+		String id = data.getEventId();
+		ds.setSetting(id + SageAlertEventMetadata.SUBJ_SUFFIX, data.getSubject());
+		ds.setSetting(id + SageAlertEventMetadata.SHORT_SUFFIX, data.getShortMsg());
+		ds.setSetting(id + SageAlertEventMetadata.MED_SUFFIX, data.getMedMsg());
+		ds.setSetting(id + SageAlertEventMetadata.LONG_SUFFIX, data.getLongMsg());
+		SageAlertEventMetadataManager.get().putMetadata(data);
 	}
 }

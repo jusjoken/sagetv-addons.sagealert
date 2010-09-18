@@ -1,0 +1,20 @@
+$1.getAlias()
+$$.getAlias()
+
+$1.getId()
+$$.getId()
+
+$1.getAlias(true)
+$$.getAlias(java.lang.Boolean)
+
+$1.getId("yz12")
+$$.getId(java.lang.String)
+
+$1.getAlias(42342)
+$$.getAlias(java.lang.Long)
+
+$1.getAlias("2312", false, true, 2112)
+$$.getAlias(java.lang.String,java.lang.Boolean,java.lang.Boolean,java.lang.Long)
+
+$1.getAlias("2312", false, true, 2112, $1.getId())
+$$.getAlias(java.lang.String,java.lang.Boolean,java.lang.Boolean,java.lang.Long,java.lang.String)
