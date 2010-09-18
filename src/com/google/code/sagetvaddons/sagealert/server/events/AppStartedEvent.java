@@ -26,7 +26,7 @@ public final class AppStartedEvent extends NoArgEvent {
 	static public final String EVENT_ID = "SageAlert_AppStarted";
 	
 	static public final String SUBJ = "SageAlert has started successfully";
-	static public final String LONG_MSG = "<TIME>: SageAlert has started successfully!";
+	static public final String LONG_MSG = "$date.format(\"H:mm z\"): SageAlert has started successfully!";
 	static public final String MED_MSG = LONG_MSG;
 	static public final String SHORT_MSG = LONG_MSG;
 	
