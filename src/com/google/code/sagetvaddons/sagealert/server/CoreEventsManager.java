@@ -115,9 +115,9 @@ public final class CoreEventsManager {
 	static final public String MEDIA_DELETED_KEEP_AT_MOST_MED_MSG = "File deleted (keep at most): $0.GetMediaTitle()/$0.GetMediaFileID()";
 	static final public String MEDIA_DELETED_KEEP_AT_MOST_SHORT_MSG = MEDIA_DELETED_KEEP_AT_MOST_MED_MSG;
 
-	static final public String MEDIA_DELETED_USER_SUBJ = "Media file deleted by user '$1.getAlias()'";
-	static final public String MEDIA_DELETED_USER_LONG_MSG = "The following media file was deleted by '$1.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
-	static final public String MEDIA_DELETED_USER_MED_MSG = "File deleted by '$1.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_USER_SUBJ = "Media file deleted by user '$3.getAlias()'";
+	static final public String MEDIA_DELETED_USER_LONG_MSG = "The following media file was deleted by '$3.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_USER_MED_MSG = "File deleted by '$3.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
 	static final public String MEDIA_DELETED_USER_SHORT_MSG = MEDIA_DELETED_USER_MED_MSG;
 	
 	static final public String MEDIA_DELETED_VERIFY_FAILED_SUBJ = "Media file deleted (verify failed)";
