@@ -164,6 +164,7 @@ final public class ApiInterpreter {
 		LOG.trace("Checking tok: " + tok);
 		return tok.matches("\\$(?:\\d+|[tf])|[tf]|-{0,1}\\d+");
 	}
+	
 	private Object readArg() throws IOException {
 		int nextTok;
 		String nextWord;
@@ -183,14 +184,21 @@ final public class ApiInterpreter {
 			if(toks.nextToken() == '.') {
 				//toks.pushBack();
 				return findApiCall(nextWord.substring(1));
-			} else if(toks.ttype == StreamTokenizer.TT_WORD)
+			} else if(toks.ttype == ',' || toks.ttype == ')') { // Naked reference to an object
+				toks.pushBack();
+				return new ApiMap(Pattern.quote(nextWord), getSrcObj(nextWord.substring(1)));
+			} else if(toks.ttype == StreamTokenizer.TT_WORD) {
+				int peekTok = toks.nextToken();
+				toks.pushBack();
+				if(peekTok == ',' || peekTok == ')')
+					return new ApiMap(Pattern.quote(nextWord + toks.sval), getSrcObj(nextWord.substring(1) + toks.sval));
 				return findApiCall(nextWord.substring(1) + toks.sval);
-			else {
+			} else {
 				LOG.error("Invalid API call as arg!");
 				return null;
 			}
 		}
-		LOG.info("Tok is other...");
+		LOG.trace("Tok is other...");
 		try {
 			if(toks.ttype != '"' && (nextWord.equals("f") || nextWord.equals("t"))) {
 				setForArg();
@@ -285,7 +293,7 @@ final public class ApiInterpreter {
 					apiCall.append(((ApiMap) arg).keySet().toArray()[0].toString());
 					apiCallRegex.append("\\s*" + ((ApiMap) arg).keySet().toArray()[0].toString() + "\\s*");
 					args.add(((ApiMap) arg).values().toArray()[0]);
-					LOG.trace("Read arg 0: " + ((ApiMap)arg).values().toArray()[0].toString());
+					LOG.trace("Read arg 0: " + String.valueOf(((ApiMap)arg).values().toArray()[0]));
 				} else if(arg instanceof String) {
 					apiCall.append(String.valueOf(arg));
 					apiCallRegex.append("\\s*\"" + Pattern.quote(String.valueOf(arg)) + "\"\\s*");
@@ -305,7 +313,7 @@ final public class ApiInterpreter {
 				setForArgDelimiter();
 				boolean argListFailed = false;
 				int argNum = 1;
-				while(!argListFailed && (pendingComma || (toks.flaggedNextToken() == StreamTokenizer.TT_WORD && toks.sval.equals(",")))) {
+				while(!argListFailed && (pendingComma || (toks.flaggedNextToken() == StreamTokenizer.TT_WORD && toks.sval.equals(",")) || toks.ttype == ',')) {
 					toks.clearFlag();
 					LOG.trace("Looking for arg #" + argNum);
 					if(pendingComma) {
@@ -360,6 +368,8 @@ final public class ApiInterpreter {
 				} else if(toks.ttype == ')') {
 					apiCall.append(")");
 					apiCallRegex.append("\\s*\\)");
+				} else if(toks.ttype == ',') { 
+					pendingComma = true;
 				} else {
 					LOG.error("Didn't find right parenthesis [" + String.valueOf(toks.ttype) + " :: " + toks.sval + "]");
 					continue;
@@ -374,6 +384,16 @@ final public class ApiInterpreter {
 		return null;
 	}
 
+	private Object getSrcObj(String name) {
+		if(name == null || name.length() == 0) {
+			LOG.error("Invalid object reference! [" + name + "]");
+			return null;
+		}
+		if(name.matches("\\d+"))
+			return getSrcObj(null, Integer.parseInt(name));
+		return getSrcObj(name, -1);
+	}
+	
 	private Object getSrcObj(String objName, int objId) {
 		if(objName != null && objName.length() > 0)
 			return getGlobalObj(objName);
@@ -395,8 +415,8 @@ final public class ApiInterpreter {
 		StringBuilder argTypesMsg = new StringBuilder("(");
 		Collection<Class<?>> argTypes = new ArrayList<Class<?>>();
 		for(Object o : args) {
-			argTypes.add(o.getClass());
-			argTypesMsg.append(o.getClass().getName() + ",");
+			argTypes.add(o != null ? o.getClass() : Object.class);
+			argTypesMsg.append((o != null ? o.getClass().getName() : Object.class.getName()) + ",");
 		}
 		if(argTypes.size() > 0)
 			argTypesMsg.deleteCharAt(argTypesMsg.length() - 1);
@@ -427,7 +447,7 @@ final public class ApiInterpreter {
 			try {
 				map = findApiCall(null);
 				if(map != null) {
-					LOG.trace("Replacing '" + map.keySet().toArray()[0].toString() + "' with '" + map.values().toArray()[0].toString() + "'");
+					LOG.debug("Replacing '" + map.keySet().toArray()[0].toString() + "' with '" + map.values().toArray()[0].toString() + "'");
 					LOG.info("Replacing '" + originalMsg + "' with '" + map.values().toArray()[0].toString() + "'");
 					interpretedMsg = interpretedMsg.replaceAll(map.keySet().toArray()[0].toString(), map.values().toArray()[0].toString().replace("\\", "\\\\").replace("$", "\\$"));
 				}

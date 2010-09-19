@@ -22,6 +22,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  * @author dbattams
@@ -29,6 +30,10 @@ import org.apache.commons.io.FileUtils;
  */
 public class ApiInterpreterTest extends TestCase {
 
+	static {
+		PropertyConfigurator.configure(new File("sagealert_test.log4j.properties").getAbsolutePath());
+	}
+	
 	/**
 	 * @param name
 	 */
@@ -64,7 +69,7 @@ public class ApiInterpreterTest extends TestCase {
 		Object[] args = new Object[] {new Object()};
 		for(int i = 0; i < lines.size(); ++i) {
 			String test = lines.get(i).trim();
-			if(test == null || test.length() == 0)
+			if(test == null || test.length() == 0 || test.charAt(0) == '#')
 				continue;
 			String expected = lines.get(++i);
 			assertEquals(expected, new ApiInterpreter(args, test).interpret());
