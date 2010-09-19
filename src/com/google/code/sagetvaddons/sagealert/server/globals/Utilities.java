@@ -36,4 +36,18 @@ public class Utilities {
 			return prefix + src;
 		return "";
 	}
+	
+	/**
+	 * <p>Convert a system message level to a human friendly string</p>
+	 * @param sysMsgType The system message level value
+	 * @return The value converted to a string; if the value is unrecognized then UNKNOWN is returned
+	 */
+	public String sysMsgLevelToString(int sysMsgType) {
+		switch(sysMsgType) {
+		case 1: return "INFO";
+		case 2: return "WARN";
+		case 3: return "ERROR";
+		default: return "UNKNOWN";
+		}
+	}
 }

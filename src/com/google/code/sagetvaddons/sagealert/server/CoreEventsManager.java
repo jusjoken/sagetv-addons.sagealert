@@ -100,7 +100,7 @@ public final class CoreEventsManager {
 	static final public String CONFLICTS_MED_MSG = "Conflict status change: $0.toString() total conflicts; $1.toString() unresolved.";
 	static final public String CONFLICTS_SHORT_MSG = EPG_UPDATED_MED_MSG;
 
-	static final public String SYSMSG_POSTED_SUBJ = "New $0.GetSystemMessageLevel() system message generated";
+	static final public String SYSMSG_POSTED_SUBJ = "New $utils.sysMsgLevelToString($0.GetSystemMessageLevel()) system message generated";
 	static final public String SYSMSG_POSTED_LONG_MSG = "$0.GetSystemMessageString()";
 	static final public String SYSMSG_POSTED_MED_MSG = "A new system message generated: $0.GetSystemMessageTypeName(); see SageTV server for details.";
 	static final public String SYSMSG_POSTED_SHORT_MSG = SYSMSG_POSTED_MED_MSG;
