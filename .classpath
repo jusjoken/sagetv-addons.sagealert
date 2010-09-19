@@ -19,5 +19,6 @@
 	<classpathentry kind="var" path="SAGELIB/commons-codec-1.3.jar"/>
 	<classpathentry kind="var" path="SAGELIB/commons-exec-1.0.1.jar"/>
 	<classpathentry kind="var" path="SAGELIB/commons-lang-2.4.jar"/>
+	<classpathentry kind="var" path="SAGELIB/commons-beanutils-1.8.3.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

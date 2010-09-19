@@ -15,12 +15,16 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.globals;
 
+import org.apache.log4j.Logger;
+
 /**
- * Various utility methods to help with string and number manipulations
+ * <p>Various utility methods to help with string and number manipulations</p>
+ * <p>An instance of this object is available via the global object <b>$utils</b></p>
  * @author dbattams
  * @version $Id$
  */
 public class Utilities {
+	private static final Logger LOG = Logger.getLogger(Utilities.class);
 	
 	/**
 	 * <p>Append the src to the prefix only if the src is non-null and greater than zero length, otherwise return the empty string.</p>
@@ -39,15 +43,48 @@ public class Utilities {
 	
 	/**
 	 * <p>Convert a system message level to a human friendly string</p>
-	 * @param sysMsgType The system message level value
+	 * @param sysMsgLevel The system message level value
 	 * @return The value converted to a string; if the value is unrecognized then UNKNOWN is returned
 	 */
-	public String sysMsgLevelToString(int sysMsgType) {
-		switch(sysMsgType) {
+	public String sysMsgLevelToString(Integer sysMsgLevel) {
+		switch(sysMsgLevel) {
 		case 1: return "INFO";
 		case 2: return "WARN";
 		case 3: return "ERROR";
 		default: return "UNKNOWN";
+		}
+	}
+	
+	/**
+	 * <p>Convert a system message level to a human friendly string</p>
+	 * @param sysMsgLevel The system message level value
+	 * @return The value converted to a string; if the value is unrecognized then UNKNOWN is returned
+	 */
+	public String sysMsgLevelToString(Long sysMsgLevel) {
+		return sysMsgLevelToString(Integer.parseInt(sysMsgLevel.toString()));
+	}
+		
+	/**
+	 * <p>Convert a system message level to a human friendly string</p>
+	 * @param sysMsgLevel The system message level value, as a String
+	 * @return The value converted to a string; if the value is unrecognized then UNKNOWN is returned
+	 */
+	public String sysMsgLevelToString(String sysMsgLevel) {
+		return sysMsgLevelToString(Integer.parseInt(sysMsgLevel));
+	}
+	
+	/**
+	 * <p>Convert a Long to an Integer; be careful that the Long being converted isn't too big to fit in an Integer</p>
+	 * <p>Because parsed numbers are always converted to Long in SageAlert, you may need this method to pass an arg as an Integer
+	 * @param l The Long to be converted
+	 * @return The Long converted to an Integer or null if there was an error with the conversion
+	 */
+	public Integer long2Int(Long l) {
+		try {
+			return new Integer(Integer.parseInt(l.toString()));
+		} catch(Exception e) {
+			LOG.error("Error converting Long to Integer [" + l + "]", e);
+			return null;
 		}
 	}
 }

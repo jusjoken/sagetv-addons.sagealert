@@ -20,13 +20,13 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -404,8 +404,7 @@ final public class ApiInterpreter {
 		try {
 			if(src != null) {
 				LOG.info("Attempting to call " + methodName + argTypesMsg.toString() + " on object of type " + src.getClass().getName());
-				Method method = src.getClass().getMethod(methodName, argTypes.toArray(new Class<?>[argTypes.size()]));
-				return method.invoke(src, args.toArray());
+				return MethodUtils.invokeMethod(src, methodName, args.toArray(), argTypes.toArray(new Class<?>[argTypes.size()]));
 			} else
 				LOG.error("Received null source object!");
 		} catch (SecurityException e) {

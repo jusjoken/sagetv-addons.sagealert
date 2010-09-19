@@ -20,7 +20,9 @@ import java.text.SimpleDateFormat;
 import org.apache.log4j.Logger;
 
 /**
- * A simple extension of java.util.Date that adds a format() method to format the date with the given DateFormat pattern
+ * <p>A simple extension of java.util.Date that adds a format() method to format the date with the given DateFormat pattern</p>
+ * <p>An instance of this object is available via the global object <b>$date</b></p>
+ * 
  * @author dbattams
  * @version $Id$
  */
@@ -63,5 +65,5 @@ public class Date extends java.util.Date {
 			LOG.error("Invalid format string! [" + fmt + "]");
 			return fmt;
 		}
-	}
+	}	
 }
