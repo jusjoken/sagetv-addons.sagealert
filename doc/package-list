@@ -1,0 +1,6 @@
+com.google.code.sagetvaddons.sagealert.client
+com.google.code.sagetvaddons.sagealert.plugin
+com.google.code.sagetvaddons.sagealert.server
+com.google.code.sagetvaddons.sagealert.server.events
+com.google.code.sagetvaddons.sagealert.server.globals
+com.google.code.sagetvaddons.sagealert.shared

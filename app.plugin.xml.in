@@ -47,7 +47,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <Webpage>http://sagetv-addons.googlecode.com</Webpage>
        <Webpage>http://code.google.com/p/sagetv-addons/wiki/DonationsFaq</Webpage>
        <PluginType>Standard</PluginType>
-       <ServerOnly/>
+       <ServerOnly>true</ServerOnly>
        <Dependency>
        	<JVM/>
        	<MinVersion>1.5.0</MinVersion>

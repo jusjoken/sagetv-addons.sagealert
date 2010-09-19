@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 /**
  * A simple extension of java.util.Date that adds a format() method to format the date with the given DateFormat pattern
  * @author dbattams
- *
+ * @version $Id$
  */
 public class Date extends java.util.Date {
 	static private final Logger LOG = Logger.getLogger(Date.class);
@@ -33,14 +33,15 @@ public class Date extends java.util.Date {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * Default constructor; sets date to current time
 	 */
 	public Date() {
 		super();
 	}
 
 	/**
-	 * @param date
+	 * Constructor; sets object to represent given timestamp
+	 * @param date The Java timestamp representing the date and time this object represents
 	 */
 	public Date(long date) {
 		super(date);
@@ -48,9 +49,11 @@ public class Date extends java.util.Date {
 	}
 
 	/**
-	 * Return the date as a string formatted using the given SimpleDateFormat format string
+	 * <p>Return the date as a string formatted using the given SimpleDateFormat pattern string</p>
+	 * <p>If the format string is invalid then this method simply returns the given format string with no substitutions</p>
 	 * @param fmt The format for the string representation of this date
 	 * @return The date formatted as specified by the given format string
+	 * @see java.text.SimpleDateFormat
 	 */
 	public String format(String fmt) {
 		try {

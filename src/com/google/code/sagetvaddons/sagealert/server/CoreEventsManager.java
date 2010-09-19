@@ -135,6 +135,8 @@ public final class CoreEventsManager {
 	static final public String MEDIA_DELETED_IMPORT_LOST_MED_MSG = "File deleted (import lost): $0.GetMediaTitle()/$0.GetMediaFileID()";
 	static final public String MEDIA_DELETED_IMPORT_LOST_SHORT_MSG = MEDIA_DELETED_IMPORT_LOST_MED_MSG;
 
+	// If you change any of the defaults for PLAYBACK_* events below then you must also update them in ClientListenerSubscriptionForm
+	
 	static final public String PLAYBACK_STARTED_SUBJ = "Media playback has started";
 	static final public String PLAYBACK_STARTED_LONG_MSG = "Media playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
 	static final public String PLAYBACK_STARTED_MED_MSG = "Media playback started ($3.getAlias()): $0.GetMediaTitle()";

@@ -31,16 +31,40 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 	
-	static private final String ERR_VALUE = "";
-	static private final String[] ARG_TYPES = new String[] {"gkusnick.sage.api.MediaFileAPI$MediaFile", "gkusnick.sage.api.AiringAPI$Airing", "gkusnick.sage.api.ShowAPI$Show", "com.google.code.sagetvaddons.sagealert.shared.Client"};
+	static private final String ERR_VALUE = "<ERROR: Try refreshing browser>";
+	static private final String[] ARG_TYPES = new String[] {"gkusnick.sagetv.api.MediaFileAPI$MediaFile", "gkusnick.sagetv.api.AiringAPI$Airing", "gkusnick.sagetv.api.ShowAPI$Show", "com.google.code.sagetvaddons.sagealert.shared.Client"};
+	
+	// If you change any of these defaults below you must also update them in CoreEventsManager
+	
+	static private final String STOPS_SUBJ = "Media playback has stopped";
+	static private final String STOPS_LONG = "Media playback of '$0.GetMediaTitle() $utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())' has stopped on client '$3.getAlias()'";
+	static private final String STOPS_MED = "Media playback stopped ($3.getAlias()): $0.GetMediaTitle() $utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
+	static private final String STOPS_SHORT = "Media playback stopped ($3.getAlias()): $0.GetMediaTitle()";
+	
+	static private final String STARTS_SUBJ = "Media playback has started";
+	static private final String STARTS_LONG = "Media playback of '$0.GetMediaTitle() $utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())' has started on client '$3.getAlias()'";
+	static private final String STARTS_MED = "Media playback started ($3.getAlias()): $0.GetMediaTitle() $utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
+	static private final String STARTS_SHORT = "Media playback started ($3.getAlias()): $0.GetMediaTitle()";
 	
 	ClientListenerSubscriptionForm(Client clnt, EventType type) {
 		super(new SageAlertEventMetadata(type.toString() + "_" + clnt.getId(), "Client Media Event (" + type.toString() + ")", "Fires when client '" + clnt.getAlias() + "' " + type.toString().toLowerCase() + " playing back media.", Arrays.asList(ARG_TYPES), "", "", "", ""));
 
 		String eventId = type.toString() + "_" + clnt.getId();
+		String defaultSubj, defaultLong, defaultMed, defaultShort;
+		if(type == EventType.STARTS) {
+			defaultSubj = STARTS_SUBJ;
+			defaultLong = STARTS_LONG;
+			defaultMed = STARTS_MED;
+			defaultShort = STARTS_SHORT;
+		} else {
+			defaultSubj = STOPS_SUBJ;
+			defaultLong = STOPS_LONG;
+			defaultMed = STOPS_MED;
+			defaultShort = STOPS_SHORT;
+		}
 		SettingsServiceAsync rpc = GWT.create(SettingsService.class);
 		
-		rpc.getSetting(eventId + SageAlertEventMetadata.SUBJ_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+		rpc.getSetting(eventId + SageAlertEventMetadata.SUBJ_SUFFIX, defaultSubj, new AsyncCallback<String>() {
 
 			public void onFailure(Throwable caught) {
 				setSubject(ERR_VALUE);
@@ -52,7 +76,7 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 			
 		});
 		
-		rpc.getSetting(eventId + SageAlertEventMetadata.SHORT_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+		rpc.getSetting(eventId + SageAlertEventMetadata.SHORT_SUFFIX, defaultShort, new AsyncCallback<String>() {
 
 			public void onFailure(Throwable caught) {
 				setShortMsg(ERR_VALUE);
@@ -64,7 +88,7 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 			
 		});
 
-		rpc.getSetting(eventId + SageAlertEventMetadata.MED_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+		rpc.getSetting(eventId + SageAlertEventMetadata.MED_SUFFIX, defaultMed, new AsyncCallback<String>() {
 
 			public void onFailure(Throwable caught) {
 				setMedMsg(ERR_VALUE);
@@ -76,7 +100,7 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 			
 		});
 
-		rpc.getSetting(eventId + SageAlertEventMetadata.LONG_SUFFIX, ERR_VALUE, new AsyncCallback<String>() {
+		rpc.getSetting(eventId + SageAlertEventMetadata.LONG_SUFFIX, defaultLong, new AsyncCallback<String>() {
 
 			public void onFailure(Throwable caught) {
 				setLongMsg(ERR_VALUE);
