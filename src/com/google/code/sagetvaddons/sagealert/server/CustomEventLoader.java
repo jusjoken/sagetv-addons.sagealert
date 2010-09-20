@@ -126,7 +126,7 @@ final class CustomEventLoader implements Runnable, SageTVEventListener {
 										boolean foundArg = true;
 										int i = 0;
 										do {
-											String arg = props.getProperty(e + "ARGTYPE" + i++);
+											String arg = props.getProperty(e + "_ARGTYPE" + i++);
 											if(arg != null)
 												argTypes.add(arg);
 											else
