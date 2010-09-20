@@ -132,7 +132,8 @@ final class CustomEventLoader implements Runnable, SageTVEventListener {
 											else
 												foundArg = false;
 										} while(foundArg);
-										CustomEventsManager.get().registerCustomEvent(eCls, p.GetPluginIdentifier(), new SageAlertEventMetadata(e, eName, eDesc, argTypes, eSubj, eShort, eMed, eLong));
+										DataStore ds = DataStore.getInstance();
+										CustomEventsManager.get().registerCustomEvent(eCls, p.GetPluginIdentifier(), new SageAlertEventMetadata(e, eName, eDesc, argTypes, ds.getSetting(e + SageAlertEventMetadata.SUBJ_SUFFIX, eSubj), ds.getSetting(e + SageAlertEventMetadata.SHORT_SUFFIX, eShort), ds.getSetting(e + SageAlertEventMetadata.MED_SUFFIX, eMed), ds.getSetting(e + SageAlertEventMetadata.LONG_SUFFIX, eLong)));
 									}
 								}
 							} else {
