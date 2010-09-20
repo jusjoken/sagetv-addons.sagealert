@@ -20,8 +20,13 @@ package com.google.code.sagetvaddons.sagealert.shared;
  * <p>The methods defined in this interface are used by the CustomEventsManager to update the messages for an event at runtime via API replacement.  No one else should be calling these methods!</p>
  * <p>When implementing this interface, you basically should have instance variables for each of subject, medium, short, and long and then your getters (defined in the super interface) will return the instance
  * variables and the setters defined here simply update the instance vars. Look at the CustomEvents plugin for an example of how this is implemented.</p>
+ * <p><b>Implementers of this interface must provide a constructor with the following signature:</b></p>
+ * <p><code>public &lt;init&gt;(java.util.Map&lt;?, ?&gt;, com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata)</code></p>
+ * <p><b>Failure to provide this constructor will result in SageAlert skipping your event.</b></p>
+ * <p>Use the metadata object to initialize your subject, long, medium, and short messages.  The map is provided by the core when it fires your event.  You create the map in whatever thread fires the event to the core.  See the Custom Events plugin for an example.</p>
  * @author dbattams
  * @version $Id$
+ * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata
  */
 public interface SageAlertCustomEvent extends SageAlertEvent {
 
