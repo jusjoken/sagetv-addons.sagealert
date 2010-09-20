@@ -15,6 +15,8 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import gkusnick.sagetv.api.API;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ final class Globals {
 		map = new HashMap<String, Object>();
 		map.put("utils", new Utilities());
 		map.put("srv", new SageTVServer());
+		map.put("sageutils", API.apiNullUI.utility);
 	}
 	
 	public Object get(String key) {
