@@ -85,6 +85,8 @@ final public class ApiInterpreter {
 	private String originalMsg;
 
 	public ApiInterpreter(Object[] src, String msg) {
+		if(src == null)
+			src = new Object[0];
 		this.src = new ArrayList<Object>();
 		this.src.addAll(Arrays.asList(src));
 		interpretedMsg = msg;

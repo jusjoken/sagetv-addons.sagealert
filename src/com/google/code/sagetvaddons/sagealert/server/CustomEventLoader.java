@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,13 +32,15 @@ import org.apache.log4j.Logger;
 import sage.SageTV;
 import sage.SageTVEventListener;
 
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
+
 /**
  * @author dbattams
  *
  */
 final class CustomEventLoader implements Runnable, SageTVEventListener {
 	static private final Logger LOG = Logger.getLogger(CustomEventLoader.class);
-		
+
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
@@ -76,24 +80,63 @@ final class CustomEventLoader implements Runnable, SageTVEventListener {
 							} catch (IOException e) {
 								LOG.error("IOError", e);
 							}
-							for(Object eventId : props.keySet()) {
-								String[] data = props.getProperty(eventId.toString()).split(":", 3);
-								String eventCls, eventName, eventDesc;
-								if(data.length == 3) {
-									eventCls = data[0];
-									eventName = data[1];
-									eventDesc = data[2];
-								} else if(data.length == 2) {
-									eventCls = data[0];
-									eventName = data[1];
-									eventDesc = "";
-								} else if(data[0].length() > 0){
-									eventCls = data[0];
-									eventName = "Unknown";
-									eventDesc = "";
-								} else
-									continue;
-								CustomEventsManager.get().registerCustomEvent(eventCls, eventId.toString(), p.GetPluginIdentifier(), eventName, eventDesc);
+							// Get the csv list of event names
+							String eventsList = props.getProperty("events");
+							if(eventsList != null) {
+								String[] events = eventsList.split(",");
+								for(String e : events) {
+									e = e.trim();
+									if(e.length() > 0) {
+										String eCls = props.getProperty(e + "_CLS");
+										if(eCls == null || eCls.length() == 0) {
+											LOG.error("No class name specified for event ID '" + e + "'; skipping event!");
+											continue;
+										}
+										String eName = props.getProperty(e + "_DISPLAY");
+										if(eName == null || eName.length() == 0) {
+											LOG.error("No display name for event ID '" + e + "'; skipping event!");
+											continue;
+										}
+										String eDesc = props.getProperty(e + "_DESC");
+										if(eDesc == null || eDesc.length() == 0) {
+											LOG.error("No description for event ID '" + e + "'; skipping event!");
+											continue;
+										}
+										String eSubj = props.getProperty(e + SageAlertEventMetadata.SUBJ_SUFFIX);
+										if(eSubj == null || eSubj.length() == 0) {
+											LOG.error("No subject text provided for event ID '" + e + "'; skipping event!");
+											continue;
+										}
+										String eShort = props.getProperty(e + SageAlertEventMetadata.SHORT_SUFFIX);
+										if(eShort == null || eShort.length() == 0) {
+											LOG.error("No short text provided for event ID '" + e + "'; skipping event!");
+											continue;
+										}
+										String eMed = props.getProperty(e + SageAlertEventMetadata.MED_SUFFIX);
+										if(eMed == null || eMed.length() == 0) {
+											LOG.error("No medium text provided for event ID '" + e + "'; skipping event!");
+											continue;
+										}
+										String eLong = props.getProperty(e + SageAlertEventMetadata.LONG_SUFFIX);
+										if(eLong == null || eLong.length() == 0) {
+											LOG.error("No long text provided for event ID '" + e + "'; skipping event!");
+											continue;
+										}
+										List<String> argTypes = new ArrayList<String>();
+										boolean foundArg = true;
+										int i = 0;
+										do {
+											String arg = props.getProperty(e + "ARGTYPE" + i++);
+											if(arg != null)
+												argTypes.add(arg);
+											else
+												foundArg = false;
+										} while(foundArg);
+										CustomEventsManager.get().registerCustomEvent(eCls, p.GetPluginIdentifier(), new SageAlertEventMetadata(e, eName, eDesc, argTypes, eSubj, eShort, eMed, eLong));
+									}
+								}
+							} else {
+								msg = "No event list provided via 'events' property; ignoring plugin!";
 							}
 						}
 					}

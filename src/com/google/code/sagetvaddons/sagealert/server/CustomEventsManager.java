@@ -19,7 +19,6 @@ import gkusnick.sagetv.api.API;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ import org.apache.log4j.Logger;
 import sage.SageTVEventListener;
 import sage.SageTVPluginRegistry;
 
-import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertCustomEvent;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
@@ -43,10 +42,10 @@ final class CustomEventsManager implements SageTVEventListener {
 
 	static private final SageTVPluginRegistry REGISTRY = (SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry();
 
-	private final Map<String, Class<SageAlertEvent>> events;
+	private final Map<String, Class<SageAlertCustomEvent>> events;
 
 	private CustomEventsManager() {
-		events = new HashMap<String, Class<SageAlertEvent>>();
+		events = new HashMap<String, Class<SageAlertCustomEvent>>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,26 +54,25 @@ final class CustomEventsManager implements SageTVEventListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	synchronized void registerCustomEvent(String clsName, String eventId, String pluginId, String name, String desc) {
+	synchronized void registerCustomEvent(String clsName, String pluginId, SageAlertEventMetadata metadata) {
 		if(pluginId == null || pluginId.length() == 0)
 			LOG.error("Custom event registration requires a valid plugin id!  Registration ignored!");
 		else if(clsName == null || clsName.length() == 0)
 			LOG.error("Custom event registration requires a valid class name!  Registration ignored!");
-		else if(eventId == null || eventId.length() == 0)
+		else if(metadata.getEventId() == null || metadata.getEventId().length() == 0)
 			LOG.error("Custom event registration requires a valid event id!  Registration ignored!");
 		else {
-			String[] args = new String[] {eventId, pluginId, clsName, name, desc};
-			StringBuilder msg = new StringBuilder("Attempting registration of custom event: " + Arrays.toString(args) + " ");
+			StringBuilder msg = new StringBuilder("Attempting registration of custom event '" + metadata.getEventId() + "' for plugin '" + pluginId + "' using class '" + clsName + "'... ");
 			try {
 				Class<?> cls = Class.forName(clsName);
-				if(SageAlertEvent.class.isAssignableFrom(cls)) {
-					events.put(eventId, (Class<SageAlertEvent>)cls);
+				if(SageAlertCustomEvent.class.isAssignableFrom(cls)) {
+					events.put(metadata.getEventId(), (Class<SageAlertCustomEvent>)cls);
 					SageAlertEventMetadataManager mdMgr = SageAlertEventMetadataManager.get();
-					mdMgr.putMetadata(new SageAlertEventMetadata(eventId, name, desc, null, null, null, null, null));
-					REGISTRY.eventSubscribe(this, eventId);
+					mdMgr.putMetadata(metadata);
+					REGISTRY.eventSubscribe(this, metadata.getEventId());
 					msg.append("SUCCESS");
 				} else
-					msg.append("FAILED (class does not implement " + SageAlertEvent.class.getCanonicalName() + ")");
+					msg.append("FAILED (class does not implement " + SageAlertCustomEvent.class.getCanonicalName() + ")");
 				LOG.info(msg.toString());
 			} catch (ClassNotFoundException e) {
 				msg.append("FAILED (class not found)");
@@ -90,10 +88,16 @@ final class CustomEventsManager implements SageTVEventListener {
 			msg.append("Firing custom event '" + eventId + "' : " + args.toString());
 			LOG.debug(msg.toString());
 		}
-		Class<SageAlertEvent> cls = events.get(eventId);
+		Class<SageAlertCustomEvent> cls = events.get(eventId);
 		if(cls != null) {
+			SageAlertEventMetadata metadata = SageAlertEventMetadataManager.get().getMetadata(eventId);
 			try {
-				SageAlertEventHandlerManager.get().fire(cls.getConstructor(Map.class).newInstance(args));
+				SageAlertCustomEvent event = cls.getConstructor(Map.class, SageAlertEventMetadata.class).newInstance(args, metadata);
+				event.setSubject(new ApiInterpreter(event.getArgs(), metadata.getSubject()).interpret());
+				event.setShortDescription(new ApiInterpreter(event.getArgs(), metadata.getShortMsg()).interpret());
+				event.setMediumDescription(new ApiInterpreter(event.getArgs(), metadata.getMedMsg()).interpret());
+				event.setLongDescription(new ApiInterpreter(event.getArgs(), metadata.getLongMsg()).interpret());
+				SageAlertEventHandlerManager.get().fire(event);
 			} catch (SecurityException e) {
 				LOG.error("SecurityException", e);
 			} catch (NoSuchMethodException e) {
