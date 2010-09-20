@@ -87,4 +87,15 @@ public class Utilities {
 			return null;
 		}
 	}
+	
+	/**
+	 * <p>Convert the long to a Date and then format it given the provided SimpleDateFormat pattern</p>
+	 * @param date
+	 * @param fmt
+	 * @return The date formatted using the given pattern; on error fmt is returned, unmodified
+	 * @see java.text.SimpleDateFormat
+	 */
+	public String fmtDate(long date, String fmt) {
+		return new Date(date).format(fmt);
+	}
 }

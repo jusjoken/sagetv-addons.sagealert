@@ -41,6 +41,7 @@ import org.mortbay.jetty.security.Password;
 import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 
 /**
@@ -824,5 +825,41 @@ final public class DataStore {
 			if(s.getDataStoreKey().equals(settings.getDataStoreKey()))
 				return s;
 		return null;
-	}	
+	}
+	
+	public void clearSettingsStartingWith(String prefix) {
+		String qry = "DELETE FROM settings WHERE var LIKE ? ESCAPE '\\'";
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(qry);
+			pstmt.setString(1, prefix.replace("_", "\\_").replace("%", "\\%") + "%");
+			pstmt.executeUpdate();
+		} catch(SQLException e) {
+			LOG.error(SQL_ERROR, e);
+		} finally {
+			if(pstmt != null)
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
+		}
+	}
+	
+	public void clearSettingsEndingWith(String suffix) {
+		String qry = "DELETE FROM settings WHERE var LIKE ? ESCAPE '\\'";
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(qry);
+			pstmt.setString(1, "%" + suffix.replace("_", "\\_").replace("%", "\\%"));
+			pstmt.executeUpdate();
+		} catch(SQLException e) {
+			LOG.error(SQL_ERROR, e);
+		} finally {
+			if(pstmt != null)
+				try { pstmt.close(); } catch(SQLException e) { LOG.error(SQL_ERROR, e); }
+		}		
+	}
+	
+	public void resetAllAlertMessages() {
+		String[] keys = new String[] {SageAlertEventMetadata.SUBJ_SUFFIX, SageAlertEventMetadata.SHORT_SUFFIX, SageAlertEventMetadata.MED_SUFFIX, SageAlertEventMetadata.LONG_SUFFIX};
+		for(String k : keys)
+			clearSettingsEndingWith(k);
+	}
 }

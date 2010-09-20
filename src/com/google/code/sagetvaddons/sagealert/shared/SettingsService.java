@@ -63,4 +63,14 @@ public interface SettingsService extends RemoteService {
 	 * @return True if it is licensed or else false
 	 */
 	public boolean isLicensed();
+	
+	/**
+	 * Remove settings from the data store that start with the given prefix
+	 * @param prefix The prefix to check for
+	 */
+	public void clearSettingsStartingWith(String prefix);
+	
+	public void clearSettingsEndingWith(String suffix);
+	
+	public void resetAllAlertMessages();
 }

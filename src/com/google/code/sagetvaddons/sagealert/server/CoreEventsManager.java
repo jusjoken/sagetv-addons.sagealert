@@ -77,17 +77,17 @@ public final class CoreEventsManager {
 
 	static final public String REC_STARTED_SUBJ = "A new recording has started";
 	static final public String REC_STARTED_SHORT_MSG = "A new recording has started: $0.GetMediaTitle()";
-	static final public String REC_STARTED_MED_MSG = "A new recording has started: $0.GetMediaTitle(): $2.GetShowEpisode()";
+	static final public String REC_STARTED_MED_MSG = "A new recording has started: $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
 	static final public String REC_STARTED_LONG_MSG = REC_STARTED_MED_MSG;
 
 	static final public String REC_STOPPED_SUBJ = "A recording has stopped";
 	static final public String REC_STOPPED_SHORT_MSG = "A recording has stopped: $0.GetMediaTitle()";
-	static final public String REC_STOPPED_MED_MSG = "A recording has stopped: $0.GetMediaTitle(): $2.GetShowEpisode()";
+	static final public String REC_STOPPED_MED_MSG = "A recording has stopped: $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
 	static final public String REC_STOPPED_LONG_MSG = REC_STOPPED_MED_MSG;
 
 	static final public String REC_COMPLETED_SUBJ = "A recording has completed";
 	static final public String REC_COMPLETED_SHORT_MSG = "A recording has completed: $0.GetMediaTitle()";
-	static final public String REC_COMPLETED_MED_MSG = "A recording has completed: $0.GetMediaTitle(): $2.GetShowEpisode()";
+	static final public String REC_COMPLETED_MED_MSG = "A recording has completed: $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
 	static final public String REC_COMPLETED_LONG_MSG = REC_COMPLETED_MED_MSG;
 
 	static final public String EPG_UPDATED_SUBJ = "An EPG update has completed";
@@ -106,19 +106,19 @@ public final class CoreEventsManager {
 	static final public String SYSMSG_POSTED_SHORT_MSG = SYSMSG_POSTED_MED_MSG;
 
 	static final public String MEDIA_DELETED_LOW_SPACE_SUBJ = "Media file deleted (min space)";
-	static final public String MEDIA_DELETED_LOW_SPACE_LONG_MSG = "The following media file was deleted because the minimum space setting was violated: $0.GetMediaTitle()/$0.GetMediaFileID()";
-	static final public String MEDIA_DELETED_LOW_SPACE_MED_MSG = "File deleted (min space): $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_LOW_SPACE_LONG_MSG = "The following media file was deleted because the minimum space setting was violated: $0.GetMediaTitle()/MediaID: $0.GetMediaFileID()/AiringID: $1.GetAiringID()/ShowEID: $2.GetShowExternalID()";
+	static final public String MEDIA_DELETED_LOW_SPACE_MED_MSG = "File deleted (min space): $0.GetMediaTitle()/MediaID: $0.GetMediaFileID()/AiringID: $1.GetAiringID()/ShowEID: $2.GetShowExternalID()";
 	static final public String MEDIA_DELETED_LOW_SPACE_SHORT_MSG = MEDIA_DELETED_LOW_SPACE_MED_MSG;
 
 	static final public String MEDIA_DELETED_KEEP_AT_MOST_SUBJ = "Media file deleted (keep at most)";
-	static final public String MEDIA_DELETED_KEEP_AT_MOST_LONG_MSG = "The following media file was deleted because the keep at most setting was exceeded: $0.GetMediaTitle()/$0.GetMediaFileID()";
-	static final public String MEDIA_DELETED_KEEP_AT_MOST_MED_MSG = "File deleted (keep at most): $0.GetMediaTitle()/$0.GetMediaFileID()";
-	static final public String MEDIA_DELETED_KEEP_AT_MOST_SHORT_MSG = MEDIA_DELETED_KEEP_AT_MOST_MED_MSG;
+	static final public String MEDIA_DELETED_KEEP_AT_MOST_LONG_MSG = "The following media file was deleted because the keep at most setting was exceeded: $0.GetMediaTitle()/MediaID: $0.GetMediaFileID()/AiringID: $1.GetAiringID()/ShowEID: $2.GetShowExternalID()";
+	static final public String MEDIA_DELETED_KEEP_AT_MOST_MED_MSG = "File deleted (keep at most): $0.GetMediaTitle()/MediaID: $0.GetMediaFileID()/AiringID: $1.GetAiringID()/ShowEID: $2.GetShowExternalID()";
+	static final public String MEDIA_DELETED_KEEP_AT_MOST_SHORT_MSG = "File deleted (keep at most): $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
 
 	static final public String MEDIA_DELETED_USER_SUBJ = "Media file deleted by user '$3.getAlias()'";
-	static final public String MEDIA_DELETED_USER_LONG_MSG = "The following media file was deleted by '$3.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
-	static final public String MEDIA_DELETED_USER_MED_MSG = "File deleted by '$3.getAlias()': $0.GetMediaTitle()/$0.GetMediaFileID()";
-	static final public String MEDIA_DELETED_USER_SHORT_MSG = MEDIA_DELETED_USER_MED_MSG;
+	static final public String MEDIA_DELETED_USER_LONG_MSG = "File deleted by '$3.getAlias()': $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())/MediaID: $0.GetMediaFileID()/AiringID: $1.GetAiringID()/ShowEID: $2.GetShowExternalID()";
+	static final public String MEDIA_DELETED_USER_MED_MSG = "File deleted by '$3.getAlias()': $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())/MediaID: $0.GetMediaFileID()/ShowEID: $2.GetShowExternalID()";
+	static final public String MEDIA_DELETED_USER_SHORT_MSG = "File deleted by '$3.getAlias()': $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
 	
 	static final public String MEDIA_DELETED_VERIFY_FAILED_SUBJ = "Media file deleted (verify failed)";
 	static final public String MEDIA_DELETED_VERIFY_FAILED_LONG_MSG = "The following media file was deleted because verification failed: $0.GetMediaTitle()/$0.GetMediaFileID()";
@@ -126,12 +126,12 @@ public final class CoreEventsManager {
 	static final public String MEDIA_DELETED_VERIFY_FAILED_SHORT_MSG = MEDIA_DELETED_VERIFY_FAILED_MED_MSG;
 
 	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_SUBJ = "Media file deleted (partial/unwanted)";
-	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_LONG_MSG = "The following media file was deleted because it is partial or unwanted: $0.GetMediaTitle()/$0.GetMediaFileID()";
-	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_MED_MSG = "File deleted (partial/unwanted): $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_LONG_MSG = "The following media file was deleted because it is partial or unwanted: $0.GetMediaTitle()/MediaID: $0.GetMediaFileID()/AiringID: $1.GetAiringID()/ShowEID: $2.GetShowExternalID()";
+	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_MED_MSG = "File deleted (partial/unwanted): $0.GetMediaTitle()/MediaID: $0.GetMediaFileID()/AiringID: $1.GetAiringID()/ShowEID: $2.GetShowExternalID()";
 	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED_SHORT_MSG = MEDIA_DELETED_PARTIAL_OR_UNWANTED_MED_MSG;
 
 	static final public String MEDIA_DELETED_IMPORT_LOST_SUBJ = "Media file deleted (import lost)";
-	static final public String MEDIA_DELETED_IMPORT_LOST_LONG_MSG = "The following media file was deleted because the import location was lost: $0.GetMediaTitle()/$0.GetMediaFileID()";
+	static final public String MEDIA_DELETED_IMPORT_LOST_LONG_MSG = "The following media file was deleted because the import location was lost: $0.GetMediaTitle()/MediaID: $0.GetMediaFileID()";
 	static final public String MEDIA_DELETED_IMPORT_LOST_MED_MSG = "File deleted (import lost): $0.GetMediaTitle()/$0.GetMediaFileID()";
 	static final public String MEDIA_DELETED_IMPORT_LOST_SHORT_MSG = MEDIA_DELETED_IMPORT_LOST_MED_MSG;
 

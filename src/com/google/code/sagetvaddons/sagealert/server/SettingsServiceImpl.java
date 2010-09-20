@@ -67,4 +67,18 @@ public final class SettingsServiceImpl extends RemoteServiceServlet implements S
 	public boolean isLicensed() {
 		return License.get().isLicensed();
 	}
+
+	public void clearSettingsStartingWith(String prefix) {
+		DataStore.getInstance().clearSettingsStartingWith(prefix);
+	}
+	
+	public void clearSettingsEndingWith(String suffix) {
+		DataStore.getInstance().clearSettingsEndingWith(suffix);
+	}
+
+	public void resetAllAlertMessages() {
+		DataStore.getInstance().resetAllAlertMessages();
+		CoreEventsManager.get().init();
+		new CustomEventLoader().run();
+	}
 }

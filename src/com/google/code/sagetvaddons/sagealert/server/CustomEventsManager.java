@@ -45,7 +45,7 @@ final class CustomEventsManager implements SageTVEventListener {
 
 	private final Map<String, Class<SageAlertEvent>> events;
 
-	CustomEventsManager() {
+	private CustomEventsManager() {
 		events = new HashMap<String, Class<SageAlertEvent>>();
 	}
 
@@ -55,7 +55,7 @@ final class CustomEventsManager implements SageTVEventListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	void registerCustomEvent(String clsName, String eventId, String pluginId, String name, String desc) {
+	synchronized void registerCustomEvent(String clsName, String eventId, String pluginId, String name, String desc) {
 		if(pluginId == null || pluginId.length() == 0)
 			LOG.error("Custom event registration requires a valid plugin id!  Registration ignored!");
 		else if(clsName == null || clsName.length() == 0)
@@ -68,14 +68,11 @@ final class CustomEventsManager implements SageTVEventListener {
 			try {
 				Class<?> cls = Class.forName(clsName);
 				if(SageAlertEvent.class.isAssignableFrom(cls)) {
-					Class<SageAlertEvent> oldVal = events.put(eventId, (Class<SageAlertEvent>)cls);
-					if(oldVal == null) {
-						SageAlertEventMetadataManager mdMgr = SageAlertEventMetadataManager.get();
-						mdMgr.putMetadata(new SageAlertEventMetadata(eventId, name, desc, null, null, null, null, null));
-						REGISTRY.eventSubscribe(this, eventId);
-						msg.append("SUCCESS");
-					} else
-						msg.append("SKIPPED (event already registered)");
+					events.put(eventId, (Class<SageAlertEvent>)cls);
+					SageAlertEventMetadataManager mdMgr = SageAlertEventMetadataManager.get();
+					mdMgr.putMetadata(new SageAlertEventMetadata(eventId, name, desc, null, null, null, null, null));
+					REGISTRY.eventSubscribe(this, eventId);
+					msg.append("SUCCESS");
 				} else
 					msg.append("FAILED (class does not implement " + SageAlertEvent.class.getCanonicalName() + ")");
 				LOG.info(msg.toString());
@@ -87,7 +84,7 @@ final class CustomEventsManager implements SageTVEventListener {
 		}
 	}
 
-	private void fireCustomEvent(String eventId, Map<?, ?> args) {
+	synchronized private void fireCustomEvent(String eventId, Map<?, ?> args) {
 		if(LOG.isDebugEnabled()) {
 			StringBuilder msg = new StringBuilder();
 			msg.append("Firing custom event '" + eventId + "' : " + args.toString());

@@ -36,7 +36,7 @@ import sage.SageTVEventListener;
  */
 final class CustomEventLoader implements Runnable, SageTVEventListener {
 	static private final Logger LOG = Logger.getLogger(CustomEventLoader.class);
-	
+		
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */

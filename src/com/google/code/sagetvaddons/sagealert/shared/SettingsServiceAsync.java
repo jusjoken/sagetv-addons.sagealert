@@ -65,4 +65,15 @@ public interface SettingsServiceAsync {
 	 * @param cb The async callback
 	 */
 	public void isLicensed(AsyncCallback<Boolean> cb);
+	
+	/**
+	 * Remove settings from the data store that start with the given prefix
+	 * @param prefix The prefix to search for
+	 * @param cb The async callback
+	 */
+	public void clearSettingsStartingWith(String prefix, AsyncCallback<Void> cb);
+	
+	public void clearSettingsEndingWith(String suffix, AsyncCallback<Void> cb);
+	
+	public void resetAllAlertMessages(AsyncCallback<Void> cb);
 }

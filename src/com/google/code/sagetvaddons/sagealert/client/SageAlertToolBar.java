@@ -47,6 +47,7 @@ final class SageAlertToolBar extends ToolBar {
 	static private final class SettingsMenu extends Menu {
 		private MenuItem smtp;
 		private MenuItem pref;
+		private MenuItem reset;
 		
 		private SettingsMenu() {
 			smtp = new MenuItem("SMTP Settings");
@@ -71,8 +72,41 @@ final class SageAlertToolBar extends ToolBar {
 				
 			});
 			
+			reset = new MenuItem("Reset ALL Messages");
+			reset.addSelectionListener(new SelectionListener<MenuEvent>() {
+
+				@Override
+				public void componentSelected(MenuEvent ce) {
+					MessageBox.confirm("Reset All Messages?", "Are you sure you want to reset ALL messages for ALL alerts back to the default value?", new Listener<MessageBoxEvent>() {
+
+						public void handleEvent(MessageBoxEvent be) {
+							if(be.getButtonClicked().getText().toUpperCase().equals("YES")) {
+								SettingsServiceAsync rpc = GWT.create(SettingsService.class);
+								rpc.resetAllAlertMessages(new AsyncCallback<Void>() {
+
+									public void onFailure(Throwable caught) {
+										MessageBox.alert("ERROR", caught.getLocalizedMessage(), null);
+									}
+
+									public void onSuccess(Void result) {
+										MessageBox.alert("Success", "All messages have been reset!", null);
+										SageAlertViewport view = SageAlertViewport.get();
+										view.refreshTree();
+										view.setCenterContent(null);
+									}
+									
+								});
+							}
+						}
+						
+					});
+				}
+				
+			});
+			
 			add(smtp);
 			add(pref);
+			add(reset);
 		}
 	}
 	

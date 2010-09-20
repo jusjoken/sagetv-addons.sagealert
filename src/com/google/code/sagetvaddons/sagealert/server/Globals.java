@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.code.sagetvaddons.sagealert.server.globals.Date;
+import com.google.code.sagetvaddons.sagealert.server.globals.SageTVServer;
 import com.google.code.sagetvaddons.sagealert.server.globals.Utilities;
 
 /**
@@ -34,6 +35,7 @@ final class Globals {
 	private Globals() {
 		map = new HashMap<String, Object>();
 		map.put("utils", new Utilities());
+		map.put("srv", new SageTVServer());
 	}
 	
 	public Object get(String key) {
