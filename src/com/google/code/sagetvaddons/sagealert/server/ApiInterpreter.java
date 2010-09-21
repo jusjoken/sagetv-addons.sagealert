@@ -152,8 +152,7 @@ final public class ApiInterpreter {
 		toks.wordChars('$', '$');
 		toks.wordChars('-', '-');
 		toks.wordChars('0', '9');
-		toks.wordChars('t', 't');
-		toks.wordChars('f', 'f');
+		toks.wordChars('a', 'z');
 	}
 
 	private void setForArgDelimiter() {
@@ -164,7 +163,7 @@ final public class ApiInterpreter {
 
 	static private final boolean isStartOfArgToken(String tok) {
 		LOG.trace("Checking tok: " + tok);
-		return tok.matches("\\$(?:\\d+|[tf])|[tf]|-{0,1}\\d+");
+		return tok.matches("\\$(?:\\d+|[a-z]+)|[a-z]+|-{0,1}\\d+");
 	}
 	
 	private Object readArg() throws IOException {
@@ -174,9 +173,10 @@ final public class ApiInterpreter {
 		nextTok = toks.nextToken();
 		LOG.trace("Read prefix tok: " + nextTok);
 		nextWord = toks.ttype == StreamTokenizer.TT_WORD ? toks.sval : "";
-		if(nextTok == '"')
+		if(nextTok == '"') {
 			nextTok = 0;
-		else if(nextTok != StreamTokenizer.TT_WORD || !isStartOfArgToken(String.valueOf(toks.sval))) {
+			nextWord = toks.sval;
+		} else if(nextTok != StreamTokenizer.TT_WORD || !isStartOfArgToken(String.valueOf(toks.sval))) {
 			LOG.trace("Tok is no good! [" + (nextTok < 0 ? toks.sval : (char)nextTok) + "]");
 			toks.pushBack();
 			return null;
@@ -216,7 +216,9 @@ final public class ApiInterpreter {
 			return null;
 		}
 		LOG.trace("nextWord = " + nextWord);
-		String fullTok = (!toks.sval.matches("-{0,1}\\d+") ? nextWord : "") + toks.sval;
+		//String fullTok = (!toks.sval.matches("-{0,1}\\d+") ? nextWord : "") + toks.sval;
+		//String fullTok = !toks.sval.matches("-{0,1}\\d+") ? nextWord : "";
+		String fullTok = nextWord;
 		LOG.trace("fullTok = " + fullTok);
 
 		if(toks.ttype == '"')

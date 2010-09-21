@@ -40,3 +40,21 @@ Some extra text $$.alias(java.lang.String)
 # Invalid object references return null to call and Object.equals() will gladly accept null, which is why this works
 $0.equals($1)
 false
+
+$0.equals($0)
+true
+
+$0.equals($1)
+false
+
+$0.equals($0.toString())
+false
+
+$0.equals($utils.If())
+false
+
+$true.true()
+$$.true()
+
+$0.equals($utils.concatIfNotEmpty(":", "Hi"))
+false

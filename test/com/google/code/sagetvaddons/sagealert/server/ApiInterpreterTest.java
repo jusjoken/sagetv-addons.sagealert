@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PropertyConfigurator;
+import org.mortbay.log.Log;
 
 /**
  * @author dbattams
@@ -72,6 +73,7 @@ public class ApiInterpreterTest extends TestCase {
 			if(test == null || test.length() == 0 || test.charAt(0) == '#')
 				continue;
 			String expected = lines.get(++i);
+			Log.warn("==== STARTING TEST ====");
 			assertEquals(expected, new ApiInterpreter(args, test).interpret());
 		}
 	}
