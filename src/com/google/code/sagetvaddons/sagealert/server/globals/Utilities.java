@@ -15,6 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.globals;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -25,6 +26,8 @@ import org.apache.log4j.Logger;
  */
 public class Utilities {
 	private static final Logger LOG = Logger.getLogger(Utilities.class);
+	
+	static private final long ONE_TB = 1024L * FileUtils.ONE_GB;
 	
 	/**
 	 * <p>Append the src to the prefix only if the src is non-null and greater than zero length, otherwise return the empty string.</p>
@@ -97,5 +100,38 @@ public class Utilities {
 	 */
 	public String fmtDate(long date, String fmt) {
 		return new Date(date).format(fmt);
+	}
+	
+	/**
+	 * Convert a long, representing bytes, to a formated string (i.e. 1000000000 becomes "1 GB")
+	 * @param bytes
+	 * @param size A single char denoting the minimum size to convert to: B=bytes, K=kilobytes, M=megabytes, G=gigabytes, T=terabytes
+	 * @return The long converted to a pretty formatted string
+	 */
+	public String bytesToString(long bytes, String min) {
+		
+		long units;
+		double leftOvers;
+		String lbl;
+		if((1.0D * bytes / ONE_TB) >= 1.0D || min.equals("T")) {
+			units = bytes / ONE_TB;
+			leftOvers = 1.0D * (bytes % ONE_TB) / ONE_TB;
+			lbl = "TB";
+		} else if((1.0D * bytes / FileUtils.ONE_GB) >= 1.0D || min.equals("G")) {
+			units = bytes / FileUtils.ONE_GB;
+			leftOvers = 1.0D * (bytes % FileUtils.ONE_GB) / FileUtils.ONE_GB;
+			lbl = "GB";
+		} else if(min.equals("M") || (1.0D * bytes / FileUtils.ONE_MB) >= 1.0D) {
+			units = bytes / FileUtils.ONE_MB;
+			leftOvers = 1.0D * (bytes % FileUtils.ONE_MB) / FileUtils.ONE_MB;
+			lbl = "MB";
+		} else if(min.equals("K") || (1.0D * bytes / FileUtils.ONE_KB) >= 1.0D) {
+			units = bytes / FileUtils.ONE_KB;
+			leftOvers = 1.0D * (bytes % FileUtils.ONE_KB) / FileUtils.ONE_KB;
+			lbl = "KB";
+		} else {
+			return bytes + " bytes";
+		}
+		return String.format("%.2f %s", (1.0D * units + leftOvers), lbl);
 	}
 }
