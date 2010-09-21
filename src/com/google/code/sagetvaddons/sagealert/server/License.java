@@ -80,10 +80,20 @@ final class License {
 				String propsData = new String(cipher.doFinal(Base64.decodeBase64(data.getBytes(utf8))), utf8);
 				Properties props = new Properties();
 				props.load(new StringReader(propsData));
-				if(props.getProperty("email").toLowerCase().equals(DataStore.getInstance().getSetting(UserSettings.LIC_EMAIL).toLowerCase()))
-					isLicensed = true;
-				else
+				String licEmail = props.getProperty("email");
+				String regEmail = DataStore.getInstance().getSetting(UserSettings.LIC_EMAIL);
+				if(licEmail == null || licEmail.length() == 0) {
+					LOG.error("Licensed email is invalid! Your license file is corrupted!");
 					isLicensed = false;
+				} else if(regEmail == null || regEmail.length() == 0) {
+					LOG.error("Registered email is invalid! You must register your email address via the SageAlert GUI.");
+					isLicensed = false;
+				} else if(licEmail.toLowerCase().equals(regEmail.toLowerCase()))
+					isLicensed = true;
+				else {
+					LOG.error("The email in the license does not match the registered email address!");
+					isLicensed = false;
+				}
 			} catch(Exception e) {
 				LOG.error("LicenseReadError", e);
 				isLicensed = false;
@@ -94,6 +104,7 @@ final class License {
 		else {
 			StringBuilder msg = new StringBuilder("License file is invalid or not found; some features of this software have been disabled:\n");
 			msg.append("\tSMTP server support disabled.\n");
+			msg.append("\tProcess executor server support disabled.\n");
 			msg.append("\tOnly one notification sent per event.\n");
 			LOG.info(msg.toString());
 			API.apiNullUI.systemMessageAPI.PostSystemMessage(1204, 1, "SageAlert: " + msg.toString() + "\nPlease consider making a donation.", null);
