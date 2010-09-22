@@ -16,6 +16,7 @@
 package com.google.code.sagetvaddons.sagealert.server.globals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.beanutils.MethodUtils;
@@ -145,7 +146,7 @@ public class Utilities {
 	 * <p>For example, if you wanted to do this in a custom alert message:</p>
 	 * <p><code>$0.getObj().callSomething().callSomethingElse("aString")</code></p>
 	 * <p>You would use this API call in your custom message string:</p>
-	 * <p><code>$utils.run($utils.run($0.getObj(), "callSomething"), "callSomethingElse", ["aString"])</code></p>
+	 * <p><code>$utils.run($utils.run($0.getObj(), "callSomething", []), "callSomethingElse", ["aString"])</code></p>
 	 * @param src The object you wish to make a method call against
 	 * @param methodName The name of the method you wish to call
 	 * @param args The list of arguments to be passed to the method call; if there are no args then you must pass an empty array to the call (denoted by [])
@@ -161,5 +162,15 @@ public class Utilities {
 			LOG.error("Error invoking method!", e);
 			return null;
 		}
+	}
+	
+	/**
+	 * Pretty print an array
+	 * @param array The array to be printed
+	 * @return The array, converted to a pretty formatted string
+	 * @see java.util.Arrays#toString(java.lang.Object[])
+	 */
+	public String printArray(Object[] array) {
+		return Arrays.toString(array);
 	}
 }

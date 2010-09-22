@@ -299,4 +299,11 @@ public class ApiInterpreterTest {
 		assertEquals("java.lang.String", new ApiInterpreter(new Object[] {new String()}, "$utils.run($utils.run($0, \"getClass\", []), \"getName\", [])").interpret());
 	}
 
+	/**
+	 * Testing $utils.printArray() with constant array arg
+	 */
+	@Test
+	public void interpreterTest0023() {
+		assertEquals("[1, true, foobar]", new ApiInterpreter(new Object[0], "$utils.printArray([1,    true,          \"foobar\"])").interpret());
+	}
 }
