@@ -15,86 +15,33 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.globals;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author dbattams
  *
  */
-public class UtilitiesTest extends TestCase {
+public class UtilitiesTest {
 
 	private Utilities utils;
 	
-	/**
-	 * @param name
-	 */
-	public UtilitiesTest(String name) {
-		super(name);
-	}
-
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		utils = new Utilities();
 	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-//	/**
-//	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.globals.Utilities#concatIfNotEmpty(java.lang.String, java.lang.String)}.
-//	 */
-//	public final void testConcatIfNotEmpty() {
-//		fail("Not yet implemented");
-//	}
-//
-//	/**
-//	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.globals.Utilities#sysMsgLevelToString(java.lang.Integer)}.
-//	 */
-//	public final void testSysMsgLevelToStringInteger() {
-//		fail("Not yet implemented");
-//	}
-//
-//	/**
-//	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.globals.Utilities#sysMsgLevelToString(java.lang.Long)}.
-//	 */
-//	public final void testSysMsgLevelToStringLong() {
-//		fail("Not yet implemented");
-//	}
-//
-//	/**
-//	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.globals.Utilities#sysMsgLevelToString(java.lang.String)}.
-//	 */
-//	public final void testSysMsgLevelToStringString() {
-//		fail("Not yet implemented");
-//	}
-//
-//	/**
-//	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.globals.Utilities#long2Int(java.lang.Long)}.
-//	 */
-//	public final void testLong2Int() {
-//		fail("Not yet implemented");
-//	}
-//
-//	/**
-//	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.globals.Utilities#fmtDate(long, java.lang.String)}.
-//	 */
-//	public final void testFmtDate() {
-//		fail("Not yet implemented");
-//	}
 
 	/**
 	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.globals.Utilities#bytesToString(long, java.lang.String)}.
 	 */
-	public final void testBytesToString() {
+	@Test
+	public final void bytesToStringTest() {
 		long oneTB = FileUtils.ONE_GB * 1024L;
 		
 		assertEquals("1.00 GB", utils.bytesToString(FileUtils.ONE_GB, "G"));
@@ -104,5 +51,4 @@ public class UtilitiesTest extends TestCase {
 		assertEquals("833 bytes", utils.bytesToString(833, "B"));
 		assertEquals("0.24 TB", utils.bytesToString(243L * FileUtils.ONE_GB, "T"));
 	}
-
 }

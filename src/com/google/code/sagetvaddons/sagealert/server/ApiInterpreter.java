@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.MethodUtils;
@@ -176,6 +177,22 @@ final public class ApiInterpreter {
 		if(nextTok == '"') {
 			nextTok = 0;
 			nextWord = toks.sval;
+		} else if(nextTok == '[') {
+			List<Object> array = new ArrayList<Object>();
+			Object ele;
+			while((ele = readArg()) != null) {
+				array.add(ele);
+				if(toks.nextToken() != ',') {
+					toks.pushBack();
+					continue;
+				}
+			}
+			if(toks.nextToken() != ']') {
+				LOG.error("Did not find ']' to close array arg!");
+				return null;
+			}
+			LOG.info("Returning array arg: " + array);
+			return new ApiMap("\\[.*\\]", array.toArray());
 		} else if(nextTok != StreamTokenizer.TT_WORD || !isStartOfArgToken(String.valueOf(toks.sval))) {
 			LOG.trace("Tok is no good! [" + (nextTok < 0 ? toks.sval : (char)nextTok) + "]");
 			toks.pushBack();
@@ -451,9 +468,9 @@ final public class ApiInterpreter {
 			try {
 				map = findApiCall(null);
 				if(map != null) {
-					LOG.debug("Replacing '" + map.keySet().toArray()[0].toString() + "' with '" + map.values().toArray()[0].toString() + "'");
-					LOG.info("Replacing '" + originalMsg + "' with '" + map.values().toArray()[0].toString() + "'");
-					interpretedMsg = interpretedMsg.replaceAll(map.keySet().toArray()[0].toString(), map.values().toArray()[0].toString().replace("\\", "\\\\").replace("$", "\\$"));
+					LOG.debug("Replacing '" + map.keySet().toArray()[0].toString() + "' with '" + map.values().toArray()[0] + "'");
+					LOG.info("Replacing '" + originalMsg + "' with '" + map.values().toArray()[0] + "'");
+					interpretedMsg = interpretedMsg.replaceAll(map.keySet().toArray()[0].toString(), map.values().toArray()[0] != null ? map.values().toArray()[0].toString().replace("\\", "\\\\").replace("$", "\\$") : null);
 				}
 			} catch (IOException e) {
 				LOG.fatal("ERROR", e);

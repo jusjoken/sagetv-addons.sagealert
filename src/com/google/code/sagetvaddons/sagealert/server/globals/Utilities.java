@@ -15,6 +15,10 @@
  */
 package com.google.code.sagetvaddons.sagealert.server.globals;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -133,5 +137,29 @@ public class Utilities {
 			return bytes + " bytes";
 		}
 		return String.format("%.2f %s", (1.0D * units + leftOvers), lbl);
+	}
+	
+	/**
+	 * <p>Execute a method against an object returned from another API call</p>
+	 * <p>Since SageAlert doesn't allow API calls like $0.getObj().callSomething().callSomethingElse(), you can use this method to simulate that ability. It's not pretty, but it works.</p>
+	 * <p>For example, if you wanted to do this in a custom alert message:</p>
+	 * <p><code>$0.getObj().callSomething().callSomethingElse("aString")</code></p>
+	 * <p>You would use this API call in your custom message string:</p>
+	 * <p><code>$utils.run($utils.run($0.getObj(), "callSomething"), "callSomethingElse", ["aString"])</code></p>
+	 * @param src The object you wish to make a method call against
+	 * @param methodName The name of the method you wish to call
+	 * @param args The list of arguments to be passed to the method call; if there are no args then you must pass an empty array to the call (denoted by [])
+	 * @return The result of the method invocation or null in case of any error encountered
+	 */
+	public Object run(Object src, String methodName, Object[] args) {
+		List<Class<?>> argTypes = new ArrayList<Class<?>>();
+			for(Object o : args)
+				argTypes.add(o.getClass());
+		try {
+			return MethodUtils.invokeMethod(src, methodName, args, argTypes.toArray(new Class<?>[args.length]));
+		} catch(Exception e) {
+			LOG.error("Error invoking method!", e);
+			return null;
+		}
 	}
 }

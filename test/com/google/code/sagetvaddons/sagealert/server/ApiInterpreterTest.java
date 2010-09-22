@@ -15,66 +15,288 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.PropertyConfigurator;
-import org.mortbay.log.Log;
+import org.junit.Test;
 
 /**
+ * Various tests for the SageAlert API interpreter
  * @author dbattams
- *
+ * @version $Id$
  */
-public class ApiInterpreterTest extends TestCase {
+public class ApiInterpreterTest {
 
-	static {
-		PropertyConfigurator.configure(new File("sagealert_test.log4j.properties").getAbsolutePath());
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 * 	<li>Valid object reference</li>
+	 *  <li>Valid method name</li>
+	 *  <li>Valid method args</li>
+	 *  <li>No args</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0001() {
+		assertEquals("A simple string.", new ApiInterpreter(new Object[] {new String("A simple string.")}, "$0.toString()").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>No args</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0002() {
+		assertEquals("$$.badFunc()", new ApiInterpreter(new Object[] {new Object()}, "$0.badFunc()").interpret());
 	}
 	
 	/**
-	 * @param name
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>One arg of type String</li>
+	 * </ul>
 	 */
-	public ApiInterpreterTest(String name) {
-		super(name);
+	@Test
+	public void interpretTest0003() {
+		assertEquals("$$.badFunc(java.lang.String)", new ApiInterpreter(new Object[] {new Object()}, "$0.badFunc(\"foo\")").interpret());
 	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
+	
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>One arg of type boolean (true)</li>
+	 * </ul>
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Test
+	public void interpretTest0004() {
+		assertEquals("$$.badFunc(java.lang.Boolean)", new ApiInterpreter(new Object[] {new Object()}, "$0.badFunc(true)").interpret());
 	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
+	
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>One arg of type boolean (false)</li>
+	 * </ul>
 	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@Test
+	public void interpretTest0005() {
+		assertEquals("$$.badFunc(java.lang.Boolean)", new ApiInterpreter(new Object[] {new Object()}, "$0.badFunc(false)").interpret());
+	}
+	
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>One arg of invalid type</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0006() {
+		assertEquals("$0.badFunc(foo)", new ApiInterpreter(new Object[] {new Object()}, "$0.badFunc(foo)").interpret());
+	}
+	
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>One arg of type number</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0007() {
+		assertEquals("$$.badFunc(java.lang.Long)", new ApiInterpreter(new Object[] {new Object()}, "$0.badFunc(3223)").interpret());
 	}
 
 	/**
-	 * Test method for {@link com.google.code.sagetvaddons.sagealert.server.ApiInterpreter#interpret()}.
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>One arg of type Object (valid reference to $0)</li>
+	 * </ul>
 	 */
-	@SuppressWarnings("unchecked")
-	public final void testInterpret() {
-		List<String> lines;
-		try {
-			lines = (List<String>)FileUtils.readLines(new File("api_tests.txt"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		Object[] args = new Object[] {new Object()};
-		for(int i = 0; i < lines.size(); ++i) {
-			String test = lines.get(i).trim();
-			if(test == null || test.length() == 0 || test.charAt(0) == '#')
-				continue;
-			String expected = lines.get(++i);
-			Log.warn("==== STARTING TEST ====");
-			assertEquals(expected, new ApiInterpreter(args, test).interpret());
-		}
+	@Test
+	public void interpretTest0008() {
+		assertEquals("$$.badFunc(java.lang.Object)", new ApiInterpreter(new Object[] {new Object()}, "$0.badFunc($0)").interpret());
 	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Valid method name</li>
+	 *  <li>One arg of type Object (valid reference to $0)</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0009() {
+		assertEquals("true", new ApiInterpreter(new Object[] {new Object()}, "$0.equals($0)").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Valid method name</li>
+	 *  <li>One arg of type String</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0010() {
+		assertEquals("false", new ApiInterpreter(new Object[] {new Object()}, "$0.equals(\"foo\")").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Valid method name</li>
+	 *  <li>One arg of type long</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0011() {
+		assertEquals("false", new ApiInterpreter(new Object[] {new Object()}, "$0.equals(500)").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Valid method name</li>
+	 *  <li>One arg of type boolean</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0012() {
+		assertEquals("false", new ApiInterpreter(new Object[] {new Object()}, "$0.equals(true)").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>Multiple args</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0013() {
+		assertEquals("$$.foo(java.lang.Boolean,java.lang.Boolean,java.lang.Long,java.lang.Boolean,java.lang.String,java.lang.Object)", new ApiInterpreter(new Object[] {new Object()}, "$0.foo(true, false, 423, true, \"jfjs\", $0)").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>Multiple args (one is an API call)</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0014() {
+		assertEquals("$$.foo(java.lang.Boolean,java.lang.Boolean,java.lang.Long,java.lang.String,java.lang.String,java.lang.Object)", new ApiInterpreter(new Object[] {new Object()}, "$0.foo(true, false, 423, $0.toString(), \"jfjs\", $0)").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>Multiple args (multiple are API calls)</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0015() {
+		assertEquals("$$.foo(java.lang.Boolean,java.lang.Boolean,java.lang.Long,java.lang.String,java.lang.String,java.lang.String)", new ApiInterpreter(new Object[] {new Object()}, "$0.foo(true, false, 423, $0.toString(), \"jfjs\", $0.toString())").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Invalid method name</li>
+	 *  <li>Multiple args (multiple are API calls; one API call is invalid)</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0016() {
+		assertEquals("$$.foo(java.lang.Boolean,java.lang.Boolean,java.lang.Long,java.lang.String,java.lang.String,java.lang.String)", new ApiInterpreter(new Object[] {new Object()}, "$0.foo(true, false, 423, $0.toString(), \"jfjs\", $0.foo())").interpret());
+	}
+
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Valid method name</li>
+	 *  <li>One arg to invalid obj ref # ($500)</li>
+	 * </ul>
+	 * <p>This case works because Object.equals() handles null arg fine and a call to $500 will return null</p>
+	 */
+	@Test
+	public void interpretTest0017() {
+		assertEquals("false", new ApiInterpreter(new Object[] {new Object()}, "$0.equals($500)").interpret());
+	}
+	
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference (global obj $utils)</li>
+	 *  <li>Valid method name</li>
+	 *  <li>Two args</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0018() {
+		assertEquals("::foobar", new ApiInterpreter(new Object[] {new Object()}, "$utils.concatIfNotEmpty(\"::\", \"foobar\")").interpret());
+	}
+	
+	/**
+	 * <p>Testing:</p>
+	 * <ul>
+	 *  <li>Valid object reference</li>
+	 *  <li>Valid method name</li>
+	 *  <li>Global $utils as arg</li>
+	 * </ul>
+	 */
+	@Test
+	public void interpretTest0019() {
+		assertEquals("false", new ApiInterpreter(new Object[] {new Object()}, "$0.equals($utils.concatIfNotEmpty(\"::\", \"foobar\"))").interpret());
+	}
+	
+	/**
+	 * Testing $utils.run()
+	 */
+	@Test
+	public void interpreterTest0020() {
+		assertEquals("12", new ApiInterpreter(new Object[] {new Object()}, "$utils.run($utils, \"concatIfNotEmpty\", [\"1\", \"2\"])").interpret());
+	}
+
+	/**
+	 * Testing $utils.run()
+	 */
+	@Test
+	public void interpreterTest0021() {
+		assertEquals("12", new ApiInterpreter(new Object[] {new Object()}, "$utils.run($utils.run($utils, \"concatIfNotEmpty\", [\"1\", \"2\"]), \"toString\", [])").interpret());
+	}
+	
+	/**
+	 * Testing $utils.run()
+	 */
+	@Test
+	public void interpreterTest0022() {
+		assertEquals("java.lang.String", new ApiInterpreter(new Object[] {new String()}, "$utils.run($utils.run($0, \"getClass\", []), \"getName\", [])").interpret());
+	}
+
 }
