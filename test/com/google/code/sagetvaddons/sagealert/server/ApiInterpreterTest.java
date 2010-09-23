@@ -279,7 +279,7 @@ public class ApiInterpreterTest {
 	 * Testing $utils.run()
 	 */
 	@Test
-	public void interpreterTest0020() {
+	public void interpretTest0020() {
 		assertEquals("12", new ApiInterpreter(new Object[] {new Object()}, "$utils.run($utils, \"concatIfNotEmpty\", [\"1\", \"2\"])").interpret());
 	}
 
@@ -287,7 +287,7 @@ public class ApiInterpreterTest {
 	 * Testing $utils.run()
 	 */
 	@Test
-	public void interpreterTest0021() {
+	public void interpretTest0021() {
 		assertEquals("12", new ApiInterpreter(new Object[] {new Object()}, "$utils.run($utils.run($utils, \"concatIfNotEmpty\", [\"1\", \"2\"]), \"toString\", [])").interpret());
 	}
 	
@@ -295,15 +295,15 @@ public class ApiInterpreterTest {
 	 * Testing $utils.run()
 	 */
 	@Test
-	public void interpreterTest0022() {
-		assertEquals("java.lang.String", new ApiInterpreter(new Object[] {new String()}, "$utils.run($utils.run($0, \"getClass\", []), \"getName\", [])").interpret());
+	public void interpretTest0022() {
+		assertEquals("java.lang.String", new ApiInterpreter(new Object[] {new String()}, "$utils.run($utils.run($utils.run($0, \"getClass\", []), \"getName\", []), \"toString\", [])").interpret());
 	}
 
 	/**
 	 * Testing $utils.printArray() with constant array arg
 	 */
 	@Test
-	public void interpreterTest0023() {
+	public void interpretTest0023() {
 		assertEquals("[1, true, foobar]", new ApiInterpreter(new Object[0], "$utils.printArray([1,    true,          \"foobar\"])").interpret());
 	}
 }
