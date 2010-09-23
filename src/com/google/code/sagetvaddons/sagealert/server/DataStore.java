@@ -49,6 +49,9 @@ import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
  *
  */
 final public class DataStore {
+	static private final Logger LOG = Logger.getLogger(DataStore.class);
+	static private final Logger SQL_LOG = Logger.getLogger("com.google.code.sagetvaddons.sagealert.server.SQLLogger");
+
 	static private final int SCHEMA_VERSION = 1;
 	static private final ThreadLocal<DataStore> THREAD_DATA_STORES = new ThreadLocal<DataStore>() {
 		@Override
@@ -56,7 +59,7 @@ final public class DataStore {
 			try {
 				return new DataStore();
 			} catch(Exception e) {
-				e.printStackTrace(System.out);
+				LOG.fatal("DataStoreAssignmentError", e);
 				return null;
 			}
 		}
@@ -69,10 +72,7 @@ final public class DataStore {
 	static final public DataStore getInstance() {
 		return THREAD_DATA_STORES.get();
 	}
-	
-	static private final Logger LOG = Logger.getLogger(DataStore.class);
-	static private final Logger SQL_LOG = Logger.getLogger("com.google.code.sagetvaddons.sagealert.server.SQLLogger");
-	
+		
 	static private final String ERR_MISSING_TABLE = "^no such table.+";
 	static public final String CLNT_SETTING_PREFIX = "sage.client.";
 	static private final String SQL_ERROR = "SQL error";
