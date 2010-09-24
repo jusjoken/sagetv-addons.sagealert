@@ -47,6 +47,7 @@ import com.google.code.sagetvaddons.sagealert.shared.ClientService;
 import com.google.code.sagetvaddons.sagealert.shared.ClientServiceAsync;
 import com.google.code.sagetvaddons.sagealert.shared.Client.EventType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -88,9 +89,21 @@ final class ClientSettingsPanel extends ContentPanel {
 							type = EventType.STARTS;
 						else
 							type = EventType.STOPS;
-						ClientReporterConfigWindow w = new ClientReporterConfigWindow((Client)model.getBean(), type);
-						w.show();
-						w.center();
+						final ClientReporterConfigWindow w = new ClientReporterConfigWindow((Client)model.getBean(), type);
+						final MessageBox progressBar = MessageBox.wait("Loading configuration window...", "Please wait while the configuration window is loading...", null);
+						new Timer() {
+
+							@Override
+							public void run() {
+								if(w.isBuilt()) {
+									this.cancel();
+									progressBar.close();
+									w.show();
+									w.center();
+								}
+							}
+							
+						}.scheduleRepeating(500);
 					}
 					
 				});

@@ -49,9 +49,11 @@ class ListenerSubscriptionForm extends FormPanel {
 	List<NotificationServerSettings> settings;
 	Button submit;
 	SageAlertEventMetadata metadata;
+	boolean isBuilt;
 	
 	ListenerSubscriptionForm(final SageAlertEventMetadata data) {
 		metadata = data;
+		isBuilt = false;
 		setWidth(640);
 		setAutoHeight(true);
 		setLabelWidth(380);
@@ -189,6 +191,7 @@ class ListenerSubscriptionForm extends FormPanel {
 						layout();
 						GWT.log(ListenerSubscriptionForm.this.getParent().toString());
 						((LayoutContainer)ListenerSubscriptionForm.this.getParent()).layout(true);
+						isBuilt = true;
 					}			
 				});
 				
@@ -212,4 +215,6 @@ class ListenerSubscriptionForm extends FormPanel {
 	protected void setLongMsg(String msg) {
 		this.longMsg.setValue(msg);
 	}
+	
+	public boolean isBuilt() { return isBuilt; }
 }

@@ -46,9 +46,12 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 	static private final String STARTS_MED = "Media playback started ($3.getAlias()): $0.GetMediaTitle() $utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
 	static private final String STARTS_SHORT = "Media playback started ($3.getAlias()): $0.GetMediaTitle()";
 	
+	private boolean[] isBuilt;
+	
 	ClientListenerSubscriptionForm(Client clnt, EventType type) {
 		super(new SageAlertEventMetadata(type.toString() + "_" + clnt.getId(), "Client Media Event (" + type.toString() + ")", "Fires when client '" + clnt.getAlias() + "' " + type.toString().toLowerCase() + " playing back media.", Arrays.asList(ARG_TYPES), "", "", "", ""));
 
+		isBuilt = new boolean[4];
 		String eventId = type.toString() + "_" + clnt.getId();
 		String defaultSubj, defaultLong, defaultMed, defaultShort;
 		if(type == EventType.STARTS) {
@@ -72,6 +75,7 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 
 			public void onSuccess(String result) {
 				setSubject(result);
+				isBuilt[0] = true;
 			}
 			
 		});
@@ -84,6 +88,7 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 
 			public void onSuccess(String result) {
 				setShortMsg(result);
+				isBuilt[1] = true;
 			}
 			
 		});
@@ -96,6 +101,7 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 
 			public void onSuccess(String result) {
 				setMedMsg(result);
+				isBuilt[2] = true;
 			}
 			
 		});
@@ -108,8 +114,15 @@ class ClientListenerSubscriptionForm extends ListenerSubscriptionForm {
 
 			public void onSuccess(String result) {
 				setLongMsg(result);
+				isBuilt[3] = true;
 			}
 			
 		});
+	}
+	
+	public boolean isBuilt() {
+		for(boolean b : isBuilt)
+			if(!b) return false;
+		return super.isBuilt();
 	}
 }

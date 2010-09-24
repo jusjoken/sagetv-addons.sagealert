@@ -25,10 +25,17 @@ import com.google.code.sagetvaddons.sagealert.shared.Client.EventType;
  */
 final class ClientReporterConfigWindow extends Window {
 
+	private ClientListenerSubscriptionForm frm;
+	
 	ClientReporterConfigWindow(Client clnt, EventType type) {
 		setModal(true);
 		setWidth(645);
 		setAutoHeight(true);
-		add(new ClientListenerSubscriptionForm(clnt, type));
+		frm = new ClientListenerSubscriptionForm(clnt, type);
+		add(frm);
+	}
+	
+	public boolean isBuilt() {
+		return frm.isBuilt();
 	}
 }
