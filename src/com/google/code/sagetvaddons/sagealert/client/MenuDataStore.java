@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.data.BeanModelFactory;
 import com.extjs.gxt.ui.client.data.BeanModelLookup;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.store.TreeStore;
+import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.CsvLogFileSettings;
 import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
 import com.google.code.sagetvaddons.sagealert.shared.ExeServerSettings;
@@ -165,8 +166,11 @@ final class MenuDataStore extends TreeStore<ModelData> {
 					
 				});
 
-				for(SageAlertEventMetadata m : result)
-					add(events, m, false);
+				for(SageAlertEventMetadata m : result) {
+					String clntEventRegex = "(?:" + Client.EventType.STARTS + "|" + Client.EventType.STOPS + ")_.+";
+					if(!m.getEventId().matches(clntEventRegex))
+						add(events, m, false);
+				}
 				sort("id", SortDir.ASC);
 			}
 			
