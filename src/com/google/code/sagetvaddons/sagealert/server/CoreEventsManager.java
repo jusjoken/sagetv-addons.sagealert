@@ -42,10 +42,11 @@ public final class CoreEventsManager {
 	static private final CoreEventsManager INSTANCE = new CoreEventsManager();
 	static public final CoreEventsManager get() { return INSTANCE; }
 	
+	// This is the master list of core events; those with a double slash at the end have been implemented in SageAlert
 	static final public String REC_STARTED = "RecordingStarted"; //
 	static final public String REC_COMPLETED = "RecordingCompleted"; //
 	static final public String REC_STOPPED = "RecordingStopped"; //
-	static final public String PLUGINS_LOADED = "AllPluginsLoaded"; //
+	static final public String PLUGINS_LOADED = "AllPluginsLoaded";
 	static final public String CONFLICTS = "ConflictStatusChanged"; //
 	static final public String SYSMSG_POSTED = "SystemMessagePosted"; //
 	static final public String INFO_SYSMSG_POSTED = "InfoSysMsgPosted"; //
@@ -64,6 +65,19 @@ public final class CoreEventsManager {
 	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED = "PartialOrUnwanted"; //
 	static final public String MEDIA_DELETED_IMPORT_LOST = "ImportLost"; //
 	static final public String PLUGIN_STARTED = "PluginStarted";
+	static final public String MEDIA_FILE_IMPORTED = "MediaFileImported";
+	static final public String IMPORT_STARTED = "ImportingStarted";
+	static final public String IMPORT_COMPLETED = "ImportingCompleted";
+	static final public String REC_SEG_ADDED = "RecordingSegmentAdded";
+	static final public String PLUGIN_STOPPED = "PluginStopped";
+	static final public String REC_SCHED_CHANGED = "RecordingScheduleChanged"; //
+	static final public String PLAYBACK_FINISHED = "PlaybackFinished";
+	static final public String FAV_ADDED = "FavoriteAdded";
+	static final public String FAV_MODDED = "FavoriteModified";
+	static final public String FAV_REMOVED = "FavoriteRemoved";
+	static final public String PLAYLIST_ADDED = "PlaylistAdded";
+	static final public String PLAYLIST_MODDED = "PlaylistModified";
+	static final public String PLAYLIST_REMOVED = "PlaylistRemoved";
 	
 	static final public String CLIENT_CONNECTED_SUBJ = "New client connected to SageTV server";
 	static final public String CLIENT_CONNECTED_SHORT_MSG = "Client '$0.getAlias()' has connected to the SageTV server.";
@@ -135,6 +149,11 @@ public final class CoreEventsManager {
 	static final public String MEDIA_DELETED_IMPORT_LOST_MED_MSG = "File deleted (import lost): $0.GetMediaTitle()/$0.GetMediaFileID()";
 	static final public String MEDIA_DELETED_IMPORT_LOST_SHORT_MSG = MEDIA_DELETED_IMPORT_LOST_MED_MSG;
 
+	static final public String REC_SCHED_CHANGED_SUBJ = "Recording schedule updated";
+	static final public String REC_SCHED_CHANGED_LONG_MSG = "The recording schedule has changed.";
+	static final public String REC_SCHED_CHANGED_MED_MSG = REC_SCHED_CHANGED_LONG_MSG;
+	static final public String REC_SCHED_CHANGED_SHORT_MSG = REC_SCHED_CHANGED_LONG_MSG;
+	
 	// If you change any of the defaults for PLAYBACK_* events below then you must also update them in ClientListenerSubscriptionForm
 	
 	static final public String PLAYBACK_STARTED_SUBJ = "Media playback has started";
@@ -214,6 +233,10 @@ public final class CoreEventsManager {
 		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_PARTIAL_OR_UNWANTED, "Media Deleted (Partial/Unwanted)", "Event fired when a media file is deleted by the core because it is a partial file or it's unwanted.", Arrays.asList(MediaFileDeletedEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_SUBJ), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_SHORT_MSG), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_MED_MSG), ds.getSetting(MEDIA_DELETED_PARTIAL_OR_UNWANTED + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_PARTIAL_OR_UNWANTED_LONG_MSG)));
 		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_DELETED_IMPORT_LOST, "Media Deleted (Import Lost)", "Event fired when a media file is removed from the core database because the import dir was removed.", Arrays.asList(MediaFileDeletedEvent.ARG_TYPES), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_DELETED_IMPORT_LOST_SUBJ), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_DELETED_IMPORT_LOST_SHORT_MSG), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.MED_SUFFIX, MEDIA_DELETED_IMPORT_LOST_MED_MSG), ds.getSetting(MEDIA_DELETED_IMPORT_LOST + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_DELETED_IMPORT_LOST_LONG_MSG)));
 		LOG.info("Subscribed to " + MEDIA_DELETED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), REC_SCHED_CHANGED);
+		mgr.putMetadata(new SageAlertEventMetadata(REC_SCHED_CHANGED, "Recording Schedule Changed", "Fired when the recording schedule has been modified.", new ArrayList<String>(), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_SCHED_CHANGED_SUBJ), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.SHORT_SUFFIX, REC_SCHED_CHANGED_SHORT_MSG), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.MED_SUFFIX, REC_SCHED_CHANGED_MED_MSG), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.LONG_SUFFIX, REC_SCHED_CHANGED_LONG_MSG)));
+		LOG.info("Subscribed to " + REC_SCHED_CHANGED + " event!");
 	}
 	
 	public void destroy() {
@@ -228,6 +251,9 @@ public final class CoreEventsManager {
 		
 		PLUGIN_REG.eventUnsubscribe(RecordingEventsListener.get(), REC_STARTED);
 		LOG.info("Unsubscribed from " + REC_STARTED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(RecordingEventsListener.get(), REC_STOPPED);
+		LOG.info("Unsubscribed from " + REC_STOPPED + " event!");
 		
 		PLUGIN_REG.eventUnsubscribe(RecordingEventsListener.get(), REC_COMPLETED);
 		LOG.info("Unsubscribed from " + REC_COMPLETED + " event!");
@@ -255,5 +281,8 @@ public final class CoreEventsManager {
 		
 		PLUGIN_REG.eventUnsubscribe(MediaDeletedEventsListener.get(), MEDIA_DELETED);
 		LOG.info("Unsubscribed from " + MEDIA_DELETED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), REC_SCHED_CHANGED);
+		LOG.info("Unsubscribed from " + REC_SCHED_CHANGED + " event!");
 	}
 }

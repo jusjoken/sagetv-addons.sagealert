@@ -24,6 +24,7 @@ import sage.SageTVEventListener;
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.ConflictStatusEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.EpgUpdatedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.RecSchedChangedEvent;
 
 /**
  * @author dbattams
@@ -48,6 +49,8 @@ final class AppEventsListener implements SageTVEventListener {
 			SageAlertEventHandlerManager.get().fire(new EpgUpdatedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.EPG_UPDATED)));
 		else if(CoreEventsManager.CONFLICTS.equals(arg0))
 			SageAlertEventHandlerManager.get().fire(new ConflictStatusEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.CONFLICTS)));
+		else if(CoreEventsManager.REC_SCHED_CHANGED.equals(arg0))
+			SageAlertEventHandlerManager.get().fire(new RecSchedChangedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_SCHED_CHANGED)));
 		else
 			LOG.error("Unhandled event: " + arg0);
 	}
