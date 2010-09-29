@@ -34,7 +34,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * GUI panel for configuring CSV file settings
+ * GUI panel for configuring exe processor settings
  * @author dbattams
  * @version $Id$
  */
@@ -51,13 +51,20 @@ final class ExeSettingsPanel extends FormPanel {
 		setWidth(480);
 		this.setLabelWidth(240);
 		
+		final TextField<String> desc = new TextField<String>();
+		desc.setAllowBlank(false);
+		desc.setFieldLabel("Description");
+		if(settings != null) {
+			desc.setValue(settings.getDesc());
+			desc.setEnabled(false);
+		}
+		add(desc);
+		
 		final TextField<String> fName = new TextField<String>();
 		fName.setAllowBlank(false);
-		fName.setFieldLabel("Process Name (full, absolute path)");
-		if(settings != null) {
+		fName.setFieldLabel("Executable");
+		if(settings != null)
 			fName.setValue(settings.getExeName());
-			fName.setEnabled(false);
-		}
 		add(fName);
 		
 		final TextField<String> args = new TextField<String>();
@@ -81,7 +88,7 @@ final class ExeSettingsPanel extends FormPanel {
 					return;
 				final ReporterServiceAsync rpc = GWT.create(ReporterService.class);
 				List<NotificationServerSettings> list = new ArrayList<NotificationServerSettings>();
-				final ExeServerSettings s = new ExeServerSettings(fName.getValue(), args.getValue() == null ? "" : args.getValue());
+				final ExeServerSettings s = new ExeServerSettings(desc.getValue(), fName.getValue(), args.getValue() == null ? "" : args.getValue());
 				list.add(s);
 				rpc.save(list, new AsyncCallback<Void>() {
 

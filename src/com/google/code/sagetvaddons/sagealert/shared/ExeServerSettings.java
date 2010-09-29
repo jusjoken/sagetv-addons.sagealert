@@ -20,7 +20,8 @@ package com.google.code.sagetvaddons.sagealert.shared;
  *
  */
 public class ExeServerSettings implements NotificationServerSettings {
-
+	
+	private String desc;
 	private String exeName;
 	private String args;
 	
@@ -32,7 +33,8 @@ public class ExeServerSettings implements NotificationServerSettings {
 	/**
 	 * 
 	 */
-	public ExeServerSettings(String exeName, String args) {
+	public ExeServerSettings(String desc, String exeName, String args) {
+		this.desc = desc;
 		this.exeName = exeName;
 		if(args != null)
 			this.args = args;
@@ -44,14 +46,14 @@ public class ExeServerSettings implements NotificationServerSettings {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings#getDisplayValue()
 	 */
 	public String getDisplayValue() {
-		return "EXE: " + exeName;
+		return "EXE: " + desc;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings#getId()
 	 */
 	public String getId() {
-		return exeName;
+		return desc;
 	}
 
 	/* (non-Javadoc)
@@ -74,22 +76,29 @@ public class ExeServerSettings implements NotificationServerSettings {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable#getDataStoreData()
 	 */
 	public String getDataStoreData() {
-		return args;
+		return exeName.replace("|", "\\|") + "|" + args;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable#getDataStoreKey()
 	 */
 	public String getDataStoreKey() {
-		return exeName;
+		return desc;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable#unserialize(java.lang.String, java.lang.String)
 	 */
 	public void unserialize(String key, String data) {
-		exeName = key;
-		args = data;
+		desc = key;
+		String[] exeAndArgs = data.split("\\|", 2);
+		if(exeAndArgs.length == 1) {
+			exeName = key;
+			args = exeAndArgs[0];
+		} else {
+			exeName = exeAndArgs[0];
+			args = exeAndArgs[1];
+		}
 	}
 	
 	public String getExeName() {
@@ -99,7 +108,16 @@ public class ExeServerSettings implements NotificationServerSettings {
 	public String getArgs() {
 		return args;
 	}
+
+	public String getDesc() {
+		return desc;
+	}
 	
+	@Override
+	public String toString() {
+		return getDisplayValue();
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -107,7 +125,7 @@ public class ExeServerSettings implements NotificationServerSettings {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((exeName == null) ? 0 : exeName.hashCode());
+		result = prime * result + ((desc == null) ? 0 : desc.hashCode());
 		return result;
 	}
 
@@ -126,18 +144,13 @@ public class ExeServerSettings implements NotificationServerSettings {
 			return false;
 		}
 		ExeServerSettings other = (ExeServerSettings) obj;
-		if (exeName == null) {
-			if (other.exeName != null) {
+		if (desc == null) {
+			if (other.desc != null) {
 				return false;
 			}
-		} else if (!exeName.equals(other.exeName)) {
+		} else if (!desc.equals(other.desc)) {
 			return false;
 		}
 		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return getDisplayValue();
 	}
 }
