@@ -22,7 +22,7 @@ import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.extjs.gxt.ui.client.widget.layout.CenterLayout;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.google.code.sagetvaddons.sagealert.shared.SettingsService;
 import com.google.code.sagetvaddons.sagealert.shared.SettingsServiceAsync;
 import com.google.gwt.core.client.GWT;
@@ -53,7 +53,7 @@ final class SageAlertViewport extends Viewport {
 		westPanel.setBottomComponent(new SageAlertToolBar());
 					
 		centerPanel = new ContentPanel();
-		centerPanel.setLayout(new CenterLayout());
+		centerPanel.setLayout(new FitLayout());
 		BorderLayoutData centerData = new BorderLayoutData(LayoutRegion.CENTER);
 		centerPanel.setHeaderVisible(false);
 

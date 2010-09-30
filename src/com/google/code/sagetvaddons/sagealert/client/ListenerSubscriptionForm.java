@@ -18,6 +18,7 @@ package com.google.code.sagetvaddons.sagealert.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Dialog;
@@ -28,6 +29,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.google.code.sagetvaddons.sagealert.shared.HandlerService;
 import com.google.code.sagetvaddons.sagealert.shared.HandlerServiceAsync;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
@@ -50,17 +52,20 @@ class ListenerSubscriptionForm extends FormPanel {
 	Button submit;
 	SageAlertEventMetadata metadata;
 	boolean isBuilt;
+	ToolBar toolbar;
 	
 	ListenerSubscriptionForm(final SageAlertEventMetadata data) {
 		metadata = data;
 		isBuilt = false;
+		toolbar = new ToolBar();
 		setWidth(640);
-		setAutoHeight(true);
+		setAutoHeight(false);
+		this.setScrollMode(Scroll.AUTOY);
 		setLabelWidth(380);
 		setFieldWidth(240);
 		setLabelAlign(LabelAlign.RIGHT);
 		setHeading("Configure Listeners: " + data.getEventName());
-
+		
 		subj = new TextField<String>();
 		subj.setFieldLabel("Alert Subject");
 		if(data.getSubject() != null)
@@ -126,6 +131,32 @@ class ListenerSubscriptionForm extends FormPanel {
 			}
 			
 		});
+		toolbar.add(submit);
+		Button argList = new Button("View Arguments");
+		argList.addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Dialog w = new Dialog();
+				w.setHeading("Event Arguments: " + data.getEventName());
+				w.setAutoHide(false);
+				w.setAutoHeight(true);
+				w.setAutoWidth(true);
+				w.setCollapsible(true);
+				w.setHideOnButtonClick(true);
+				List<String> types = data.getObjTypes();
+				
+				if(types.size() > 0)
+					for(int i = 0; i < types.size(); ++i)
+						w.add(new HTML("<p style=\"margin: 6px;\"><b>$" + i + "</b>: " + types.get(i) + "</p>"));
+				else
+					w.add(new HTML("<p style=\"margin: 6px;\"><b>No objects provided by this event.</b></p>"));
+				w.show();
+			}
+			
+		});
+		toolbar.add(argList);
+		setBottomComponent(toolbar);
 		LabelField lbl = new LabelField();
 		lbl.setFieldLabel(data.getDesc());
 		add(lbl);
@@ -135,7 +166,6 @@ class ListenerSubscriptionForm extends FormPanel {
 		add(longMsg);
 		final ReporterServiceAsync rSvc = GWT.create(ReporterService.class);
 		final HandlerServiceAsync hSvc = GWT.create(HandlerService.class);
-		GWT.log("ID: " + data.getEventId());
 		hSvc.getHandlers(data.getEventId(), new AsyncCallback<List<NotificationServerSettings>>() {
 
 			public void onFailure(Throwable caught) {
@@ -163,31 +193,6 @@ class ListenerSubscriptionForm extends FormPanel {
 							settings.add(s);
 							add(cb);
 						}
-						add(submit);
-						Button argList = new Button("View Arguments");
-						argList.addSelectionListener(new SelectionListener<ButtonEvent>() {
-
-							@Override
-							public void componentSelected(ButtonEvent ce) {
-								Dialog w = new Dialog();
-								w.setHeading("Event Arguments: " + data.getEventName());
-								w.setAutoHide(false);
-								w.setAutoHeight(true);
-								w.setAutoWidth(true);
-								w.setCollapsible(true);
-								w.setHideOnButtonClick(true);
-								List<String> types = data.getObjTypes();
-								
-								if(types.size() > 0)
-									for(int i = 0; i < types.size(); ++i)
-										w.add(new HTML("<p style=\"margin: 6px;\"><b>$" + i + "</b>: " + types.get(i) + "</p>"));
-								else
-									w.add(new HTML("<p style=\"margin: 6px;\"><b>No objects provided by this event.</b></p>"));
-								w.show();
-							}
-							
-						});
-						add(argList);
 						layout();
 						GWT.log(ListenerSubscriptionForm.this.getParent().toString());
 						((LayoutContainer)ListenerSubscriptionForm.this.getParent()).layout(true);
