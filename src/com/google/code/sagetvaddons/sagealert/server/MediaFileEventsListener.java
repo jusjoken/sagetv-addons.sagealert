@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 
 import sage.SageTVEventListener;
 
+import com.google.code.sagetvaddons.sagealert.server.events.MediaFileImportedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.RecSegmentAddedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecordingCompletedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecordingStartedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecordingStoppedEvent;
@@ -31,18 +33,18 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
 
 /**
- * A SageTVEventListener that will listen for and handle events related to tv recordings
+ * A SageTVEventListener that will listen for and handle events related to media files
  * @author Derek Battams &lt;derek AT battams DOT ca&gt;
  * @version $Id$
  */
-final class RecordingEventsListener implements SageTVEventListener {
-	static private final Logger LOG = Logger.getLogger(RecordingEventsListener.class);
-	static private final RecordingEventsListener INSTANCE = new RecordingEventsListener();
-	static final RecordingEventsListener get() { return INSTANCE; }
+final class MediaFileEventsListener implements SageTVEventListener {
+	static private final Logger LOG = Logger.getLogger(MediaFileEventsListener.class);
+	static private final MediaFileEventsListener INSTANCE = new MediaFileEventsListener();
+	static final MediaFileEventsListener get() { return INSTANCE; }
 
 	static private final String MF_KEY = "MediaFile";
 	
-	private RecordingEventsListener() {}
+	private MediaFileEventsListener() {}
 
 	@SuppressWarnings("unchecked")
 	public void sageEvent(String arg0, Map arg1) {
@@ -59,6 +61,10 @@ final class RecordingEventsListener implements SageTVEventListener {
 					e = new RecordingCompletedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_COMPLETED));
 				else if(CoreEventsManager.REC_STOPPED.equals(arg0))
 					e = new RecordingStoppedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_STOPPED));
+				else if(CoreEventsManager.MEDIA_FILE_IMPORTED.equals(arg0))
+					e = new MediaFileImportedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.MEDIA_FILE_IMPORTED));
+				else if(CoreEventsManager.REC_SEG_ADDED.equals(arg0))
+					e = new RecSegmentAddedEvent(mf, SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_SEG_ADDED));
 				if(e != null)
 					SageAlertEventHandlerManager.get().fire(e);
 				else

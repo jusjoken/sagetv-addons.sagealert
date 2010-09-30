@@ -21,9 +21,12 @@ import org.apache.log4j.Logger;
 
 import sage.SageTVEventListener;
 
+import com.google.code.sagetvaddons.sagealert.server.events.AllPluginsLoadedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.ConflictStatusEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.EpgUpdatedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.ImportCompletedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.ImportStartedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecSchedChangedEvent;
 
 /**
@@ -51,6 +54,12 @@ final class AppEventsListener implements SageTVEventListener {
 			SageAlertEventHandlerManager.get().fire(new ConflictStatusEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.CONFLICTS)));
 		else if(CoreEventsManager.REC_SCHED_CHANGED.equals(arg0))
 			SageAlertEventHandlerManager.get().fire(new RecSchedChangedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_SCHED_CHANGED)));
+		else if(CoreEventsManager.PLUGINS_LOADED.equals(arg0))
+			SageAlertEventHandlerManager.get().fire(new AllPluginsLoadedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.PLUGINS_LOADED)));
+		else if(CoreEventsManager.IMPORT_STARTED.equals(arg0))
+			SageAlertEventHandlerManager.get().fire(new ImportStartedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.IMPORT_STARTED)));
+		else if(CoreEventsManager.IMPORT_COMPLETED.equals(arg0))
+			SageAlertEventHandlerManager.get().fire(new ImportCompletedEvent((Boolean)arg1.get("FullReindex"), SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.IMPORT_COMPLETED)));
 		else
 			LOG.error("Unhandled event: " + arg0);
 	}

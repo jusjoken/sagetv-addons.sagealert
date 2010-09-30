@@ -27,8 +27,13 @@ import sage.SageTVPluginRegistry;
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.ClientConnectionEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.ConflictStatusEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.FavEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.ImportCompletedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.MediaFileDeletedUserEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.MediaFileEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.PlaylistEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.PluginEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecordingEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.SystemMessageEvent;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
@@ -46,7 +51,7 @@ public final class CoreEventsManager {
 	static final public String REC_STARTED = "RecordingStarted"; //
 	static final public String REC_COMPLETED = "RecordingCompleted"; //
 	static final public String REC_STOPPED = "RecordingStopped"; //
-	static final public String PLUGINS_LOADED = "AllPluginsLoaded";
+	static final public String PLUGINS_LOADED = "AllPluginsLoaded"; //
 	static final public String CONFLICTS = "ConflictStatusChanged"; //
 	static final public String SYSMSG_POSTED = "SystemMessagePosted"; //
 	static final public String INFO_SYSMSG_POSTED = "InfoSysMsgPosted"; //
@@ -64,21 +69,86 @@ public final class CoreEventsManager {
 	static final public String MEDIA_DELETED_VERIFY_FAILED = "VerifyFailed"; //
 	static final public String MEDIA_DELETED_PARTIAL_OR_UNWANTED = "PartialOrUnwanted"; //
 	static final public String MEDIA_DELETED_IMPORT_LOST = "ImportLost"; //
-	static final public String PLUGIN_STARTED = "PluginStarted";
-	static final public String MEDIA_FILE_IMPORTED = "MediaFileImported";
-	static final public String IMPORT_STARTED = "ImportingStarted";
-	static final public String IMPORT_COMPLETED = "ImportingCompleted";
-	static final public String REC_SEG_ADDED = "RecordingSegmentAdded";
-	static final public String PLUGIN_STOPPED = "PluginStopped";
+	static final public String PLUGIN_STARTED = "PluginStarted"; //
+	static final public String MEDIA_FILE_IMPORTED = "MediaFileImported"; //
+	static final public String IMPORT_STARTED = "ImportingStarted"; //
+	static final public String IMPORT_COMPLETED = "ImportingCompleted"; //
+	static final public String REC_SEG_ADDED = "RecordingSegmentAdded"; //
+	static final public String PLUGIN_STOPPED = "PluginStopped"; //
 	static final public String REC_SCHED_CHANGED = "RecordingScheduleChanged"; //
 	static final public String PLAYBACK_FINISHED = "PlaybackFinished";
-	static final public String FAV_ADDED = "FavoriteAdded";
-	static final public String FAV_MODDED = "FavoriteModified";
-	static final public String FAV_REMOVED = "FavoriteRemoved";
-	static final public String PLAYLIST_ADDED = "PlaylistAdded";
-	static final public String PLAYLIST_MODDED = "PlaylistModified";
-	static final public String PLAYLIST_REMOVED = "PlaylistRemoved";
+	static final public String FAV_ADDED = "FavoriteAdded"; //
+	static final public String FAV_MODDED = "FavoriteModified"; //
+	static final public String FAV_REMOVED = "FavoriteRemoved"; //
+	static final public String PLAYLIST_ADDED = "PlaylistAdded"; //
+	static final public String PLAYLIST_MODDED = "PlaylistModified"; //
+	static final public String PLAYLIST_REMOVED = "PlaylistRemoved"; //
 	
+	static final public String PLAYLIST_ADDED_SUBJ = "A new playlist has been created by '$1.getAlias()'";
+	static final public String PLAYLIST_ADDED_SHORT_MSG = "Playlist created by '$1.getAlias()': $0.GetName()";
+	static final public String PLAYLIST_ADDED_MED_MSG = PLAYLIST_ADDED_SHORT_MSG;
+	static final public String PLAYLIST_ADDED_LONG_MSG = PLAYLIST_ADDED_SHORT_MSG;
+
+	static final public String PLAYLIST_MODDED_SUBJ = "A playlist has been modified by '$1.getAlias()'";
+	static final public String PLAYLIST_MODDED_SHORT_MSG = "Playlist '$0.GetName()' modified by '$1.getAlias()'.";
+	static final public String PLAYLIST_MODDED_MED_MSG = PLAYLIST_MODDED_SHORT_MSG;
+	static final public String PLAYLIST_MODDED_LONG_MSG = PLAYLIST_MODDED_SHORT_MSG;
+
+	static final public String PLAYLIST_REMOVED_SUBJ = "A playlist has been removed by '$1.getAlias()'";
+	static final public String PLAYLIST_REMOVED_SHORT_MSG = "Playlist '$0.GetName()' removed by '$1.getAlias()'.";
+	static final public String PLAYLIST_REMOVED_MED_MSG = PLAYLIST_REMOVED_SHORT_MSG;
+	static final public String PLAYLIST_REMOVED_LONG_MSG = PLAYLIST_REMOVED_SHORT_MSG;
+
+	static final public String FAV_ADDED_SUBJ = "A favourite has been added";
+	static final public String FAV_ADDED_SHORT_MSG = "New favourite added: $0.GetFavoriteDescription()";
+	static final public String FAV_ADDED_MED_MSG = FAV_ADDED_SHORT_MSG;
+	static final public String FAV_ADDED_LONG_MSG = FAV_ADDED_SHORT_MSG;
+
+	static final public String FAV_MODDED_SUBJ = "A favourite has been modified";
+	static final public String FAV_MODDED_SHORT_MSG = "Favourite modified: $0.GetFavoriteDescription()";
+	static final public String FAV_MODDED_MED_MSG = FAV_MODDED_SHORT_MSG;
+	static final public String FAV_MODDED_LONG_MSG = FAV_MODDED_SHORT_MSG;
+
+	static final public String FAV_REMOVED_SUBJ = "A favourite has been removed";
+	static final public String FAV_REMOVED_SHORT_MSG = "Favourite removed: $0.GetFavoriteDescription()";
+	static final public String FAV_REMOVED_MED_MSG = FAV_REMOVED_SHORT_MSG;
+	static final public String FAV_REMOVED_LONG_MSG = FAV_REMOVED_SHORT_MSG;
+
+	static final public String IMPORT_COMPLETED_SUBJ = "A media import scan has completed";
+	static final public String IMPORT_COMPLETED_SHORT_MSG = "A media import scan has completed. [full reindex = $0.toString()]";
+	static final public String IMPORT_COMPLETED_MED_MSG = IMPORT_COMPLETED_SHORT_MSG;
+	static final public String IMPORT_COMPLETED_LONG_MSG = IMPORT_COMPLETED_SHORT_MSG;
+	
+	static final public String REC_SEG_ADDED_SUBJ = "A new recording segment has been started";
+	static final public String REC_SEG_ADDED_SHORT_MSG = "Recording segment added: $0.GetMediaTitle()$utils.concatIfNotEmpty(\": \", $2.GetShowEpisode())";
+	static final public String REC_SEG_ADDED_MED_MSG = REC_SEG_ADDED_SHORT_MSG;
+	static final public String REC_SEG_ADDED_LONG_MSG = REC_SEG_ADDED_SHORT_MSG;
+	
+	static final public String IMPORT_STARTED_SUBJ = "A media import scan has started";
+	static final public String IMPORT_STARTED_SHORT_MSG = "A media import scan has started.";
+	static final public String IMPORT_STARTED_MED_MSG = IMPORT_STARTED_SHORT_MSG;
+	static final public String IMPORT_STARTED_LONG_MSG = IMPORT_STARTED_SHORT_MSG;
+	
+	static final public String MEDIA_FILE_IMPORTED_SUBJ = "A new media file has been imported";
+	static final public String MEDIA_FILE_IMPORTED_SHORT_MSG = "New media file imported: $0.GetMediaTitle()";
+	static final public String MEDIA_FILE_IMPORTED_MED_MSG = MEDIA_FILE_IMPORTED_SHORT_MSG;
+	static final public String MEDIA_FILE_IMPORTED_LONG_MSG = MEDIA_FILE_IMPORTED_SHORT_MSG;
+	
+	static final public String PLUGINS_LOADED_SUBJ = "All enabled plugins have been loaded";
+	static final public String PLUGINS_LOADED_SHORT_MSG = "All enabled plugins have been loaded.";
+	static final public String PLUGINS_LOADED_MED_MSG = PLUGINS_LOADED_SHORT_MSG;
+	static final public String PLUGINS_LOADED_LONG_MSG = PLUGINS_LOADED_SHORT_MSG;
+	
+	static final public String PLUGIN_STARTED_SUBJ = "A plugin has been started";
+	static final public String PLUGIN_STARTED_SHORT_MSG = "Plugin '$0.GetPluginName()' has been started.";
+	static final public String PLUGIN_STARTED_MED_MSG = PLUGIN_STARTED_SHORT_MSG;
+	static final public String PLUGIN_STARTED_LONG_MSG = PLUGIN_STARTED_SHORT_MSG;
+
+	static final public String PLUGIN_STOPPED_SUBJ = "A plugin has been stopped";
+	static final public String PLUGIN_STOPPED_SHORT_MSG = "Plugin '$0.GetPluginName()' has been stopped.";
+	static final public String PLUGIN_STOPPED_MED_MSG = PLUGIN_STOPPED_SHORT_MSG;
+	static final public String PLUGIN_STOPPED_LONG_MSG = PLUGIN_STOPPED_SHORT_MSG;
+
 	static final public String CLIENT_CONNECTED_SUBJ = "New client connected to SageTV server";
 	static final public String CLIENT_CONNECTED_SHORT_MSG = "Client '$0.getAlias()' has connected to the SageTV server.";
 	static final public String CLIENT_CONNECTED_MED_MSG = CLIENT_CONNECTED_SHORT_MSG;
@@ -185,15 +255,15 @@ public final class CoreEventsManager {
 		mgr.putMetadata(new SageAlertEventMetadata(AppStartedEvent.EVENT_ID, "SageAlert App Started", "Event fired when SageAlert has successfully started.", new ArrayList<String>(), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.SUBJ_SUFFIX, AppStartedEvent.SUBJ), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.SHORT_SUFFIX, AppStartedEvent.SHORT_MSG), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.MED_SUFFIX, AppStartedEvent.MED_MSG), ds.getSetting(AppStartedEvent.EVENT_ID + SageAlertEventMetadata.LONG_SUFFIX, AppStartedEvent.LONG_MSG)));
 		LOG.info("Subscribed to " + AppStartedEvent.EVENT_ID + " event!");
 		
-		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_STARTED);
+		PLUGIN_REG.eventSubscribe(MediaFileEventsListener.get(), REC_STARTED);
 		mgr.putMetadata(new SageAlertEventMetadata(REC_STARTED, "Recording Started", "Event fired when the SageTV system starts a recording.", Arrays.asList(RecordingEvent.EVENT_ARG_TYPES), ds.getSetting(REC_STARTED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_STARTED_SUBJ), ds.getSetting(REC_STARTED + SageAlertEventMetadata.SHORT_SUFFIX, REC_STARTED_SHORT_MSG), ds.getSetting(REC_STARTED + SageAlertEventMetadata.MED_SUFFIX, REC_STARTED_MED_MSG), ds.getSetting(REC_STARTED + SageAlertEventMetadata.LONG_SUFFIX, REC_STARTED_LONG_MSG)));
 		LOG.info("Subscribed to " + REC_STARTED + " event!");
 
-		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_STOPPED);
+		PLUGIN_REG.eventSubscribe(MediaFileEventsListener.get(), REC_STOPPED);
 		mgr.putMetadata(new SageAlertEventMetadata(REC_STOPPED, "Recording Stopped", "Event fired when the SageTV system stops a recording for any other reason besides it being fully completed.", Arrays.asList(RecordingEvent.EVENT_ARG_TYPES), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_STOPPED_SUBJ), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.SHORT_SUFFIX, REC_STOPPED_SHORT_MSG), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.MED_SUFFIX, REC_STOPPED_MED_MSG), ds.getSetting(REC_STOPPED + SageAlertEventMetadata.LONG_SUFFIX, REC_STOPPED_LONG_MSG)));
 		LOG.info("Subscribed to " + REC_STOPPED + " event!");
 		
-		PLUGIN_REG.eventSubscribe(RecordingEventsListener.get(), REC_COMPLETED);
+		PLUGIN_REG.eventSubscribe(MediaFileEventsListener.get(), REC_COMPLETED);
 		mgr.putMetadata(new SageAlertEventMetadata(REC_COMPLETED, "Recording Completed", "Event fired when the SageTV system completes a recording.", Arrays.asList(RecordingEvent.EVENT_ARG_TYPES), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_COMPLETED_SUBJ), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.SHORT_SUFFIX, REC_COMPLETED_SHORT_MSG), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.MED_SUFFIX, REC_COMPLETED_MED_MSG), ds.getSetting(REC_COMPLETED + SageAlertEventMetadata.LONG_SUFFIX, REC_COMPLETED_LONG_MSG)));
 		LOG.info("Subscribed to " + REC_COMPLETED + " event!");
 		
@@ -237,6 +307,54 @@ public final class CoreEventsManager {
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), REC_SCHED_CHANGED);
 		mgr.putMetadata(new SageAlertEventMetadata(REC_SCHED_CHANGED, "Recording Schedule Changed", "Fired when the recording schedule has been modified.", new ArrayList<String>(), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_SCHED_CHANGED_SUBJ), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.SHORT_SUFFIX, REC_SCHED_CHANGED_SHORT_MSG), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.MED_SUFFIX, REC_SCHED_CHANGED_MED_MSG), ds.getSetting(REC_SCHED_CHANGED + SageAlertEventMetadata.LONG_SUFFIX, REC_SCHED_CHANGED_LONG_MSG)));
 		LOG.info("Subscribed to " + REC_SCHED_CHANGED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(PluginEventsListener.get(), PLUGIN_STARTED);
+		mgr.putMetadata(new SageAlertEventMetadata(PLUGIN_STARTED, "Plugin Started", "Fires when the core starts a plugin (not including initial startup of all plugins).", PluginEvent.ARG_TYPES, ds.getSetting(PLUGIN_STARTED + SageAlertEventMetadata.SUBJ_SUFFIX, PLUGIN_STARTED_SUBJ), ds.getSetting(PLUGIN_STARTED + SageAlertEventMetadata.SHORT_SUFFIX, PLUGIN_STARTED_SHORT_MSG), ds.getSetting(PLUGIN_STARTED + SageAlertEventMetadata.MED_SUFFIX, PLUGIN_STARTED_MED_MSG), ds.getSetting(PLUGIN_STARTED + SageAlertEventMetadata.LONG_SUFFIX, PLUGIN_STARTED_LONG_MSG)));
+		LOG.info("Subscribed to " + PLUGIN_STARTED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(PluginEventsListener.get(), PLUGIN_STOPPED);
+		mgr.putMetadata(new SageAlertEventMetadata(PLUGIN_STOPPED, "Plugin Stopped", "Fires when the core stops a plugin (not including shutdown of all plugins).", PluginEvent.ARG_TYPES, ds.getSetting(PLUGIN_STOPPED + SageAlertEventMetadata.SUBJ_SUFFIX, PLUGIN_STOPPED_SUBJ), ds.getSetting(PLUGIN_STOPPED + SageAlertEventMetadata.SHORT_SUFFIX, PLUGIN_STOPPED_SHORT_MSG), ds.getSetting(PLUGIN_STOPPED + SageAlertEventMetadata.MED_SUFFIX, PLUGIN_STOPPED_MED_MSG), ds.getSetting(PLUGIN_STOPPED + SageAlertEventMetadata.LONG_SUFFIX, PLUGIN_STOPPED_LONG_MSG)));
+		LOG.info("Subscribed to " + PLUGIN_STOPPED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(MediaFileEventsListener.get(), MEDIA_FILE_IMPORTED);
+		mgr.putMetadata(new SageAlertEventMetadata(MEDIA_FILE_IMPORTED, "Media File Imported", "Fires when the core imports a new media file.", MediaFileEvent.ARG_TYPES, ds.getSetting(MEDIA_FILE_IMPORTED + SageAlertEventMetadata.SUBJ_SUFFIX, MEDIA_FILE_IMPORTED_SUBJ), ds.getSetting(MEDIA_FILE_IMPORTED + SageAlertEventMetadata.SHORT_SUFFIX, MEDIA_FILE_IMPORTED_SHORT_MSG), ds.getSetting(MEDIA_FILE_IMPORTED + SageAlertEventMetadata.MED_SUFFIX, MEDIA_FILE_IMPORTED_MED_MSG), ds.getSetting(MEDIA_FILE_IMPORTED + SageAlertEventMetadata.LONG_SUFFIX, MEDIA_FILE_IMPORTED_LONG_MSG)));
+		LOG.info("Subscribed to " + MEDIA_FILE_IMPORTED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), IMPORT_STARTED);
+		mgr.putMetadata(new SageAlertEventMetadata(IMPORT_STARTED, "Media Import Scan Started", "Fires when the core starts a media import scan.", new ArrayList<String>(), ds.getSetting(IMPORT_STARTED + SageAlertEventMetadata.SUBJ_SUFFIX, IMPORT_STARTED_SUBJ), ds.getSetting(IMPORT_STARTED + SageAlertEventMetadata.SHORT_SUFFIX, IMPORT_STARTED_SHORT_MSG), ds.getSetting(IMPORT_STARTED + SageAlertEventMetadata.MED_SUFFIX, IMPORT_STARTED_MED_MSG), ds.getSetting(IMPORT_STARTED + SageAlertEventMetadata.LONG_SUFFIX, IMPORT_STARTED_LONG_MSG)));
+		LOG.info("Subscribed to " + IMPORT_STARTED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), IMPORT_COMPLETED);
+		mgr.putMetadata(new SageAlertEventMetadata(IMPORT_COMPLETED, "Media Import Scan Completed", "Fires when the core completes a media import scan.", Arrays.asList(ImportCompletedEvent.ARG_TYPES), ds.getSetting(IMPORT_COMPLETED + SageAlertEventMetadata.SUBJ_SUFFIX, IMPORT_COMPLETED_SUBJ), ds.getSetting(IMPORT_COMPLETED + SageAlertEventMetadata.SHORT_SUFFIX, IMPORT_COMPLETED_SHORT_MSG), ds.getSetting(IMPORT_COMPLETED + SageAlertEventMetadata.MED_SUFFIX, IMPORT_COMPLETED_MED_MSG), ds.getSetting(IMPORT_COMPLETED + SageAlertEventMetadata.LONG_SUFFIX, IMPORT_COMPLETED_LONG_MSG)));
+		LOG.info("Subscrbied to " + IMPORT_COMPLETED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(MediaFileEventsListener.get(), REC_SEG_ADDED);
+		mgr.putMetadata(new SageAlertEventMetadata(REC_SEG_ADDED, "Recording Segment Added", "Fires when a new segment is created for an active recording.", Arrays.asList(RecordingEvent.EVENT_ARG_TYPES), ds.getSetting(REC_SEG_ADDED + SageAlertEventMetadata.SUBJ_SUFFIX, REC_SEG_ADDED_SUBJ), ds.getSetting(REC_SEG_ADDED + SageAlertEventMetadata.SHORT_SUFFIX, REC_SEG_ADDED_SHORT_MSG), ds.getSetting(REC_SEG_ADDED + SageAlertEventMetadata.MED_SUFFIX, REC_SEG_ADDED_MED_MSG), ds.getSetting(REC_SEG_ADDED + SageAlertEventMetadata.LONG_SUFFIX, REC_SEG_ADDED_LONG_MSG)));
+		LOG.info("Subscribed to " + REC_SEG_ADDED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(FavEventsListener.get(), FAV_ADDED);
+		mgr.putMetadata(new SageAlertEventMetadata(FAV_ADDED, "Favourite Added", "Fires when a new favourite is created.", Arrays.asList(FavEvent.ARG_TYPES), ds.getSetting(FAV_ADDED + SageAlertEventMetadata.SUBJ_SUFFIX, FAV_ADDED_SUBJ), ds.getSetting(FAV_ADDED + SageAlertEventMetadata.SHORT_SUFFIX, FAV_ADDED_SHORT_MSG), ds.getSetting(FAV_ADDED + SageAlertEventMetadata.MED_SUFFIX, FAV_ADDED_MED_MSG), ds.getSetting(FAV_ADDED + SageAlertEventMetadata.LONG_SUFFIX, FAV_ADDED_LONG_MSG)));
+		LOG.info("Subscribed to " + FAV_ADDED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(FavEventsListener.get(), FAV_MODDED);
+		mgr.putMetadata(new SageAlertEventMetadata(FAV_MODDED, "Favourite Modified", "Fires when a favourite is modified.", Arrays.asList(FavEvent.ARG_TYPES), ds.getSetting(FAV_MODDED + SageAlertEventMetadata.SUBJ_SUFFIX, FAV_MODDED_SUBJ), ds.getSetting(FAV_MODDED + SageAlertEventMetadata.SHORT_SUFFIX, FAV_MODDED_SHORT_MSG), ds.getSetting(FAV_MODDED + SageAlertEventMetadata.MED_SUFFIX, FAV_MODDED_MED_MSG), ds.getSetting(FAV_MODDED + SageAlertEventMetadata.LONG_SUFFIX, FAV_MODDED_LONG_MSG)));
+		LOG.info("Subscribed to " + FAV_MODDED + " event!");
+	
+		PLUGIN_REG.eventSubscribe(FavEventsListener.get(), FAV_REMOVED);
+		mgr.putMetadata(new SageAlertEventMetadata(FAV_REMOVED, "Favourite Removed", "Fires when a favourite is removed.", Arrays.asList(FavEvent.ARG_TYPES), ds.getSetting(FAV_REMOVED + SageAlertEventMetadata.SUBJ_SUFFIX, FAV_REMOVED_SUBJ), ds.getSetting(FAV_REMOVED + SageAlertEventMetadata.SHORT_SUFFIX, FAV_REMOVED_SHORT_MSG), ds.getSetting(FAV_REMOVED + SageAlertEventMetadata.MED_SUFFIX, FAV_REMOVED_MED_MSG), ds.getSetting(FAV_REMOVED + SageAlertEventMetadata.LONG_SUFFIX, FAV_REMOVED_LONG_MSG)));
+		LOG.info("Subscribed to " + FAV_REMOVED + " event!");
+		
+		PLUGIN_REG.eventSubscribe(PlaylistEventsListener.get(), PLAYLIST_ADDED);
+		mgr.putMetadata(new SageAlertEventMetadata(PLAYLIST_ADDED, "Playlist Created", "Fires when a playlist is created.", Arrays.asList(PlaylistEvent.ARG_TYPES), ds.getSetting(PLAYLIST_ADDED + SageAlertEventMetadata.SUBJ_SUFFIX, PLAYLIST_ADDED_SUBJ), ds.getSetting(PLAYLIST_ADDED + SageAlertEventMetadata.SHORT_SUFFIX, PLAYLIST_ADDED_SHORT_MSG), ds.getSetting(PLAYLIST_ADDED + SageAlertEventMetadata.MED_SUFFIX, PLAYLIST_ADDED_MED_MSG), ds.getSetting(PLAYLIST_ADDED + SageAlertEventMetadata.LONG_SUFFIX, PLAYLIST_ADDED_LONG_MSG)));
+		LOG.info("Subscribed to " + PLAYLIST_ADDED + " event!");
+
+		PLUGIN_REG.eventSubscribe(PlaylistEventsListener.get(), PLAYLIST_MODDED);
+		mgr.putMetadata(new SageAlertEventMetadata(PLAYLIST_MODDED, "Playlist Modified", "Fires when a playlist is modified.", Arrays.asList(PlaylistEvent.ARG_TYPES), ds.getSetting(PLAYLIST_MODDED + SageAlertEventMetadata.SUBJ_SUFFIX, PLAYLIST_MODDED_SUBJ), ds.getSetting(PLAYLIST_MODDED + SageAlertEventMetadata.SHORT_SUFFIX, PLAYLIST_MODDED_SHORT_MSG), ds.getSetting(PLAYLIST_MODDED + SageAlertEventMetadata.MED_SUFFIX, PLAYLIST_MODDED_MED_MSG), ds.getSetting(PLAYLIST_MODDED + SageAlertEventMetadata.LONG_SUFFIX, PLAYLIST_MODDED_LONG_MSG)));
+		LOG.info("Subscribed to " + PLAYLIST_MODDED + " event!");
+
+		PLUGIN_REG.eventSubscribe(PlaylistEventsListener.get(), PLAYLIST_REMOVED);
+		mgr.putMetadata(new SageAlertEventMetadata(PLAYLIST_REMOVED, "Playlist Removed", "Fires when a playlist is removed.", Arrays.asList(PlaylistEvent.ARG_TYPES), ds.getSetting(PLAYLIST_REMOVED + SageAlertEventMetadata.SUBJ_SUFFIX, PLAYLIST_REMOVED_SUBJ), ds.getSetting(PLAYLIST_REMOVED + SageAlertEventMetadata.SHORT_SUFFIX, PLAYLIST_REMOVED_SHORT_MSG), ds.getSetting(PLAYLIST_REMOVED + SageAlertEventMetadata.MED_SUFFIX, PLAYLIST_REMOVED_MED_MSG), ds.getSetting(PLAYLIST_REMOVED + SageAlertEventMetadata.LONG_SUFFIX, PLAYLIST_REMOVED_LONG_MSG)));
+		LOG.info("Subscribed to " + PLAYLIST_REMOVED + " event!");
 	}
 	
 	public void destroy() {
@@ -249,13 +367,13 @@ public final class CoreEventsManager {
 		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), AppStartedEvent.EVENT_ID);
 		LOG.info("Unsubscrbied from " + AppStartedEvent.EVENT_ID + " event!");
 		
-		PLUGIN_REG.eventUnsubscribe(RecordingEventsListener.get(), REC_STARTED);
+		PLUGIN_REG.eventUnsubscribe(MediaFileEventsListener.get(), REC_STARTED);
 		LOG.info("Unsubscribed from " + REC_STARTED + " event!");
 		
-		PLUGIN_REG.eventUnsubscribe(RecordingEventsListener.get(), REC_STOPPED);
+		PLUGIN_REG.eventUnsubscribe(MediaFileEventsListener.get(), REC_STOPPED);
 		LOG.info("Unsubscribed from " + REC_STOPPED + " event!");
 		
-		PLUGIN_REG.eventUnsubscribe(RecordingEventsListener.get(), REC_COMPLETED);
+		PLUGIN_REG.eventUnsubscribe(MediaFileEventsListener.get(), REC_COMPLETED);
 		LOG.info("Unsubscribed from " + REC_COMPLETED + " event!");
 		
 		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), EPG_UPDATED);
@@ -284,5 +402,41 @@ public final class CoreEventsManager {
 		
 		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), REC_SCHED_CHANGED);
 		LOG.info("Unsubscribed from " + REC_SCHED_CHANGED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(PluginEventsListener.get(), PLUGIN_STARTED);
+		LOG.info("Unsubscribed from " + PLUGIN_STARTED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(PluginEventsListener.get(), PLUGIN_STOPPED);
+		LOG.info("Unsubscribed from " + PLUGIN_STOPPED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(MediaFileEventsListener.get(), MEDIA_FILE_IMPORTED);
+		LOG.info("Unsubscribed from " + MEDIA_FILE_IMPORTED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), IMPORT_STARTED);
+		LOG.info("Unsubscribed from " + IMPORT_STARTED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(AppEventsListener.get(), IMPORT_COMPLETED);
+		LOG.info("Unsubscribed from " + IMPORT_COMPLETED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(MediaFileEventsListener.get(), REC_SEG_ADDED);
+		LOG.info("Unsubscribed from " + REC_SEG_ADDED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(FavEventsListener.get(), FAV_ADDED);
+		LOG.info("Unsubscribed from " + FAV_ADDED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(FavEventsListener.get(), FAV_MODDED);
+		LOG.info("Unsubscribed from " + FAV_MODDED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(FavEventsListener.get(), FAV_REMOVED);
+		LOG.info("Unsubscrbied from " + FAV_REMOVED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(PlaylistEventsListener.get(), PLAYLIST_ADDED);
+		LOG.info("Unsubscribed from " + PLAYLIST_ADDED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(PlaylistEventsListener.get(), PLAYLIST_REMOVED);
+		LOG.info("Unsubscribed from " + PLAYLIST_REMOVED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(PlaylistEventsListener.get(), PLAYLIST_MODDED);
+		LOG.info("Unsubscribed from " + PLAYLIST_MODDED + " event!");
 	}
 }
