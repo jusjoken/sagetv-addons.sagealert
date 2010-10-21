@@ -36,6 +36,7 @@ import com.google.code.sagetvaddons.sagealert.server.events.PlaylistEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.PluginEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecordingEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.SystemMessageEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.UnresolvedConflictStatusEvent;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
 
 /**
@@ -53,6 +54,7 @@ public final class CoreEventsManager {
 	static final public String REC_STOPPED = "RecordingStopped"; //
 	static final public String PLUGINS_LOADED = "AllPluginsLoaded"; //
 	static final public String CONFLICTS = "ConflictStatusChanged"; //
+	static final public String UNRESOLVED_CONFLICTS = "UnresolvedConflicts"; //
 	static final public String SYSMSG_POSTED = "SystemMessagePosted"; //
 	static final public String INFO_SYSMSG_POSTED = "InfoSysMsgPosted"; //
 	static final public String WARN_SYSMSG_POSTED = "WarnSysMsgPosted"; //
@@ -182,7 +184,12 @@ public final class CoreEventsManager {
 	static final public String CONFLICTS_SUBJ = "Conflict status changed in recording schedule";
 	static final public String CONFLICTS_LONG_MSG = "The conflict status of your SageTV recording schedule has changed.  There are now $0.toString() conflict(s); $1.toString() are unresolved.";
 	static final public String CONFLICTS_MED_MSG = "Conflict status change: $0.toString() total conflicts; $1.toString() unresolved.";
-	static final public String CONFLICTS_SHORT_MSG = EPG_UPDATED_MED_MSG;
+	static final public String CONFLICTS_SHORT_MSG = CONFLICTS_MED_MSG;
+
+	static final public String UNRESOLVED_CONFLICTS_SUBJ = "There are unresolved conflicts in your recording schedule";
+	static final public String UNRESOLVED_CONFLICTS_LONG_MSG = "The conflict status of your SageTV recording schedule has changed.  There are now $0.toString() conflict(s); $1.toString() are unresolved.";
+	static final public String UNRESOLVED_CONFLICTS_MED_MSG = "Conflict status change: $0.toString() total conflicts; $1.toString() unresolved.";
+	static final public String UNRESOLVED_CONFLICTS_SHORT_MSG = UNRESOLVED_CONFLICTS_MED_MSG;
 
 	static final public String SYSMSG_POSTED_SUBJ = "New $utils.sysMsgLevelToString($0.GetSystemMessageLevel()) system message generated";
 	static final public String SYSMSG_POSTED_LONG_MSG = "$0.GetSystemMessageString()";
@@ -293,6 +300,7 @@ public final class CoreEventsManager {
 		
 		PLUGIN_REG.eventSubscribe(AppEventsListener.get(), CONFLICTS);
 		mgr.putMetadata(new SageAlertEventMetadata(CONFLICTS, "Recording Conflicts", "Fired when the conflict status of your recording schedule changes.", Arrays.asList(ConflictStatusEvent.ARG_TYPES), ds.getSetting(CONFLICTS + SageAlertEventMetadata.SUBJ_SUFFIX, CONFLICTS_SUBJ), ds.getSetting(CONFLICTS + SageAlertEventMetadata.SHORT_SUFFIX, CONFLICTS_SHORT_MSG), ds.getSetting(CONFLICTS + SageAlertEventMetadata.MED_SUFFIX, CONFLICTS_MED_MSG), ds.getSetting(CONFLICTS + SageAlertEventMetadata.LONG_SUFFIX, CONFLICTS_LONG_MSG)));
+		mgr.putMetadata(new SageAlertEventMetadata(UNRESOLVED_CONFLICTS, "Unresolved Recording Conflicts", "Fired when unresolved recording conflicts are detected in your recording schedule.", Arrays.asList(UnresolvedConflictStatusEvent.ARG_TYPES), ds.getSetting(UNRESOLVED_CONFLICTS + SageAlertEventMetadata.SUBJ_SUFFIX, UNRESOLVED_CONFLICTS_SUBJ), ds.getSetting(UNRESOLVED_CONFLICTS + SageAlertEventMetadata.SHORT_SUFFIX, UNRESOLVED_CONFLICTS_SHORT_MSG), ds.getSetting(UNRESOLVED_CONFLICTS + SageAlertEventMetadata.MED_SUFFIX, UNRESOLVED_CONFLICTS_MED_MSG), ds.getSetting(UNRESOLVED_CONFLICTS + SageAlertEventMetadata.LONG_SUFFIX, UNRESOLVED_CONFLICTS_LONG_MSG)));
 		LOG.info("Subscribed to " + CONFLICTS + " event!");
 		
 		PLUGIN_REG.eventSubscribe(MediaDeletedEventsListener.get(), MEDIA_DELETED);

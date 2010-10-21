@@ -15,6 +15,8 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import gkusnick.sagetv.api.API;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -28,6 +30,7 @@ import com.google.code.sagetvaddons.sagealert.server.events.EpgUpdatedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.ImportCompletedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.ImportStartedEvent;
 import com.google.code.sagetvaddons.sagealert.server.events.RecSchedChangedEvent;
+import com.google.code.sagetvaddons.sagealert.server.events.UnresolvedConflictStatusEvent;
 
 /**
  * @author dbattams
@@ -50,9 +53,12 @@ final class AppEventsListener implements SageTVEventListener {
 			SageAlertEventHandlerManager.get().fire(new AppStartedEvent(SageAlertEventMetadataManager.get().getMetadata(AppStartedEvent.EVENT_ID)));
 		else if(CoreEventsManager.EPG_UPDATED.equals(arg0))
 			SageAlertEventHandlerManager.get().fire(new EpgUpdatedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.EPG_UPDATED)));
-		else if(CoreEventsManager.CONFLICTS.equals(arg0))
+		else if(CoreEventsManager.CONFLICTS.equals(arg0)) {
+			int unresolved = API.apiNullUI.global.GetAiringsThatWontBeRecorded(true).size();
+			if(unresolved > 0)
+				SageAlertEventHandlerManager.get().fire(new UnresolvedConflictStatusEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.UNRESOLVED_CONFLICTS)));
 			SageAlertEventHandlerManager.get().fire(new ConflictStatusEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.CONFLICTS)));
-		else if(CoreEventsManager.REC_SCHED_CHANGED.equals(arg0))
+		} else if(CoreEventsManager.REC_SCHED_CHANGED.equals(arg0))
 			SageAlertEventHandlerManager.get().fire(new RecSchedChangedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.REC_SCHED_CHANGED)));
 		else if(CoreEventsManager.PLUGINS_LOADED.equals(arg0))
 			SageAlertEventHandlerManager.get().fire(new AllPluginsLoadedEvent(SageAlertEventMetadataManager.get().getMetadata(CoreEventsManager.PLUGINS_LOADED)));
