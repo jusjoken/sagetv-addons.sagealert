@@ -40,6 +40,7 @@ import com.google.code.sagetvaddons.sagealert.shared.SmtpSettings;
 final class EmailServer implements SageAlertEventHandler {
 
 	static private final Logger LOG = Logger.getLogger(EmailServer.class);
+	static private final String RFC_822_ENC = "UTF-8";
 
 	private EmailSettings emailSettings;
 	private final SmtpSettings smtpSettings;
@@ -126,7 +127,7 @@ final class EmailServer implements SageAlertEventHandler {
 		message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(smtpSettings.getSenderAddress().length() == 0 ? "sagealert@" + smtpSettings.getHost() : smtpSettings.getSenderAddress()));
 		message.setRecipient(Message.RecipientType.TO, new InternetAddress(emailSettings.getAddress()));
-		message.setSubject("SageAlert: " + event.getSubject());
+		message.setSubject("SageAlert: " + event.getSubject(), RFC_822_ENC);
 		message.setSentDate(new Date());
 		String txt;
 		if(emailSettings.getMsgType().equals("short"))
@@ -135,7 +136,7 @@ final class EmailServer implements SageAlertEventHandler {
 			txt = event.getMediumDescription();
 		else
 			txt = event.getLongDescription();
-		message.setText(txt);
+		message.setText(txt, RFC_822_ENC);
 	}
 
 	private void sendMessage() throws MessagingException {

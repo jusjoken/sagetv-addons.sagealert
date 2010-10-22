@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.net.QuotedPrintableCodec;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -39,6 +41,7 @@ import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
  */
 class ExeServer implements SageAlertEventHandler {
 	static private final Logger LOG = Logger.getLogger(ExeServer.class);
+	static private final String ENV_ENC = "UTF-8";
 	
 	private ExeServerSettings settings;
 	
@@ -82,11 +85,17 @@ class ExeServer implements SageAlertEventHandler {
 		} catch (IOException e1) {
 			LOG.warn("IOError grabbing parent env; using empty env instead!", e1);
 		}
-		env.put("SA_SUBJ", e.getSubject());
-		env.put("SA_SOURCE", e.getSource());
-		env.put("SA_SHORT", e.getShortDescription());
-		env.put("SA_MED", e.getMediumDescription());
-		env.put("SA_LONG", e.getLongDescription());
+		QuotedPrintableCodec qpc = new QuotedPrintableCodec(ENV_ENC);
+		try {
+			env.put("SA_SUBJ", qpc.encode(e.getSubject()));
+			env.put("SA_SOURCE", qpc.encode(e.getSource()));
+			env.put("SA_SHORT", qpc.encode(e.getShortDescription()));
+			env.put("SA_MED", qpc.encode(e.getMediumDescription()));
+			env.put("SA_LONG", qpc.encode(e.getLongDescription()));
+		} catch(EncoderException x) {
+			LOG.error("EncoderError", x);
+			return;
+		}
 		final File exe = new File(settings.getExeName());
 		LOG.info("Processing event '" + e.getSubject() + "' with exe '" + exe.getAbsolutePath() + "' and env " + env.toString());
 		if(exe.canExecute()) {

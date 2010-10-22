@@ -16,8 +16,9 @@
 package com.google.code.sagetvaddons.sagealert.server;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.apache.log4j.Logger;
@@ -32,6 +33,7 @@ import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
  */
 abstract class LogFileServer implements SageAlertEventHandler {
 	static private final Logger LOG = Logger.getLogger(LogFileServer.class);
+	static private final String FILE_ENC = "UTF-8";
 	
 	File target;
 	Writer w;
@@ -49,7 +51,7 @@ abstract class LogFileServer implements SageAlertEventHandler {
 		if(this.target.exists() && !this.target.canWrite())
 			throw new IllegalArgumentException("Unable to write to target log file! [" + this.target + "]");
 		try {
-			w = new FileWriter(this.target, true);
+			w = new OutputStreamWriter(new FileOutputStream(this.target, true), FILE_ENC);
 		} catch(IOException e) {
 			LOG.error("IO Error", e);
 			throw new RuntimeException(e);
