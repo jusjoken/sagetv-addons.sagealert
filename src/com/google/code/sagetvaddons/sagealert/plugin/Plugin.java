@@ -22,11 +22,15 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import sage.SageTVPlugin;
 import sage.SageTVPluginRegistry;
+
+import com.google.code.sagetvaddons.sagealert.server.DataStore;
+import com.google.code.sagetvaddons.sagealert.shared.Client;
 
 /**
  * @author dbattams
@@ -163,6 +167,13 @@ public final class Plugin implements SageTVPlugin {
 		} catch(IOException e) {
 			LOG.fatal("Deployment failed!", e);
 			throw new RuntimeException(e);
+		}
+		LOG.info("Registering all connected UI contexts...");
+		DataStore ds = DataStore.getInstance();
+		for(String clntIp : (String[])ArrayUtils.addAll(API.apiNullUI.global.GetConnectedClients(), API.apiNullUI.global.GetUIContextNames())) {
+			Client c = ds.getClient(clntIp);
+			ds.registerClient(c.getId());
+			LOG.info("Client id '" + c.getId() + "' registered!");
 		}
 	}
 
