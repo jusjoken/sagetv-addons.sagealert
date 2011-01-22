@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
+import com.google.code.sagetvaddons.sagealert.client.ClientListenerSubscriptionForm.MediaType;
 import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.ClientService;
 import com.google.code.sagetvaddons.sagealert.shared.ClientServiceAsync;
@@ -85,11 +86,20 @@ final class ClientSettingsPanel extends ContentPanel {
 					@Override
 					public void componentSelected(ButtonEvent ce) {
 						EventType type;
-						if(config.id.equals("notifyOnStart"))
+						if(config.id.endsWith("Start"))
 							type = EventType.STARTS;
 						else
 							type = EventType.STOPS;
-						final ClientReporterConfigWindow w = new ClientReporterConfigWindow((Client)model.getBean(), type);
+						MediaType mediaType;
+						if(config.id.contains("Tv"))
+							mediaType = MediaType.TV;
+						else if(config.id.contains("Dvd"))
+							mediaType = MediaType.DVD;
+						else if(config.id.contains("Import"))
+							mediaType = MediaType.IMPORT;
+						else
+							mediaType = MediaType.MUSIC;
+						final ClientReporterConfigWindow w = new ClientReporterConfigWindow((Client)model.getBean(), type, mediaType);
 						final MessageBox progressBar = MessageBox.wait("Loading configuration window...", "Please wait while the configuration window is loading...", null);
 						new Timer() {
 
@@ -131,14 +141,38 @@ final class ClientSettingsPanel extends ContentPanel {
 		cfg.setEditor(new CellEditor(new TextField<String>()));
 		cols.add(cfg);
 	
-		cfg = new CheckColumnConfig("notifyOnStart", "Starts Playback", 90);
+		cfg = new CheckColumnConfig("notifyOnTvStart", "Starts TV", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 		
-		cfg = new CheckColumnConfig("notifyOnStop", "Stops Playback", 90);
+		cfg = new CheckColumnConfig("notifyOnTvStop", "Stops TV", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
-				
+
+		cfg = new CheckColumnConfig("notifyOnDvdStart", "Starts DVD/BR", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+		
+		cfg = new CheckColumnConfig("notifyOnDvdStop", "Stops DVD/BR", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifyOnImportStart", "Starts Import", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+		
+		cfg = new CheckColumnConfig("notifyOnImportStop", "Stops Import", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifyOnMusicStart", "Starts Music", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+		
+		cfg = new CheckColumnConfig("notifyOnMusicStop", "Stops Music", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
 		ColumnModel cm = new ColumnModel(cols);
 		grid = new EditorGrid<BeanModel>(store, cm);
 		grid.setLazyRowRender(0);

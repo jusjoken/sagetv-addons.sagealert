@@ -1,5 +1,5 @@
 /*
- *      Copyright 2010 Battams, Derek
+ *      Copyright 2010-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -233,15 +233,45 @@ public final class CoreEventsManager {
 	
 	// If you change any of the defaults for PLAYBACK_* events below then you must also update them in ClientListenerSubscriptionForm
 	
-	static final public String PLAYBACK_STARTED_SUBJ = "Media playback has started";
-	static final public String PLAYBACK_STARTED_LONG_MSG = "Media playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
-	static final public String PLAYBACK_STARTED_MED_MSG = "Media playback started ($3.getAlias()): $0.GetMediaTitle()";
-	static final public String PLAYBACK_STARTED_SHORT_MSG = PLAYBACK_STARTED_MED_MSG;
+	static final public String PLAYBACK_TV_STARTED_SUBJ = "TV playback has started";
+	static final public String PLAYBACK_TV_STARTED_LONG_MSG = "TV playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
+	static final public String PLAYBACK_TV_STARTED_MED_MSG = "TV playback started ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_TV_STARTED_SHORT_MSG = PLAYBACK_TV_STARTED_MED_MSG;
 
-	static final public String PLAYBACK_STOPPED_SUBJ = "Media playback has stopped";
-	static final public String PLAYBACK_STOPPED_LONG_MSG = "Media playback of '$0.GetMediaTitle()' has stopped on client '$3.getAlias()'";
-	static final public String PLAYBACK_STOPPED_MED_MSG = "Media playback stopped ($3.getAlias()): $0.GetMediaTitle()";
-	static final public String PLAYBACK_STOPPED_SHORT_MSG = PLAYBACK_STOPPED_MED_MSG;
+	static final public String PLAYBACK_TV_STOPPED_SUBJ = "TV playback has stopped";
+	static final public String PLAYBACK_TV_STOPPED_LONG_MSG = "TV playback of '$0.GetMediaTitle()' has stopped on client '$3.getAlias()'";
+	static final public String PLAYBACK_TV_STOPPED_MED_MSG = "TV playback stopped ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_TV_STOPPED_SHORT_MSG = PLAYBACK_TV_STOPPED_MED_MSG;
+
+	static final public String PLAYBACK_IMPORT_STARTED_SUBJ = "Import playback has started";
+	static final public String PLAYBACK_IMPORT_STARTED_LONG_MSG = "Import playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
+	static final public String PLAYBACK_IMPORT_STARTED_MED_MSG = "Import playback started ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_IMPORT_STARTED_SHORT_MSG = PLAYBACK_IMPORT_STARTED_MED_MSG;
+
+	static final public String PLAYBACK_IMPORT_STOPPED_SUBJ = "Import playback has stopped";
+	static final public String PLAYBACK_IMPORT_STOPPED_LONG_MSG = "Import playback of '$0.GetMediaTitle()' has stopped on client '$3.getAlias()'";
+	static final public String PLAYBACK_IMPORT_STOPPED_MED_MSG = "Import playback stopped ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_IMPORT_STOPPED_SHORT_MSG = PLAYBACK_IMPORT_STOPPED_MED_MSG;
+
+	static final public String PLAYBACK_DVD_STARTED_SUBJ = "DVD/BluRay playback has started";
+	static final public String PLAYBACK_DVD_STARTED_LONG_MSG = "DVD/BluRay playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
+	static final public String PLAYBACK_DVD_STARTED_MED_MSG = "DVD/BluRay playback started ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_DVD_STARTED_SHORT_MSG = PLAYBACK_DVD_STARTED_MED_MSG;
+
+	static final public String PLAYBACK_DVD_STOPPED_SUBJ = "DVD/BluRay playback has stopped";
+	static final public String PLAYBACK_DVD_STOPPED_LONG_MSG = "DVD/BluRay playback of '$0.GetMediaTitle()' has stopped on client '$3.getAlias()'";
+	static final public String PLAYBACK_DVD_STOPPED_MED_MSG = "DVD/BluRay playback stopped ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_DVD_STOPPED_SHORT_MSG = PLAYBACK_DVD_STOPPED_MED_MSG;
+
+	static final public String PLAYBACK_MUSIC_STARTED_SUBJ = "Music playback has started";
+	static final public String PLAYBACK_MUSIC_STARTED_LONG_MSG = "Music playback of '$0.GetMediaTitle()'$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow()) has started on client '$3.getAlias()'";
+	static final public String PLAYBACK_MUSIC_STARTED_MED_MSG = "Music playback started ($3.getAlias()): $0.GetMediaTitle()$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow())";
+	static final public String PLAYBACK_MUSIC_STARTED_SHORT_MSG = PLAYBACK_MUSIC_STARTED_MED_MSG;
+
+	static final public String PLAYBACK_MUSIC_STOPPED_SUBJ = "Music playback has stopped";
+	static final public String PLAYBACK_MUSIC_STOPPED_LONG_MSG = "Music playback of '$0.GetMediaTitle()'$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow()) has stopped on client '$3.getAlias()'";
+	static final public String PLAYBACK_MUSIC_STOPPED_MED_MSG = "Music playback stopped ($3.getAlias()): $0.GetMediaTitle()$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow())";
+	static final public String PLAYBACK_MUSIC_STOPPED_SHORT_MSG = PLAYBACK_MUSIC_STOPPED_MED_MSG;
 
 	private final SageTVPluginRegistry PLUGIN_REG = (SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry();
 	private final CustomEventLoader CUSTOM_LOADER = new CustomEventLoader();

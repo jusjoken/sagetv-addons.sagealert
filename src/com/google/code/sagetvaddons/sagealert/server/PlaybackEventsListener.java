@@ -1,5 +1,5 @@
 /*
- *      Copyright 2010 Battams, Derek
+ *      Copyright 2010-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.google.code.sagetvaddons.sagealert.server;
 import gkusnick.sagetv.api.API;
 import gkusnick.sagetv.api.MediaFileAPI;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -28,6 +27,7 @@ import sage.SageTVEventListener;
 import com.google.code.sagetvaddons.sagealert.server.events.PlaybackEvent;
 import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEventMetadata;
+import com.google.code.sagetvaddons.sagealert.shared.Client.EventType;
 
 /**
  * @author dbattams
@@ -54,13 +54,17 @@ final class PlaybackEventsListener implements SageTVEventListener {
 			Client clnt = ds.getClient((String)arg1.get(UI_KEY));
 			
 			if(CoreEventsManager.PLAYBACK_STARTED.equals(arg0)) {
-				String eventId = Client.EventType.STARTS + "_" + clnt.getId();
-				SageAlertEventMetadata metadata = new SageAlertEventMetadata(eventId, "Media Playback Started: " + clnt.getAlias(), "Event fires when client '" + clnt.getAlias() + "' starts to playback media.", Arrays.asList(PlaybackEvent.ARG_TYPES), ds.getSetting(eventId + SageAlertEventMetadata.SUBJ_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_SUBJ), ds.getSetting(eventId + SageAlertEventMetadata.SHORT_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_SHORT_MSG), ds.getSetting(eventId + SageAlertEventMetadata.MED_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_MED_MSG), ds.getSetting(eventId + SageAlertEventMetadata.LONG_SUFFIX, CoreEventsManager.PLAYBACK_STARTED_LONG_MSG));
-				SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, eventId, metadata));
+				SageAlertEventMetadata metadata = PlaybackMetadataFactory.getMetadata(clnt, EventType.STARTS, mf);
+				if(metadata != null)
+					SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, metadata.getEventId(), metadata));
+				else
+					LOG.warn("Playback started event ignored; probably because a picture is being played back!");
 			} else if(CoreEventsManager.PLAYBACK_STOPPED.equals(arg0)) {
-				String eventId = Client.EventType.STOPS + "_" + clnt.getId();
-				SageAlertEventMetadata metadata = new SageAlertEventMetadata(eventId, "Media Playback Stopped: " + clnt.getAlias(), "Event fires when client '" + clnt.getAlias() + "' stops playing back media.", Arrays.asList(PlaybackEvent.ARG_TYPES), ds.getSetting(eventId + SageAlertEventMetadata.SUBJ_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_SUBJ), ds.getSetting(eventId + SageAlertEventMetadata.SHORT_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_SHORT_MSG), ds.getSetting(eventId + SageAlertEventMetadata.MED_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_MED_MSG), ds.getSetting(eventId + SageAlertEventMetadata.LONG_SUFFIX, CoreEventsManager.PLAYBACK_STOPPED_LONG_MSG));
-				SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, eventId, metadata));
+				SageAlertEventMetadata metadata = PlaybackMetadataFactory.getMetadata(clnt, EventType.STOPS, mf);
+				if(metadata != null)
+					SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, metadata.getEventId(), metadata));
+				else
+					LOG.warn("Playback stopped event ignored; probably because a picture is being played back!");
 			} else
 				LOG.error("Unhandled event: " + arg0);
 		} else

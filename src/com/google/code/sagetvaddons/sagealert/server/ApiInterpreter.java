@@ -1,5 +1,5 @@
 /*
- *      Copyright 2010 Battams, Derek
+ *      Copyright 2010-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -191,7 +191,7 @@ final public class ApiInterpreter {
 				LOG.error("Did not find ']' to close array arg!");
 				return null;
 			}
-			LOG.info("Returning array arg: " + array);
+			LOG.trace("Returning array arg: " + array);
 			return new ApiMap("\\[.*\\]", array.toArray());
 		} else if(nextTok != StreamTokenizer.TT_WORD || !isStartOfArgToken(String.valueOf(toks.sval))) {
 			LOG.trace("Tok is no good! [" + (nextTok < 0 ? toks.sval : (char)nextTok) + "]");
@@ -395,7 +395,7 @@ final public class ApiInterpreter {
 					LOG.error("Didn't find right parenthesis [" + String.valueOf(toks.ttype) + " :: " + toks.sval + "]");
 					continue;
 				}
-				LOG.info("Found API call: " + apiCall.toString());
+				LOG.trace("Found API call: " + apiCall.toString());
 				return new ApiMap(apiCallRegex.toString(), reflect(getSrcObj(objName, objId), methodName, args));
 			} finally {
 				setForObjCall();
@@ -444,7 +444,7 @@ final public class ApiInterpreter {
 		argTypesMsg.append(")");
 		try {
 			if(src != null) {
-				LOG.info("Attempting to call " + methodName + argTypesMsg.toString() + " on object of type " + src.getClass().getName());
+				LOG.trace("Attempting to call " + methodName + argTypesMsg.toString() + " on object of type " + src.getClass().getName());
 				return MethodUtils.invokeMethod(src, methodName, args.toArray(), argTypes.toArray(new Class<?>[argTypes.size()]));
 			} else
 				LOG.error("Received null source object!");
@@ -469,7 +469,7 @@ final public class ApiInterpreter {
 				map = findApiCall(null);
 				if(map != null) {
 					LOG.debug("Replacing '" + map.keySet().toArray()[0].toString() + "' with '" + map.values().toArray()[0] + "'");
-					LOG.info("Replacing '" + originalMsg + "' with '" + map.values().toArray()[0] + "'");
+					LOG.debug("Replacing '" + originalMsg + "' with '" + map.values().toArray()[0] + "'");
 					interpretedMsg = interpretedMsg.replaceAll(map.keySet().toArray()[0].toString(), map.values().toArray()[0] != null ? map.values().toArray()[0].toString().replace("\\", "\\\\").replace("$", "\\$") : null);
 				}
 			} catch (IOException e) {
