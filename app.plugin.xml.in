@@ -57,7 +57,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        </Dependency>
        <Dependency>
        	<Plugin>jetty</Plugin>
-       	<MinVersion>2.0.1</MinVersion>
+       	<MinVersion>2.2.0.9</MinVersion>
        </Dependency>
        <Dependency>
        	<Plugin>log4j</Plugin>

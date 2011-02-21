@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class Client implements BeanModelTag, IsSerializable {
 	public enum EventType {
 		STARTS,
-		STOPS
+		STOPS,
+		PAUSES,
+		RESUMES
 	}
 	
 	private String id;

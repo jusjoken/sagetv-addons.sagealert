@@ -62,6 +62,8 @@ public final class CoreEventsManager {
 	static final public String EPG_UPDATED = "EPGUpdateCompleted"; //
 	static final public String PLAYBACK_STARTED = "PlaybackStarted"; //
 	static final public String PLAYBACK_STOPPED = "PlaybackStopped"; //
+	static final public String PLAYBACK_PAUSED = "PlaybackPaused"; //
+	static final public String PLAYBACK_RESUMED = "PlaybackResumed"; //
 	static final public String CLIENT_CONNECTED = "ClientConnected"; //
 	static final public String CLIENT_DISCONNECTED = "ClientDisconnected"; //
 	static final public String MEDIA_DELETED = "MediaFileRemoved"; //
@@ -243,6 +245,16 @@ public final class CoreEventsManager {
 	static final public String PLAYBACK_TV_STOPPED_MED_MSG = "TV playback stopped ($3.getAlias()): $0.GetMediaTitle()";
 	static final public String PLAYBACK_TV_STOPPED_SHORT_MSG = PLAYBACK_TV_STOPPED_MED_MSG;
 
+	static final public String PLAYBACK_TV_PAUSED_SUBJ = "TV playback paused";
+	static final public String PLAYBACK_TV_PAUSED_LONG_MSG = "TV playback of '$0.GetMediaTitle()' has been paused on client '$3.getAlias()'";
+	static final public String PLAYBACK_TV_PAUSED_MED_MSG = "TV playback paused ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_TV_PAUSED_SHORT_MSG = PLAYBACK_TV_PAUSED_MED_MSG;
+
+	static final public String PLAYBACK_TV_RESUMED_SUBJ = "TV playback has resumed";
+	static final public String PLAYBACK_TV_RESUMED_LONG_MSG = "TV playback of '$0.GetMediaTitle()' has resumed on client '$3.getAlias()'";
+	static final public String PLAYBACK_TV_RESUMED_MED_MSG = "TV playback resumed ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_TV_RESUMED_SHORT_MSG = PLAYBACK_TV_RESUMED_MED_MSG;
+
 	static final public String PLAYBACK_IMPORT_STARTED_SUBJ = "Import playback has started";
 	static final public String PLAYBACK_IMPORT_STARTED_LONG_MSG = "Import playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
 	static final public String PLAYBACK_IMPORT_STARTED_MED_MSG = "Import playback started ($3.getAlias()): $0.GetMediaTitle()";
@@ -252,6 +264,16 @@ public final class CoreEventsManager {
 	static final public String PLAYBACK_IMPORT_STOPPED_LONG_MSG = "Import playback of '$0.GetMediaTitle()' has stopped on client '$3.getAlias()'";
 	static final public String PLAYBACK_IMPORT_STOPPED_MED_MSG = "Import playback stopped ($3.getAlias()): $0.GetMediaTitle()";
 	static final public String PLAYBACK_IMPORT_STOPPED_SHORT_MSG = PLAYBACK_IMPORT_STOPPED_MED_MSG;
+
+	static final public String PLAYBACK_IMPORT_PAUSED_SUBJ = "Import playback paused";
+	static final public String PLAYBACK_IMPORT_PAUSED_LONG_MSG = "Import playback of '$0.GetMediaTitle()' has been paused on client '$3.getAlias()'";
+	static final public String PLAYBACK_IMPORT_PAUSED_MED_MSG = "Import playback paused ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_IMPORT_PAUSED_SHORT_MSG = PLAYBACK_IMPORT_PAUSED_MED_MSG;
+
+	static final public String PLAYBACK_IMPORT_RESUMED_SUBJ = "Import playback has resumed";
+	static final public String PLAYBACK_IMPORT_RESUMED_LONG_MSG = "Import playback of '$0.GetMediaTitle()' has resumed on client '$3.getAlias()'";
+	static final public String PLAYBACK_IMPORT_RESUMED_MED_MSG = "Import playback resumed ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_IMPORT_RESUMED_SHORT_MSG = PLAYBACK_IMPORT_RESUMED_MED_MSG;
 
 	static final public String PLAYBACK_DVD_STARTED_SUBJ = "DVD/BluRay playback has started";
 	static final public String PLAYBACK_DVD_STARTED_LONG_MSG = "DVD/BluRay playback of '$0.GetMediaTitle()' has started on client '$3.getAlias()'";
@@ -263,6 +285,16 @@ public final class CoreEventsManager {
 	static final public String PLAYBACK_DVD_STOPPED_MED_MSG = "DVD/BluRay playback stopped ($3.getAlias()): $0.GetMediaTitle()";
 	static final public String PLAYBACK_DVD_STOPPED_SHORT_MSG = PLAYBACK_DVD_STOPPED_MED_MSG;
 
+	static final public String PLAYBACK_DVD_PAUSED_SUBJ = "DVD/BluRay playback paused";
+	static final public String PLAYBACK_DVD_PAUSED_LONG_MSG = "DVD/BluRay playback of '$0.GetMediaTitle()' has been paused on client '$3.getAlias()'";
+	static final public String PLAYBACK_DVD_PAUSED_MED_MSG = "DVD/BluRay playback paused ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_DVD_PAUSED_SHORT_MSG = PLAYBACK_DVD_PAUSED_MED_MSG;
+
+	static final public String PLAYBACK_DVD_RESUMED_SUBJ = "DVD/BluRay playback has resumed";
+	static final public String PLAYBACK_DVD_RESUMED_LONG_MSG = "DVD/BluRay playback of '$0.GetMediaTitle()' has resumed on client '$3.getAlias()'";
+	static final public String PLAYBACK_DVD_RESUMED_MED_MSG = "DVD/BluRay playback resumed ($3.getAlias()): $0.GetMediaTitle()";
+	static final public String PLAYBACK_DVD_RESUMED_SHORT_MSG = PLAYBACK_DVD_RESUMED_MED_MSG;
+
 	static final public String PLAYBACK_MUSIC_STARTED_SUBJ = "Music playback has started";
 	static final public String PLAYBACK_MUSIC_STARTED_LONG_MSG = "Music playback of '$0.GetMediaTitle()'$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow()) has started on client '$3.getAlias()'";
 	static final public String PLAYBACK_MUSIC_STARTED_MED_MSG = "Music playback started ($3.getAlias()): $0.GetMediaTitle()$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow())";
@@ -272,6 +304,16 @@ public final class CoreEventsManager {
 	static final public String PLAYBACK_MUSIC_STOPPED_LONG_MSG = "Music playback of '$0.GetMediaTitle()'$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow()) has stopped on client '$3.getAlias()'";
 	static final public String PLAYBACK_MUSIC_STOPPED_MED_MSG = "Music playback stopped ($3.getAlias()): $0.GetMediaTitle()$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow())";
 	static final public String PLAYBACK_MUSIC_STOPPED_SHORT_MSG = PLAYBACK_MUSIC_STOPPED_MED_MSG;
+
+	static final public String PLAYBACK_MUSIC_PAUSED_SUBJ = "Music playback paused";
+	static final public String PLAYBACK_MUSIC_PAUSED_LONG_MSG = "Music playback of '$0.GetMediaTitle()'$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow()) has been paused on client '$3.getAlias()'";
+	static final public String PLAYBACK_MUSIC_PAUSED_MED_MSG = "Music playback paused ($3.getAlias()): $0.GetMediaTitle()$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow())";
+	static final public String PLAYBACK_MUSIC_PAUSED_SHORT_MSG = PLAYBACK_MUSIC_PAUSED_MED_MSG;
+
+	static final public String PLAYBACK_MUSIC_RESUMED_SUBJ = "Music playback has resumed";
+	static final public String PLAYBACK_MUSIC_RESUMED_LONG_MSG = "Music playback of '$0.GetMediaTitle()'$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow()) has resumed on client '$3.getAlias()'";
+	static final public String PLAYBACK_MUSIC_RESUMED_MED_MSG = "Music playback resumed ($3.getAlias()): $0.GetMediaTitle()$utils.concatIfNotEmpty(\" by \", $2.GetPeopleInShow())";
+	static final public String PLAYBACK_MUSIC_RESUMED_SHORT_MSG = PLAYBACK_MUSIC_RESUMED_MED_MSG;
 
 	private final SageTVPluginRegistry PLUGIN_REG = (SageTVPluginRegistry)API.apiNullUI.pluginAPI.GetSageTVPluginRegistry();
 	private final CustomEventLoader CUSTOM_LOADER = new CustomEventLoader();
@@ -321,6 +363,15 @@ public final class CoreEventsManager {
 		
 		PLUGIN_REG.eventSubscribe(PlaybackEventsListener.get(), PLAYBACK_STOPPED);
 		LOG.info("Subscribed to " + PLAYBACK_STOPPED + " event!");
+
+		if(!API.apiNullUI.configuration.GetProperty("version", "").startsWith("SageTV V7.1"))
+			LOG.warn("Pause and Resume events will not work properly; requires SageTV 7.1 or newer!");
+		
+		PLUGIN_REG.eventSubscribe(PlaybackEventsListener.get(), PLAYBACK_PAUSED);
+		LOG.info("Subscribed to " + PLAYBACK_PAUSED + " event!");
+
+		PLUGIN_REG.eventSubscribe(PlaybackEventsListener.get(), PLAYBACK_RESUMED);
+		LOG.info("Subscribed to " + PLAYBACK_RESUMED + " event!");
 		
 		PLUGIN_REG.eventSubscribe(SystemMessageEventsListener.get(), SYSMSG_POSTED);
 		mgr.putMetadata(new SageAlertEventMetadata(INFO_SYSMSG_POSTED, "System Message Posted (INFO)", "Event fired when a system message with level INFO is posted.", Arrays.asList(SystemMessageEvent.ARG_TYPES), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.SUBJ_SUFFIX, SYSMSG_POSTED_SUBJ), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.SHORT_SUFFIX, SYSMSG_POSTED_SHORT_MSG), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.MED_SUFFIX, SYSMSG_POSTED_MED_MSG), ds.getSetting(INFO_SYSMSG_POSTED + SageAlertEventMetadata.LONG_SUFFIX, SYSMSG_POSTED_LONG_MSG)));
@@ -476,5 +527,11 @@ public final class CoreEventsManager {
 		
 		PLUGIN_REG.eventUnsubscribe(PlaylistEventsListener.get(), PLAYLIST_MODDED);
 		LOG.info("Unsubscribed from " + PLAYLIST_MODDED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(PlaybackEventsListener.get(), PLAYBACK_PAUSED);
+		LOG.info("Unsubscribed from " + PLAYBACK_PAUSED + " event!");
+		
+		PLUGIN_REG.eventUnsubscribe(PlaybackEventsListener.get(), PLAYBACK_RESUMED);
+		LOG.info("Unsubscribed from " + PLAYBACK_RESUMED + " event!");
 	}
 }

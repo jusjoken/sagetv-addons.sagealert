@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
 <!--
-      Copyright 2009 Battams, Derek
+      Copyright 2009-2011 Battams, Derek
 
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
@@ -25,12 +25,9 @@
    <Set name="defaultsDescriptor">
      <SystemProperty name="jetty.home" default="."/>/etc/webdefault.xml
    </Set>
-   <!-- Remove use of tmp dir because there are still file locking issues on Windows -->
-   <!--
    <Set name="tempDirectory">
     <SystemProperty name="jetty.home" default="."/>/webapps/SageAlert
   </Set>
-  -->
    <Set name="contextPath">/sagealert</Set>
    <Set name="war"><SystemProperty name="jetty.home" default="."/>/webapps/SageAlert.war</Set>
    <Set name="extractWAR">true</Set>

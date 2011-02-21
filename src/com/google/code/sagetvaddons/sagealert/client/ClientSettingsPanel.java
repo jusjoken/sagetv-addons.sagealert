@@ -88,8 +88,12 @@ final class ClientSettingsPanel extends ContentPanel {
 						EventType type;
 						if(config.id.endsWith("Start"))
 							type = EventType.STARTS;
-						else
+						else if(config.id.endsWith("Stop"))
 							type = EventType.STOPS;
+						else if(config.id.endsWith("Pause"))
+							type = EventType.PAUSES;
+						else
+							type = EventType.RESUMES;
 						MediaType mediaType;
 						if(config.id.contains("Tv"))
 							mediaType = MediaType.TV;
@@ -148,12 +152,28 @@ final class ClientSettingsPanel extends ContentPanel {
 		cfg = new CheckColumnConfig("notifyOnTvStop", "Stops TV", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
+		
+		cfg = new CheckColumnConfig("notifiyOnTvPause", "Pauses TV", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifiyOnTvResume", "Resumes TV", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
 
 		cfg = new CheckColumnConfig("notifyOnDvdStart", "Starts DVD/BR", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 		
 		cfg = new CheckColumnConfig("notifyOnDvdStop", "Stops DVD/BR", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifiyOnDvdPause", "Pauses DVD/BR", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifiyOnDvdResume", "Resumes DVD/BR", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 
@@ -165,11 +185,27 @@ final class ClientSettingsPanel extends ContentPanel {
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 
+		cfg = new CheckColumnConfig("notifiyOnImportPause", "Pauses Import", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifiyOnImportResume", "Resumes Import", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
 		cfg = new CheckColumnConfig("notifyOnMusicStart", "Starts Music", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 		
 		cfg = new CheckColumnConfig("notifyOnMusicStop", "Stops Music", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifiyOnMusicPause", "Pauses Music", 90);
+		cfg.setRenderer(btnRenderer);
+		cols.add(cfg);
+
+		cfg = new CheckColumnConfig("notifiyOnMusicResume", "Resumes Music", 90);
 		cfg.setRenderer(btnRenderer);
 		cols.add(cfg);
 

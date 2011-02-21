@@ -65,6 +65,18 @@ final class PlaybackEventsListener implements SageTVEventListener {
 					SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, metadata.getEventId(), metadata));
 				else
 					LOG.warn("Playback stopped event ignored; probably because a picture is being played back!");
+			} else if(CoreEventsManager.PLAYBACK_PAUSED.equals(arg0)) {
+				SageAlertEventMetadata metadata = PlaybackMetadataFactory.getMetadata(clnt, EventType.PAUSES, mf);
+				if(metadata != null)
+					SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, metadata.getEventId(), metadata));
+				else
+					LOG.warn("Playback paused event ignored; probably because a picture is being played back!");				
+			} else if(CoreEventsManager.PLAYBACK_RESUMED.equals(arg0)) {
+				SageAlertEventMetadata metadata = PlaybackMetadataFactory.getMetadata(clnt, EventType.RESUMES, mf);
+				if(metadata != null)
+					SageAlertEventHandlerManager.get().fire(new PlaybackEvent(mf, clnt, metadata.getEventId(), metadata));
+				else
+					LOG.warn("Playback resumed event ignored; probably because a picture is being played back!");
 			} else
 				LOG.error("Unhandled event: " + arg0);
 		} else
