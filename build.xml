@@ -206,6 +206,7 @@ Test targets suppressed because -junit argument was not specified when running w
 		-libraryjars "${java.home}/lib/jce.jar"
   		-libraryjars "${sage.libs}/commons-lang-2.4.jar"
   		-libraryjars "${sage.libs}/commons-beanutils-1.8.3.jar"
+  		-libraryjars "${sage.libs}/salicense.jar"
         -injars jars/sagealert-plain.jar
         -outjars sagealert.jar
   		-dontusemixedcaseclassnames
