@@ -32,6 +32,7 @@ import com.google.code.sagetvaddons.license.LicenseResponse;
 import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
+import com.google.code.sagetvaddons.sagealert.shared.UserSettings;
 
 /**
  * Initialize/kill daemon threads when the app is started
@@ -67,7 +68,7 @@ public final class AppInitializer implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
 		LOG.info("Migrating license details to license server...");
-		License.autoConfig(DataStore.getInstance().getSetting("RegisteredEmail"), new File("plugins/sagetv-addons.lic").getAbsolutePath());
+		License.autoConfig(DataStore.getInstance().getSetting(UserSettings.LIC_EMAIL), new File("plugins/sagetv-addons.lic").getAbsolutePath());
 		LOG.info("Checking license server...");
 		LicenseResponse resp = License.isLicensed(Plugin.PLUGIN_ID);
 		if(!resp.isLicensed())
