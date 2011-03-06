@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.google.code.sagetvaddons.license.License;
+import com.google.code.sagetvaddons.license.LicenseResponse;
+import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
 
@@ -66,11 +69,12 @@ final class SageAlertEventHandlerManager implements HasHandlers {
 		
 	synchronized public void fire(SageAlertEvent e) {
 		Set<SageAlertEventHandler> s = handlers.get(e.getSource());
+		LicenseResponse resp = License.isLicensed(Plugin.PLUGIN_ID);
 		if(s != null && s.size() > 0) {
 			boolean eventFired = false;
 			for(SageAlertEventHandler h : s) {
-				if(eventFired && !License.get().isLicensed()) {
-					LOG.warn("Only notifying one listener for event '" + e.getSubject() + "' because this copy of SageAlert is not licensed!");
+				if(eventFired && !resp.isLicensed()) {
+					LOG.warn("Only notifying one listener for event '" + e.getSubject() + "' because this copy of SageAlert is not licensed! [" + resp.getMessage() + "]");
 					break;
 				}
 				eventFired = true;

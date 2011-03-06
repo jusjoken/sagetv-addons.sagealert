@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.google.code.sagetvaddons.sagealert.server;
 
+import com.google.code.sagetvaddons.license.License;
 import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.server.events.SmtpTestEvent;
 import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
@@ -65,7 +66,7 @@ public final class SettingsServiceImpl extends RemoteServiceServlet implements S
 	}
 
 	public boolean isLicensed() {
-		return License.get().isLicensed();
+		return License.isLicensed(Plugin.PLUGIN_ID).isLicensed();
 	}
 
 	public void clearSettingsStartingWith(String prefix) {

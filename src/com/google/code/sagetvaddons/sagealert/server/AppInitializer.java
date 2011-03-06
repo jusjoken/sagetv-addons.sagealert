@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.google.code.sagetvaddons.sagealert.server;
 
 import gkusnick.sagetv.api.API;
 
+import java.io.File;
 import java.util.Collections;
 
 import javax.servlet.ServletContextEvent;
@@ -26,6 +27,9 @@ import org.apache.log4j.Logger;
 
 import sage.SageTVPluginRegistry;
 
+import com.google.code.sagetvaddons.license.License;
+import com.google.code.sagetvaddons.license.LicenseResponse;
+import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.server.events.AppStartedEvent;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 
@@ -62,9 +66,14 @@ public final class AppInitializer implements ServletContextListener {
 	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
-		LOG.info("Checking license...");
-		if(!License.get().isLicensed() && LOG.isDebugEnabled())
-			LOG.debug("License validation failed!");
+		LOG.info("Migrating license details to license server...");
+		License.autoConfig(DataStore.getInstance().getSetting("RegisteredEmail"), new File("plugins/sagetv-addons.lic").getAbsolutePath());
+		LOG.info("Checking license server...");
+		LicenseResponse resp = License.isLicensed(Plugin.PLUGIN_ID);
+		if(!resp.isLicensed())
+			LOG.warn(resp.getMessage());
+		else
+			LOG.info("sagetv-addons license successfully validated with license server!");
 		LOG.info("Loading registered handlers...");
 		registerCurrentHandlers();
 		LOG.info("Registering event listeners with SageTV core...");

@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -27,6 +27,9 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 
+import com.google.code.sagetvaddons.license.License;
+import com.google.code.sagetvaddons.license.LicenseResponse;
+import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.shared.EmailSettings;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
@@ -80,7 +83,8 @@ final class EmailServer implements SageAlertEventHandler {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.server.SageEvent)
 	 */
 	public void onEvent(final SageAlertEvent e) {
-		if(License.get().isLicensed()) {
+		LicenseResponse resp = License.isLicensed(Plugin.PLUGIN_ID);
+		if(resp.isLicensed()) {
 			setSettings(DataStore.getInstance().reloadSettings(getSettings()));
 			new Thread() {
 				@Override
@@ -102,7 +106,7 @@ final class EmailServer implements SageAlertEventHandler {
 				}
 			}.start();
 		} else
-			LOG.warn("Email notification ignored; your copy of SageAlert is not licensed!");
+			LOG.warn("Email notification ignored; your copy of SageAlert is not licensed! [" + resp.getMessage() + "]");
 	}
 
 	private void connectToSmtp() throws NotificationRecipientException {

@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.environment.EnvironmentUtils;
 import org.apache.log4j.Logger;
 
+import com.google.code.sagetvaddons.license.License;
+import com.google.code.sagetvaddons.license.LicenseResponse;
+import com.google.code.sagetvaddons.sagealert.plugin.Plugin;
 import com.google.code.sagetvaddons.sagealert.shared.ExeServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.NotificationServerSettings;
 import com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent;
@@ -71,8 +74,9 @@ class ExeServer implements SageAlertEventHandler {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent)
 	 */
 	public void onEvent(SageAlertEvent e) {
-		if(!License.get().isLicensed()) {
-			LOG.warn("You can't send alerts to process executors because this version of SageAlert is not licensed!");
+		LicenseResponse resp = License.isLicensed(Plugin.PLUGIN_ID);
+		if(!resp.isLicensed()) {
+			LOG.warn("You can't send alerts to process executors because this version of SageAlert is not licensed! [" + resp.getMessage() + "]");
 			return;
 		}
 

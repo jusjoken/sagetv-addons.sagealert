@@ -38,6 +38,7 @@ import com.google.code.sagetvaddons.sagealert.shared.Client;
  */
 public final class Plugin implements SageTVPlugin {
 	static private Logger LOG = null;
+	static public final String PLUGIN_ID = "sagealert";
 	static public final File RES_DIR = new File("plugins/sagealert");
 	
 	static public final String OPT_PREFIX = "sagealert/";
