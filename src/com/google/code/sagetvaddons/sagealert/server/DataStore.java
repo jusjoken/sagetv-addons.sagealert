@@ -1,5 +1,5 @@
 /*
- *      Copyright 2009-2010 Battams, Derek
+ *      Copyright 2009-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *       limitations under the License.
  */
 package com.google.code.sagetvaddons.sagealert.server;
+
+import gkusnick.sagetv.api.API;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +54,8 @@ final public class DataStore {
 	static private final Logger LOG = Logger.getLogger(DataStore.class);
 	static private final Logger SQL_LOG = Logger.getLogger("com.google.code.sagetvaddons.sagealert.server.SQLLogger");
 
+	static private final String SAGEX_ALIAS_PROP = "sagex/uicontexts/%s/name";
+	
 	static private final int SCHEMA_VERSION = 1;
 	static private final ThreadLocal<DataStore> THREAD_DATA_STORES = new ThreadLocal<DataStore>() {
 		@Override
@@ -688,12 +692,7 @@ final public class DataStore {
 	 */
 	public Client getClient(String id) {
 		id = massageClientId(id);
-		String alias = getSetting(CLNT_SETTING_PREFIX + id, "");
-		if(alias.length() == 0 || alias.equals(id)) {
-			String webAlias = WebServerSettings.lookupExtenderAlias(id);
-			if(webAlias != null && webAlias.length() > 0)
-				alias = webAlias;
-		}
+		String alias = API.apiNullUI.configuration.GetServerProperty(String.format(SAGEX_ALIAS_PROP, id), id);
 		return new Client(id, alias);
 	}
 	
@@ -702,6 +701,7 @@ final public class DataStore {
 	 * @param c The Client instance to be saved
 	 */
 	public void saveClient(Client c) {
+		API.apiNullUI.configuration.SetServerProperty(String.format(SAGEX_ALIAS_PROP, c.getId()), c.getAlias());
 		setSetting(CLNT_SETTING_PREFIX + c.getId(), c.getAlias());
 	}
 	
