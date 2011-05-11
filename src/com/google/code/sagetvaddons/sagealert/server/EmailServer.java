@@ -83,9 +83,14 @@ final class EmailServer implements SageAlertEventHandler {
 	 * @see com.google.code.sagetvaddons.sagealert.server.SageAlertEventHandler#onEvent(com.google.code.sagetvaddons.sagealert.server.SageEvent)
 	 */
 	public void onEvent(final SageAlertEvent e) {
+		onEvent(e, true);
+	}
+	
+	public void onEvent(final SageAlertEvent e, boolean reload) {
 		LicenseResponse resp = License.isLicensed(Plugin.PLUGIN_ID);
 		if(resp.isLicensed()) {
-			setSettings(DataStore.getInstance().reloadSettings(getSettings()));
+			if(reload)
+				setSettings(DataStore.getInstance().reloadSettings(getSettings()));
 			new Thread() {
 				@Override
 				public void run() {
