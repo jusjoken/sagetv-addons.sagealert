@@ -41,7 +41,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <Author>Slugger</Author>
        <CreationDate>2010.05.29</CreationDate>
        <ModificationDate>@@MOD_DATE@@</ModificationDate>
-       <Version beta="true">@@VER_NUM@@.@@BLD_NUM@@</Version>
+       <Version>@@VER_NUM@@.@@BLD_NUM@@</Version>
        <ResourcePath>plugins/sagealert</ResourcePath>
        <Webpage>http://sagetv-addons.googlecode.com</Webpage>
        <Webpage>http://code.google.com/p/sagetv-addons/wiki/DonationsFaq</Webpage>
