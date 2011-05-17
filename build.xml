@@ -10,7 +10,7 @@
   <property name="gwt.sdk" location="C:/gwt-2.0.3" />
   <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
   <property name="gxt.home" location="${sage.libs}/gxt-2.1.1" />
-  <property name="app.ver" value="2.0.0" />
+  <property name="app.ver" value="2.0.1" />
   <property name="app.stable" value="1523" />
   <property name="sage.jar" value="C:/Program Files/SageTV/SageTV/Sage.jar" />
   <property name="src.token" value="@@" />

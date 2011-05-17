@@ -1,5 +1,5 @@
 /*
- *      Copyright 2010 Battams, Derek
+ *      Copyright 2010-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public final class UnresolvedConflictStatusEvent implements SageAlertEvent {
 	 * @see com.google.code.sagetvaddons.sagealert.shared.SageAlertEvent#getSource()
 	 */
 	public String getSource() {
-		return CoreEventsManager.CONFLICTS;
+		return CoreEventsManager.UNRESOLVED_CONFLICTS;
 	}
 
 	/* (non-Javadoc)
