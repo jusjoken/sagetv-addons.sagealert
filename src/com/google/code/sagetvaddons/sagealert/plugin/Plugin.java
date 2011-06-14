@@ -1,5 +1,5 @@
 /*
- *      Copyright 2010 Battams, Derek
+ *      Copyright 2010-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import com.google.code.sagetvaddons.sagealert.shared.Client;
  */
 public final class Plugin implements SageTVPlugin {
 	static private Logger LOG = null;
-	static public final String PLUGIN_ID = "sagealert";
+	static public final String PLUGIN_ID = "sa2";
 	static public final File RES_DIR = new File("plugins/sagealert");
 	
 	static public final String OPT_PREFIX = "sagealert/";
@@ -193,7 +193,7 @@ public final class Plugin implements SageTVPlugin {
 	/* (non-Javadoc)
 	 * @see sage.SageTVEventListener#sageEvent(java.lang.String, java.util.Map)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void sageEvent(String arg0, Map arg1) {
 		// TODO Auto-generated method stub
 

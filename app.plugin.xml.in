@@ -4,7 +4,7 @@
        <Description><![CDATA[
 SageAlert listens for important/interesting SageTV events and will send notifications of those events to various notification platforms.
  
-WARNING: Starting with v2.0.0.920, SageAlert requires a sagetv-addons license file to unlock all features!  This license file is separate from the SageTV software license and can be obtained from the sagetv-addons project site at http://sagetv-addons.googlecode.com by clicking the "Donate" button on the front page.  There are ways to unlock the software without a license file and those options are discussed in the donations FAQ doc at http://code.google.com/p/sagetv-addons/wiki/DonationsFaq.  In this version, the following features are DISABLED without a license:
+WARNING: Starting with v2.0.0.920, SageAlert requires a sagetv-addons license file to unlock all features!  This license file is separate from the SageTV software license and can be obtained from the sagetv-addons project site at http://code.google.com/p/sagetv-addons/wiki/PluginPricing.  There are ways to unlock the software without a license file and those options are discussed in the licensing FAQ doc at http://code.google.com/p/sagetv-addons/wiki/PluginPricing.  In this version, the following features are DISABLED without a license:
  
 * SMTP server support
 * Sending more than one notification per event
@@ -121,7 +121,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
 	   </Dependency>
 	   <Dependency>
 	    <Plugin>salicense</Plugin>
-	    <MinVersion>1.0.0</MinVersion>
+	    <MinVersion>1.1.0</MinVersion>
 	   </Dependency>
        <Package>
                <PackageType>JAR</PackageType>

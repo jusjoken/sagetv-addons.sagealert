@@ -1,5 +1,5 @@
 /*
- *      Copyright 2010 Battams, Derek
+ *      Copyright 2010-2011 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -115,20 +115,20 @@ final class SageAlertToolBar extends ToolBar {
 		private MenuItem faq;
 		
 		private RegisterMenu() {
-			donate = new MenuItem("Donate (Obtain License)");
+			donate = new MenuItem("Obtain License");
 			donate.setIcon(AbstractImagePrototype.create(SageAlertClientBundle.INSTANCE.getDonateImg()));
 			donate.addSelectionListener(new SelectionListener<MenuEvent>() {
 
 				@Override
 				public void componentSelected(MenuEvent ce) {
-					MessageBox.confirm("Donations", "Donations are used for the sole purpose of defraying out of pocket expenses for developing my plugins.  These expenses include the purchase of addtional SageTV server licenses and hardware used to create the development environment used solely for the purposes of plugin development.  Donators will receive a license file that unlocks all features of this plugin.  Do you wish to donate?", new Listener<MessageBoxEvent>() {
+					MessageBox.confirm("Purchase License", "License revenue is used for the sole purpose of defraying out of pocket expenses for developing my plugins.  These expenses include the purchase of addtional SageTV server licenses and hardware used to create the development environment used solely for the purposes of plugin development.  When you purchase a license, you will receive a license file that unlocks all features of this plugin.  Do you wish to purchase?", new Listener<MessageBoxEvent>() {
 
 						public void handleEvent(MessageBoxEvent be) {
 							if(be.getButtonClicked().getText().toUpperCase().equals("YES")) {
 								MessageBox.alert("Taking You to PayPal", "If a new window directing you to PayPal does not appear then you may need to disable popup blockers in your browser.", new Listener<MessageBoxEvent>() {
 
 									public void handleEvent(MessageBoxEvent be) {
-										UrlLauncher.launch("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AQV6A8JXY7XRJ");						
+										UrlLauncher.launch("http://code.google.com/p/sagetv-addons/wiki/PluginLicenseStore");						
 									}
 									
 								});
@@ -140,13 +140,13 @@ final class SageAlertToolBar extends ToolBar {
 				
 			});
 			
-			faq = new MenuItem("Donations FAQ");
+			faq = new MenuItem("Licensing FAQ");
 			faq.setIcon(AbstractImagePrototype.create(SageAlertClientBundle.INSTANCE.getFaqImg()));
 			faq.addSelectionListener(new SelectionListener<MenuEvent>() {
 
 				@Override
 				public void componentSelected(MenuEvent ce) {
-					UrlLauncher.launch("http://code.google.com/p/sagetv-addons/wiki/DonationsFaq");					
+					UrlLauncher.launch("http://code.google.com/p/sagetv-addons/wiki/PluginPricing");					
 				}
 				
 			});
