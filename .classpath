@@ -10,7 +10,6 @@
 	<classpathentry kind="var" path="SAGELIB/json.jar"/>
 	<classpathentry kind="var" path="SAGELIB/gkusnick.sagetv.jar"/>
 	<classpathentry kind="var" path="SAGELIB/mail.jar"/>
-	<classpathentry kind="var" path="ANT_LIB"/>
 	<classpathentry kind="var" path="SAGE_HOME/Sage.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GXT_2_1_1"/>
 	<classpathentry kind="var" path="SAGELIB/libgrowl.jar"/>
@@ -21,5 +20,6 @@
 	<classpathentry kind="var" path="SAGELIB/commons-lang-2.4.jar"/>
 	<classpathentry kind="var" path="SAGELIB/commons-beanutils-1.8.3.jar"/>
 	<classpathentry kind="var" path="SAGELIB/salicense.jar"/>
+	<classpathentry kind="var" path="ANT_LIB"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
