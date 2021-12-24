@@ -1,0 +1,85 @@
+plugins {
+    id 'java'
+}
+apply plugin: 'idea'
+
+ext {
+    plugin_name = "sagealert"
+    plugin_desc = "SageTV Alert"
+    plugin_longdesc = "Long desc"
+    plugin_version = '2.1.0'
+    targetdir = 'target'
+}
+
+archivesBaseName = "${plugin_name}"
+group 'sagetv-addons.sagealert'
+version = plugin_version
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    configure
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        //Github does not support public maven packages so to retrieve you will need
+        // a Personal Access Token to get the package
+        // Create the 2 environment variables below with the user and token
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/jusjoken/sagetv-dependencies-task")
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USER")
+            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+dependencies {
+    configure 'sagex:sagex.plugin.resolver:1.7'
+
+    // the plugin jars should be extrated here
+    implementation fileTree(dir: 'lib', include: '*.jar')
+
+}
+
+clean {
+    // extra folders to clean
+    delete 'target'
+    delete 'bin'
+}
+
+task configureDependencies() {
+    doLast {
+        // remove all dependency jars
+        ant.delete(dir: "lib", includes: "*.*", failonerror: "false")
+
+        ant.taskdef(
+                name: 'sagetvdeps',
+                classname: 'sagex.plugin.resolver.ant.SageDependencies',
+                classpath: configurations.configure.asPath
+
+        )
+
+        ant.sagetvdeps(
+                downloadsagejar: "false",
+                jardir: "lib",
+                pluginname: "sagealert,sagealert-common",
+                devpluginsxml: "src/plugins/plugin.xml,src/plugins/jettystarter_plugin.xml"
+        )
+
+        // delete the plugin jar if it's downloaded as a dependency
+        ant.delete(file: "lib/${plugin_name}.jar", failonerror: "false")
+    }
+}
+
+task configure(dependsOn: configureDependencies) {
+}

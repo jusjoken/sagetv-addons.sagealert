@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="SageAlert" default="build" basedir=".">
-	  <!-- Import svn tasks -->
+	  <!-- Import svn tasks
 	  <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
 	  <taskdef resource="proguard/ant/task.properties" />
+	  -->
   <!-- Arguments to gwtc and devmode targets -->
   <property name="gwt.args" value="" />
 
   <!-- Configure path to GWT SDK -->
   <property name="gwt.sdk" location="C:/gwt-2.0.3" />
-  <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
-  <property name="gxt.home" location="${sage.libs}/gxt-2.1.1" />
-  <property name="app.ver" value="2.0.2" />
-  <property name="app.stable" value="1532" />
-  <property name="sage.jar" value="C:/Program Files/SageTV/SageTV/Sage.jar" />
+  <!--
+  <property name="sage.libs" value="C:/SageTV/SageJARs" />
+  -->
+  <property name="sage.libs" value="lib" />
+  <property name="gxt.home" location="gxt" />
+  <property name="app.ver" value="2.1.0" />
+  <property name="app.stable" value="1600" />
+  <property name="revision.max-with-flags" value="${app.stable}" />
+  <property name="sage.jar" value="C:/SageTV/Sage.jar" />
   <property name="src.token" value="@@" />
-  <property name="bld.dir" value="bld" />
+  <property name="bld.dir" value="build" />
   <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
+
 	
   <path id="project.class.path">
     <pathelement location="war/WEB-INF/classes"/>
     <pathelement location="${gwt.sdk}/gwt-user.jar"/>
-    <fileset dir="${gwt.sdk}" includes="gwt-dev*.jar"/>
+    <fileset dir="${gwt.sdk}" includes="gwt-*.jar"/>
+    <fileset dir="${gwt.sdk}" includes="validation-api-*.jar"/>
     <!-- Add any additional non-server libs (such as JUnit) -->
     <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
   	<fileset dir="${sage.libs}" includes="**/*.jar"/>
@@ -31,6 +38,7 @@
 	    <tstamp>
 	      <format property="app.bld.date" pattern="yyyy.MM.dd" />
 	    </tstamp>
+		<!--
 	    <svn javahl="true">
 	            <wcVersion path="." />
 	    </svn>
@@ -38,6 +46,7 @@
 	       <arg value="log"/>
 	       <arg value="-r${app.stable}:HEAD"/>
 	    </exec>
+	    -->
 	  </target>
 	  	
 	  <target name="rmgensrc" description="Delete generated src files">
@@ -57,7 +66,9 @@
 	  	    <filter token="VER_NUM" value="${app.ver}"/>
 	  	    <filter token="BLD_NUM" value="${revision.max-with-flags}"/>
 	  	  	<filter token="MOD_DATE" value="${app.bld.date}"/>
+              <!--
 	  	  	<filter token="CHG_LOG" value="${changelog.out}"/>
+	  	  	-->
 	  	  	<filter token="BLD_STABLE" value="${app.stable}"/>
 	  	  </filterset>
 	    </copy> 
@@ -185,8 +196,9 @@ Test targets suppressed because -junit argument was not specified when running w
   <target name="jars" depends="build">
 	<jar destfile="sagealert-common.jar" basedir="${bld.dir}" includes="**/shared/*" filesonly="true" />
   	<copy todir="${bld.dir}/com/google/code/sagetvaddons/sagealert/server/resources" file="src/com/google/code/sagetvaddons/sagealert/server/resources/sagetv-addons.pub" failonerror="true" />
-  	<jar destfile="jars/sagealert-plain.jar" basedir="${bld.dir}" excludes="**/shared/*,**/*.java" filesonly="true" />
-  	<proguard>
+  	<jar destfile="sagealert.jar" basedir="${bld.dir}" excludes="**/shared/*,**/*.java" filesonly="true" />
+	<!--
+	<proguard>
 		-libraryjars "${java.home}/lib/rt.jar"
 		-libraryjars "${sage.libs}/log4j-1.2.15.jar"
 		-libraryjars "${sage.libs}/json.jar"
@@ -235,6 +247,7 @@ Test targets suppressed because -junit argument was not specified when running w
 		-printconfiguration sagealert.pro
     </proguard>
     <zip destfile="sagealert-proguard-dbg-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="sagealert.pro.*" />
+    -->
   </target>
 	
   <target name="app_plugin" depends="common_plugin">
@@ -269,6 +282,7 @@ Test targets suppressed because -junit argument was not specified when running w
   	<replace file="common.plugin.xml" token="@@COMMON_MD5@@" value="${bin.common.md5}" />
   </target>
 
+  <!--
   <target name="deliver" depends="app_plugin" description="Upload build to Google Code">
 	<available file="${gc.upload.settings}" property="gc.upload.enable" />
 	<fail message="${gc.upload.settings} file does not exist!" unless="gc.upload.enable" />
@@ -287,11 +301,12 @@ Test targets suppressed because -junit argument was not specified when running w
 	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="sagealert-common" reqtype="UPGRADE" descriptor="common.plugin.xml" />
 	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="sagealert" reqtype="UPGRADE" descriptor="app.plugin.xml" />
   </target>
-	
+  -->
+
   <target name="clean" depends="rmgensrc" description="Cleans this project">
     <delete dir="war/WEB-INF/classes" failonerror="false" />
     <delete failonerror="false">
-	<fileset dir="war/WEB-INF/lib" includes="sagealert-web.jar" />
+	  <fileset dir="war/WEB-INF/lib" includes="sagealert-web.jar" />
     </delete>
     <delete dir="jars" failonerror="false" />
     <delete dir="war/sagealert" failonerror="false" />

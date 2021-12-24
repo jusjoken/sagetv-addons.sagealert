@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mortbay.jetty.security.Password;
+import org.eclipse.jetty.util.security.Password;
 
 import com.google.code.sagetvaddons.sagealert.shared.Client;
 import com.google.code.sagetvaddons.sagealert.shared.IsDataStoreSerializable;
