@@ -160,15 +160,18 @@ public final class Plugin implements SageTVPlugin {
 	 * @see sage.SageTVPlugin#start()
 	 */
 	public void start() {
+		LOG.info("Starting SageAlert plugin...");
+		/*
 		LOG.info("Deploying SageAlert v2.x into Jetty plugin...");
 		try {
 			FileUtils.copyFileToDirectory(new File(RES_DIR, "SageAlert.war"), new File("jetty/webapps"), true);
-			FileUtils.copyFileToDirectory(new File(RES_DIR, "SageAlert.context.xml"), new File("jetty/contexts"), false);
+			//FileUtils.copyFileToDirectory(new File(RES_DIR, "SageAlert.context.xml"), new File("jetty/contexts"), false);
 			LOG.info("Deployment successful!");
 		} catch(IOException e) {
 			LOG.fatal("Deployment failed!", e);
 			throw new RuntimeException(e);
 		}
+		 */
 		LOG.info("Registering all connected UI contexts...");
 		DataStore ds = DataStore.getInstance();
 		for(String clntIp : (String[])ArrayUtils.addAll(API.apiNullUI.global.GetConnectedClients(), API.apiNullUI.global.GetUIContextNames())) {
@@ -182,12 +185,15 @@ public final class Plugin implements SageTVPlugin {
 	 * @see sage.SageTVPlugin#stop()
 	 */
 	public void stop() {
+		LOG.info("Stopping SageAlert plugin...");
+		/*
 		LOG.info("Undeploying SageAlert from Jetty plugin...");
 		if(!new File("jetty/webapps/SageAlert.war").delete())
 			LOG.warn("Unable to delete SageAlert war file; you may need to restart SageTV to correct this error!");
 		if(!new File("jetty/contexts/SageAlert.context.xml").delete())
 			LOG.error("Unable to delete SageAlert context file; you will need to stop SageTV and delete this file manually!");
 		LOG.info("Undeployment completed!");
+		 */
 	}
 
 	/* (non-Javadoc)

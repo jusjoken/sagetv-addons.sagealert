@@ -19,7 +19,9 @@
   <property name="revision.max-with-flags" value="${app.stable}" />
   <property name="sage.jar" value="C:/SageTV/Sage.jar" />
   <property name="src.token" value="@@" />
-  <property name="bld.dir" value="build" />
+  <property name="target.dir" value="target" />
+  <property name="build.dir" value="build" />
+  <property name="package.dir" value="${build.dir}/package" />
   <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
 
 	
@@ -82,9 +84,9 @@
   <target name="javac" depends="libs" description="Compile java source">
     <mkdir dir="war/WEB-INF/classes"/>
     <mkdir dir="jars" />
-  	<mkdir dir="${bld.dir}"/>
+  	<mkdir dir="${target.dir}"/>
     <javac srcdir="src" includes="**" encoding="utf-8"
-        destdir="${bld.dir}"
+        destdir="${target.dir}"
         source="1.5" target="1.5" nowarn="true"
         debug="true" debuglevel="lines,vars,source">
       <classpath refid="project.class.path"/>
@@ -181,8 +183,9 @@ Test targets suppressed because -junit argument was not specified when running w
     <antcall target="test.prod" />
   </target>
 -->
-
+  <!--
   <target name="hosted" depends="devmode" description="Run development mode (NOTE: the 'hosted' target is deprecated)" />
+  -->
 
   <target name="build" depends="gwtc" description="Build this project" />
 
@@ -190,13 +193,13 @@ Test targets suppressed because -junit argument was not specified when running w
   	<copy todir="war/resources">
   		<fileset dir="${gxt.home}/resources" />	
   	</copy>
-    <zip destfile="SageAlert.war" basedir="war"/>
+    <zip destfile="${build.dir}\SageAlert.war" basedir="war"/>
   </target>
 
   <target name="jars" depends="build">
-	<jar destfile="sagealert-common.jar" basedir="${bld.dir}" includes="**/shared/*" filesonly="true" />
-  	<copy todir="${bld.dir}/com/google/code/sagetvaddons/sagealert/server/resources" file="src/com/google/code/sagetvaddons/sagealert/server/resources/sagetv-addons.pub" failonerror="true" />
-  	<jar destfile="sagealert.jar" basedir="${bld.dir}" excludes="**/shared/*,**/*.java" filesonly="true" />
+	<jar destfile="${build.dir}\sagealert-common.jar" basedir="${target.dir}" includes="**/shared/*" filesonly="true" />
+  	<copy todir="${target.dir}/com/google/code/sagetvaddons/sagealert/server/resources" file="src/com/google/code/sagetvaddons/sagealert/server/resources/sagetv-addons.pub" failonerror="true" />
+  	<jar destfile="${build.dir}\sagealert.jar" basedir="${target.dir}" excludes="**/shared/*,**/*.java" filesonly="true" />
 	<!--
 	<proguard>
 		-libraryjars "${java.home}/lib/rt.jar"
@@ -254,32 +257,40 @@ Test targets suppressed because -junit argument was not specified when running w
   	<delete dir="app_plugin" failonerror="false" />
   	<property name="app_base" value="app_plugin/plugins/sagealert" />
     <mkdir dir="${app_base}" />
-  	<filelist id="bins" dir="." files="sagealert.jar,SageAlert.war,SageAlert.context.xml,sagealert.log4j.properties" />
+    <property name="jetty_base" value="app_plugin/jetty/webapps" />
+    <mkdir dir="${jetty_base}" />
+    <copy todir="${app_base}" file="sagealert.log4j.properties" failonerror="true" />
+    <copy todir="${jetty_base}" file="${build.dir}/SageAlert.war" failonerror="true" />
+    <!--
+  	<filelist id="bins" dir="${build.dir}" files="sagealert.jar,SageAlert.war,sagealert.log4j.properties" />
   	<copy todir="${app_base}">
   	  <filelist refid="bins" />
   	</copy>
-  	<zip destfile="sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="sagealert.jar" />
-  	<checksum file="sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" property="bin.jar.md5" />
-  	<replace file="app.plugin.xml" token="@@JAR_MD5@@" value="${bin.jar.md5}" />
-  	<zip destfile="sagealert-web-${app.ver}.${revision.max-with-flags}.zip" basedir="app_plugin" excludes="**/*.properties" />
-  	<checksum file="sagealert-web-${app.ver}.${revision.max-with-flags}.zip" property="bin.web.md5" />
-  	<replace file="app.plugin.xml" token="@@WEB_MD5@@" value="${bin.web.md5}" />
-  	<zip destfile="sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" basedir="app_plugin" includes="**/*.properties" />
-  	<checksum file="sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" property="bin.conf.md5" />
-  	<replace file="app.plugin.xml" token="@@CONF_MD5@@" value="${bin.conf.md5}" />
+  	-->
+  	<zip destfile="${package.dir}/sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" basedir="${build.dir}" includes="sagealert.jar" />
+  	<checksum file="${package.dir}/sagealert-jar-${app.ver}.${revision.max-with-flags}.zip" property="bin.jar.md5" />
+  	<replace file="sagealert.app.plugin.xml" token="@@JAR_MD5@@" value="${bin.jar.md5}" />
+  	<zip destfile="${package.dir}/sagealert-web-${app.ver}.${revision.max-with-flags}.zip" basedir="app_plugin" excludes="**/*.properties" />
+  	<checksum file="${package.dir}/sagealert-web-${app.ver}.${revision.max-with-flags}.zip" property="bin.web.md5" />
+  	<replace file="sagealert.app.plugin.xml" token="@@WEB_MD5@@" value="${bin.web.md5}" />
+  	<zip destfile="${package.dir}/sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" basedir="app_plugin" includes="**/*.properties" />
+  	<checksum file="${package.dir}/sagealert-conf-${app.ver}.${revision.max-with-flags}.zip" property="bin.conf.md5" />
+  	<replace file="sagealert.app.plugin.xml" token="@@CONF_MD5@@" value="${bin.conf.md5}" />
+    <copy todir="${package.dir}" file="sagealert.app.plugin.xml" failonerror="true" />
   </target>
 	
   <target name="common_plugin" depends="war">
   	<delete dir="common_plugin" failonerror="false" />
   	<property name="common_base" value="common_plugin" />
     <mkdir dir="${common_base}" />
-  	<filelist id="bins" dir="." files="sagealert-common.jar" />
+  	<filelist id="bins" dir="${build.dir}" files="sagealert-common.jar" />
   	<copy todir="${common_base}">
   	  <filelist refid="bins" />
   	</copy>
-  	<zip destfile="sagealert-common-${app.ver}.${revision.max-with-flags}.zip" basedir="${common_base}" includes="sagealert-common.jar" />
-  	<checksum file="sagealert-common-${app.ver}.${revision.max-with-flags}.zip" property="bin.common.md5" />
-  	<replace file="common.plugin.xml" token="@@COMMON_MD5@@" value="${bin.common.md5}" />
+  	<zip destfile="${package.dir}/sagealert-common-${app.ver}.${revision.max-with-flags}.zip" basedir="${common_base}" includes="sagealert-common.jar" />
+  	<checksum file="${package.dir}/sagealert-common-${app.ver}.${revision.max-with-flags}.zip" property="bin.common.md5" />
+  	<replace file="sagealert.common.plugin.xml" token="@@COMMON_MD5@@" value="${bin.common.md5}" />
+    <copy todir="${package.dir}" file="sagealert.common.plugin.xml" failonerror="true" />
   </target>
 
   <!--
@@ -310,7 +321,8 @@ Test targets suppressed because -junit argument was not specified when running w
     </delete>
     <delete dir="jars" failonerror="false" />
     <delete dir="war/sagealert" failonerror="false" />
-  	<delete dir="${bld.dir}" failonerror="false" />
+  	<delete dir="${build.dir}" failonerror="false" />
+    <delete dir="${target.dir}" failonerror="false" />
   	<delete dir="common_plugin" failonerror="false" />
   	<delete dir="app_plugin" failonerror="false" />
   	<delete failonerror="false">
