@@ -14,7 +14,7 @@
   -->
   <property name="sage.libs" value="lib" />
   <property name="gxt.home" location="gxt" />
-  <property name="app.ver" value="2.1.0" />
+  <property name="app.ver" value="2.1.1" />
   <property name="app.stable" value="1600" />
   <property name="revision.max-with-flags" value="${app.stable}" />
   <property name="sage.jar" value="C:/SageTV/Sage.jar" />

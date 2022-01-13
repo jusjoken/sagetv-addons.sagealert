@@ -12,6 +12,7 @@
        <Dependency>
        	<JVM/>
        	<MinVersion>1.8</MinVersion>
+       	<MaxVersion>1.9</MaxVersion>
        </Dependency>
        <Package>
                <PackageType>JAR</PackageType>

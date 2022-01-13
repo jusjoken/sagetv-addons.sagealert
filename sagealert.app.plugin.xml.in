@@ -41,6 +41,7 @@ Other plugins can also register and fire events to SageAlert, which can then be 
        <Dependency>
        	<JVM/>
        	<MinVersion>1.8</MinVersion>
+       	<MaxVersion>1.9</MaxVersion>
        </Dependency>
        <Dependency>
        	<Core/>
